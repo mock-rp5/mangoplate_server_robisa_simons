@@ -25,24 +25,4 @@ public class ReviewController {
         this.service = service;
     }
 
-    /**
-     * 식당 상세 정보 조회
-     * @param restaurantId
-     * @return
-     */
-    @ResponseBody
-    @GetMapping("/{restaurant_id}")
-    public BaseResponse<GetReviewRes> getRestaurantDetail(@PathVariable("restaurant_id") Integer restaurantId) {
-        if(restaurantId == null ) {
-            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
-        }
-
-        try{
-            GetReviewRes getReviewRes = provider.getRestaurantDetail(restaurantId);
-            return new BaseResponse<>(getReviewRes);
-        }catch (BaseException e) {
-            return new BaseResponse<>(e.getStatus());
-        }
-
-    }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GetCommentRes {
     private Integer id;
-    private int userId;
+    private Integer userId;
     private String userName;
     private String content;
     private int order;
