@@ -30,6 +30,8 @@ public enum BaseResponseStatus {
     POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
     POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
 
+    RESTAURANTS_EMPTY_RESTAURANT_ID(false, 2030, "식당 아이디 값을 확인해주세요"),
+
 
 
     /**
@@ -41,6 +43,8 @@ public enum BaseResponseStatus {
     // [POST] /users
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
+
+    RESTAURANTS_NOT_EXISTS_RESTAURANT(false, 3030, "존재하지 않은 식당입니다."),
 
 
 
