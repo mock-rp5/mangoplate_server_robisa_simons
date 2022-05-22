@@ -23,10 +23,13 @@ public class ReviewDao {
     }
 
     public GetReviewRes getReviewDetail(int reviewId) {
-        String getReviewDetailQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, U.profile_img_url " +
+        String getReviewDetailQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
+                "U.profile_img_url, R.restaurant_id, RT.name " +
                 "from reviews as R " +
                 "join users as U " +
                 "on R.user_id = U.id " +
+                "join restaurants as RT " +
+                "on R.restaurant_id = RT.id " +
                 "where R.id = ?";
 
         GetReviewRes getReviewRes = jdbcTemplate.queryForObject(getReviewDetailQuery,
@@ -36,7 +39,9 @@ public class ReviewDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getString(6)
+                        rs.getString(6),
+                        rs.getInt(7),
+                        rs.getString(8)
                 ), reviewId );
 
         getReviewRes.setImgUrls(getReviewImgURLs(reviewId));

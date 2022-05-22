@@ -69,10 +69,13 @@ public class RestaurantDao {
     }
 
     public List<GetReviewRes> getReviews(int restaurantId) {
-        String getReviewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, U.profile_img_url " +
+        String getReviewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, U.profile_img_url, R.restaurant_id, RT.name " +
                 "from reviews as R " +
                 "join users as U " +
-                "on R.user_id = U.id and R.id = ?";
+                "on R.user_id = U.id " +
+                "join restaurants as RT " +
+                "on R.restaurant_id = RT.id " +
+                "where R.id = ?";
 
         List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewsQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -81,7 +84,9 @@ public class RestaurantDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getString(6)
+                        rs.getString(6),
+                        rs.getInt(7),
+                        rs.getString(8)
                 ), restaurantId);
 
         for(GetReviewRes review : getReviewRes) {
