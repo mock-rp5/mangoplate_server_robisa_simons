@@ -2,6 +2,7 @@ package com.example.demo.src.restaurant;
 
 import com.example.demo.src.comment.model.GetCommentRes;
 import com.example.demo.src.comment.model.GetSubComment;
+import com.example.demo.src.menu.model.GetRestaurantMenu;
 import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
 import com.example.demo.src.review.model.GetReviewRes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,10 @@ public class RestaurantDao {
                         rs.getString(16)
                 ), restaurantId);
 
-        getRestaurantDetailRes.setImgUrl(getRestaurantImgUrls(restaurantId));
+        getRestaurantDetailRes.setImgUrls(getRestaurantImgUrls(restaurantId));
         getRestaurantDetailRes.setReviews(getReviews(restaurantId));
+        getRestaurantDetailRes.setScore(getRestaurantScore(restaurantId));
+        getRestaurantDetailRes.setMenus(getRestaurantMenus(restaurantId));
 
         return getRestaurantDetailRes;
 
@@ -66,7 +69,7 @@ public class RestaurantDao {
     }
 
     public List<GetReviewRes> getReviews(int restaurantId) {
-        String getReviewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score " +
+        String getReviewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, U.profile_img_url " +
                 "from reviews as R " +
                 "join users as U " +
                 "on R.user_id = U.id and R.id = ?";
@@ -77,19 +80,24 @@ public class RestaurantDao {
                         rs.getInt(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getInt(5)
+                        rs.getInt(5),
+                        rs.getString(6)
                 ), restaurantId);
 
         for(GetReviewRes review : getReviewRes) {
-            List<GetCommentRes> commentRes = getComments(review.getId());
+            //List<GetCommentRes> commentRes = getComments(review.getId());
             List<String> imgUrls = getReviewImgURLs(review.getId());
 
-            review.setComments(commentRes);
-            review.setImgUrl(imgUrls);
+            //review.setComments(commentRes);
+            review.setImgUrls(imgUrls);
         }
 
         return getReviewRes;
 
+    }
+    public Integer getRestaurantScore(int restaurantId) {
+        String getScoreQuery = "select avg(score) from reviews where restaurant_id = ?";
+        return jdbcTemplate.queryForObject(getScoreQuery, int.class, restaurantId);
     }
 
     public List<String> getReviewImgURLs(int reviewId) {
@@ -143,4 +151,23 @@ public class RestaurantDao {
                 ), groupNum);
     }
 
+    public int increaseView(Integer restaurantId) {
+        String increaseViewQuery = "update restaurants " +
+                "set view = " +
+                "(select viewer from " +
+                "(select view+1 as viewer from restaurants where id = ?) A) " +
+                "where id = ?";
+
+        return jdbcTemplate.update(increaseViewQuery, restaurantId, restaurantId);
+    }
+
+    public List<GetRestaurantMenu> getRestaurantMenus(Integer restaurantId) {
+        String getMenusQuery = "select id, name, price from menus where restaurant_id = ?";
+        return jdbcTemplate.query(getMenusQuery,
+                (rs, rowNum) -> new GetRestaurantMenu(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("price")
+                ), restaurantId);
+    }
 }

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/restaurants")
@@ -39,6 +39,13 @@ public class RestaurantController {
         }
 
         try{
+            // 식당 상세 보기 API 호출 시 해당 식당의 조회수는 1 증가됨
+            int result = service.increaseView(restaurantId);
+
+            if(result == 0) {
+                return new BaseResponse<>(RESTAURANTS_VIEW_INCREASE_FAIL);
+            }
+
             GetRestaurantDetailRes getReviewRes = provider.getRestaurantDetail(restaurantId);
             return new BaseResponse<>(getReviewRes);
         }catch (BaseException e) {

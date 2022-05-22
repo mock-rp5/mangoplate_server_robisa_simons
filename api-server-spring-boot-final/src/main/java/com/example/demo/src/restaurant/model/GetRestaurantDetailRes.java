@@ -1,5 +1,6 @@
 package com.example.demo.src.restaurant.model;
 
+import com.example.demo.src.menu.model.GetRestaurantMenu;
 import com.example.demo.src.review.model.GetReviewRes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class GetRestaurantDetailRes {
     private Integer id;
     private String name;
     private Integer view;
+    private float score;
     private String address;
     private Double latitude;
     private Double longitude;
@@ -27,8 +29,9 @@ public class GetRestaurantDetailRes {
     private String website;
     private int foodCategoryId;
     private String foodCategoryName;
-    private List<String> imgUrl;
+    private List<String> imgUrls;
     private List<GetReviewRes> reviews;
+    private List<GetRestaurantMenu> menus;
 
     public GetRestaurantDetailRes(Integer id, String name, Integer view, String address, Double latitude, Double longitude, String dayOff, String openHour, String closeHour, String breakTime,int minPrice, int maxPrice, String parkInfo, String website, int foodCategoryId,String foodCategoryName) {
         this.id = id;

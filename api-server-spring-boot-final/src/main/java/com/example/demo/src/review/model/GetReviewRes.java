@@ -15,16 +15,18 @@ public class GetReviewRes {
     private Integer id;
     private int userId;
     private String userName;
+    private String profileImgUrl;
     private String content;
     private int score;
-    private List<String> imgUrl;
+    private List<String> imgUrls;
     private List<GetCommentRes> comments;
 
-    public GetReviewRes(Integer id, int userId, String userName, String content, int score) {
+    public GetReviewRes(Integer id, int userId, String userName, String content, int score, String profileImgUrl) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
         this.content = content;
         this.score = score;
+        this.profileImgUrl = profileImgUrl;
     }
 }

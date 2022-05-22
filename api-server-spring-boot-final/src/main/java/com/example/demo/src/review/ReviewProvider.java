@@ -21,4 +21,24 @@ public class ReviewProvider {
     }
 
 
+    public GetReviewRes getReviewDetail(int reviewId) throws BaseException {
+        if(checkReviewId(reviewId) == 0) {
+            throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
+        }
+        try {
+            GetReviewRes getReviewRes = dao.getReviewDetail(reviewId);
+            return getReviewRes;
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    public int checkReviewId(int reviewId) throws BaseException {
+        try{
+            return dao.checkReviewId(reviewId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

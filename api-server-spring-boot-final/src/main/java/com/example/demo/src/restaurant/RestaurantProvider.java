@@ -27,12 +27,20 @@ public class RestaurantProvider {
      * @throws BaseException
      */
     public GetRestaurantDetailRes getRestaurantDetail(Integer restaurantId) throws BaseException {
-        if(dao.checkRestaurantId(restaurantId) == 0 ) {
+        if(checkRestaurantId(restaurantId) == 0 ) {
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         }
         try {
             return dao.getRestaurantDetail(restaurantId);
         } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkRestaurantId(int restaurantId)throws BaseException {
+        try {
+            return dao.checkRestaurantId(restaurantId);
+        }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
