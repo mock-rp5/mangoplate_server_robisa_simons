@@ -20,20 +20,5 @@ public class ReviewProvider {
         this.dao = dao;
     }
 
-    /**
-     * 식당 존재 여부 체크
-     * @param restaurantId
-     * @return
-     * @throws BaseException
-     */
-    public GetReviewRes getRestaurantDetail(Integer restaurantId) throws BaseException {
-        if(dao.checkRestaurantId(restaurantId) == 0 ) {
-            throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
-        }
-        try {
-            return dao.getRestaurantDetail(restaurantId);
-        } catch (Exception e) {
-            throw new BaseException(DATABASE_ERROR);
-        }
-    }
+
 }

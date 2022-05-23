@@ -2,15 +2,24 @@ package com.example.demo.src.restaurant;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+<<<<<<< HEAD
 import com.example.demo.src.restaurant.model.GetRestaurantRes;
 import com.example.demo.src.user.model.GetUserRes;
+=======
+import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
+import com.example.demo.src.review.model.GetReviewRes;
+>>>>>>> main
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+<<<<<<< HEAD
 import java.util.List;
 import java.util.Optional;
+=======
+import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
+>>>>>>> main
 
 @RestController
 @RequestMapping("/restaurants")
@@ -41,6 +50,28 @@ public class RestaurantController {
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
+    }
+
+
+    /**
+     * 식당 상세 정보 조회
+     * @param restaurantId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/{restaurant_id}")
+    public BaseResponse<GetRestaurantDetailRes> getRestaurantDetail(@PathVariable("restaurant_id") Integer restaurantId) {
+        if(restaurantId == null ) {
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
+        }
+
+        try{
+            GetRestaurantDetailRes getReviewRes = provider.getRestaurantDetail(restaurantId);
+            return new BaseResponse<>(getReviewRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
     }
 
 
