@@ -1,37 +1,30 @@
 package com.example.demo.src.restaurant;
 
 import com.example.demo.src.comment.model.GetCommentRes;
-<<<<<<< HEAD
+
 import com.example.demo.src.restaurant.model.GetRestaurantRes;
 import com.example.demo.src.review.model.GetReviewRes;
 import com.example.demo.src.user.model.GetUserRes;
-=======
+
 import com.example.demo.src.comment.model.GetSubComment;
 import com.example.demo.src.menu.model.GetRestaurantMenu;
 import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
-import com.example.demo.src.review.model.GetReviewRes;
->>>>>>> main
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-<<<<<<< HEAD
-import java.math.BigInteger;
 import java.util.List;
-import java.util.Optional;
-=======
+
 import java.util.ArrayList;
-import java.util.List;
->>>>>>> main
+
 
 @Repository
 public class RestaurantDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-<<<<<<< HEAD
-    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories) {
+    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range) {
         try {
             String getRestaurantQuery = "select R.id,\n" +
                     "       R.name,\n" +
@@ -41,10 +34,16 @@ public class RestaurantDao {
                     "       R.longitude,\n" +
                     "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl,\n" +
                     "       (select count(*) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE')as numReviews\n" +
-                    "\n" +
-                    "from restaurants as R\n" +
-                    "inner join third_regions tr on R.third_region_id = tr.id\n" +
-                    "inner join categories_food cf on R.food_category = cf.id\n";
+                    "       from restaurants as R\n " +
+                    "       join (SELECT * FROM (\n " +
+                    "               SELECT ( 6371 * acos( cos( radians( ?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id\n " +
+                    "           FROM restaurants) DATA \n" +
+                    "           WHERE DATA.distance < ?) as D\n" +
+                    "       on R.id = D.id" +
+                    "       inner join third_regions tr on R.third_region_id = tr.id\n" +
+                    "       inner join categories_food cf on R.food_category = cf.id\n";
+
+            Object[] params = new Object[] {latitude, longitude, latitude, range};
             List<GetRestaurantRes> getRestaurantRes = this.jdbcTemplate.query(getRestaurantQuery,
                     (rs, rowNum) -> new GetRestaurantRes(
                             rs.getLong("id"),
@@ -54,7 +53,8 @@ public class RestaurantDao {
                             rs.getDouble("latitude"),
                             rs.getDouble("longitude"),
                             rs.getInt("numReviews"),
-                            rs.getString("imgUrl")));
+                            rs.getString("imgUrl"))
+            ,params );
             for (GetRestaurantRes restaurant : getRestaurantRes) {
 //          평점 계산
                 Double ratingsAvg = calculateRatings(restaurant.getId());
@@ -136,7 +136,7 @@ public class RestaurantDao {
     private static double rad2deg(double rad) {
         return (rad * 180 / Math.PI);
     }
-=======
+
     public int checkRestaurantId(int restaurantId) {
         String checkRestaurantQuery = "select exists (select * from restaurants where id = ?)";
         return jdbcTemplate.queryForObject(checkRestaurantQuery, int.class, restaurantId);
@@ -276,7 +276,6 @@ public class RestaurantDao {
                 ), groupNum);
     }
 
-<<<<<<< HEAD
     public int increaseView(Integer restaurantId) {
         String increaseViewQuery = "update restaurants " +
                 "set view = " +
@@ -296,7 +295,5 @@ public class RestaurantDao {
                         rs.getInt("price")
                 ), restaurantId);
     }
-=======
->>>>>>> main
->>>>>>> 8ef8c61d59742ef78e8031321d90d1e41044b588
+
 }
