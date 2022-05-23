@@ -47,7 +47,8 @@ public class ReviewController {
     @PostMapping(value = "/{restaurant_id}", consumes = "multipart/form-data" )
     @ResponseBody
     public BaseResponse<PostReviewRes> createReview(@PathVariable("restaurant_id") Integer restaurantId,
-                                                    @ModelAttribute PostReviewReq postReviewReq) throws IOException {
+                                                    @RequestParam PostReviewReq postReviewReq) throws IOException {
+        logger.info("[ReviewController] createReview, restaurantId: {}, postReviewReq: {}", restaurantId, postReviewReq.toString());
         // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
         // 일단 임시로...userId = 2
         int userId = 2;
@@ -72,7 +73,9 @@ public class ReviewController {
         }
 
         try{
-            return new BaseResponse<>(new PostReviewRes(service.createReview(restaurantId, userId, review)));
+            PostReviewRes postReviewRes = new PostReviewRes(service.createReview(restaurantId, userId, review));
+            logger.info("[ReviewController] createReview, userId: {}, reviewId: {}", userId, postReviewRes.getId());
+            return new BaseResponse<>(postReviewRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

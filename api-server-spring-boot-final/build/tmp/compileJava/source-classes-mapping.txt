@@ -80,9 +80,9 @@ com/example/demo/src/review/upload/UploadFile.java
  com.example.demo.src.review.upload.UploadFile
 com/example/demo/src/review/ReviewDao.java
  com.example.demo.src.review.ReviewDao
-com/example/demo/src/review/ReviewController.java
- com.example.demo.src.review.ReviewController
-com/example/demo/src/review/ReviewProvider.java
- com.example.demo.src.review.ReviewProvider
 com/example/demo/src/review/ReviewService.java
  com.example.demo.src.review.ReviewService
+com/example/demo/src/review/ReviewProvider.java
+ com.example.demo.src.review.ReviewProvider
+com/example/demo/src/review/ReviewController.java
+ com.example.demo.src.review.ReviewController

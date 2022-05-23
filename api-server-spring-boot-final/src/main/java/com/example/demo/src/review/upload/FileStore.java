@@ -50,7 +50,7 @@ public class FileStore {
     }
 
     public String getFileUrl(String storeFileUrl) {
-        String fileUrl = "http://49.172.70.200:9000/imges/"+storeFileUrl;
+        String fileUrl = "http://13.166.50.5:9000/imges/"+storeFileUrl;
         return fileUrl;
     }
 }
