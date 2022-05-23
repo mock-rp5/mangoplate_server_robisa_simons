@@ -6,12 +6,17 @@ import com.example.demo.src.review.model.GetReviewRes;
 
 import com.example.demo.src.review.model.PostReviewReq;
 import com.example.demo.src.review.model.PostReviewRes;
-import com.fasterxml.jackson.databind.ser.Serializers;
+import com.example.demo.src.review.model.Review;
+import com.example.demo.src.review.upload.FileStore;
+import com.example.demo.src.review.upload.UploadFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
+
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -22,12 +27,15 @@ public class ReviewController {
     private final ReviewProvider provider;
     private final ReviewService service;
 
+    private final FileStore fileStore;
+
     final Logger logger = LoggerFactory.getLogger(ReviewController.class);
 
     @Autowired
-    public ReviewController(ReviewProvider provider, ReviewService service) {
+    public ReviewController(ReviewProvider provider, ReviewService service, FileStore fileStore) {
         this.provider = provider;
         this.service = service;
+        this.fileStore = fileStore;
     }
 
     /**
@@ -36,13 +44,13 @@ public class ReviewController {
      * @param postReviewReq
      * @return
      */
-    @PostMapping("/{restaurant_id}")
+    @PostMapping(value = "/{restaurant_id}", consumes = "multipart/form-data" )
     @ResponseBody
     public BaseResponse<PostReviewRes> createReview(@PathVariable("restaurant_id") Integer restaurantId,
-                                                    @RequestBody PostReviewReq postReviewReq) {
+                                                    @ModelAttribute PostReviewReq postReviewReq) throws IOException {
         // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 일단 임시로...userId = 1
-        int userId = 1;
+        // 일단 임시로...userId = 2
+        int userId = 2;
 
         if(restaurantId == null) {
             return new BaseResponse<>(REVIEWS_EMPTY_RESTAURANT_ID);
@@ -54,8 +62,17 @@ public class ReviewController {
             return new BaseResponse<>(REVIEWS_EMPTY_CONTENT);
         }
 
+        Review review = new Review();
+        review.setContent(postReviewReq.getContent());
+        review.setScore(postReviewReq.getScore());
+
+        if(postReviewReq.getFile()!=null) {
+            List<UploadFile> storeImageFiles = fileStore.storeFiles(postReviewReq.getFile());
+            review.setFile(storeImageFiles);
+        }
+
         try{
-            return new BaseResponse<>(new PostReviewRes(service.createReview(restaurantId, userId, postReviewReq)));
+            return new BaseResponse<>(new PostReviewRes(service.createReview(restaurantId, userId, review)));
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -81,5 +98,6 @@ public class ReviewController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
 
 }

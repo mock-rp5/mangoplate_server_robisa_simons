@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: demo
+  web:
+    resources:
+      static-locations: classpath:/
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 10MB
 
   datasource:
     platform: mysql
