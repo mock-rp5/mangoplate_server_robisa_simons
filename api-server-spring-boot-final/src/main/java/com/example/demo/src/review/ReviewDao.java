@@ -4,8 +4,10 @@ import com.example.demo.src.comment.model.Comment;
 import com.example.demo.src.comment.model.GetCommentRes;
 import com.example.demo.src.comment.model.GetSubComment;
 import com.example.demo.src.review.model.GetReviewRes;
+import com.example.demo.src.review.model.PostReviewReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
@@ -80,9 +82,19 @@ public class ReviewDao {
 
         for(GetCommentRes comment : getCommentRes) {
             List<GetSubComment> subComments = getSubComments(comment.getId());
+            for (GetSubComment getSubComment : subComments) {
+                getSubComment.setParentCommentUserName(getParentCommentUserName(getSubComment.getId()));
+            }
             comment.setSubComments(subComments);
         }
         return getCommentRes;
+    }
+
+    public String getParentCommentUserName(int commentId) {
+        String getParentCommentUserQuery = "select user_name " +
+                "from users where id = (select parent_user_id from review_comments where id = ?)";
+
+        return jdbcTemplate.queryForObject(getParentCommentUserQuery, String.class, commentId);
     }
 
     private List<GetSubComment> getSubComments(int groupNum) {
@@ -101,5 +113,20 @@ public class ReviewDao {
                         rs.getString(4),
                         rs.getInt(5)
                 ), groupNum);
+    }
+
+    public int checkRestaurantId(int restaurantId) {
+        String checkReviewQuery = "select exists (select * from restaurants where id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkReviewQuery, int.class, restaurantId);
+    }
+
+    public int createReview(int restaurantId, int userId, PostReviewReq postReviewReq) {
+        String createReviewQuery = "insert into reviews(content, score, status, user_id, restaurant_id) " +
+                "values(?, ?, 'ACTIVE', ?, ?) ";
+        Object[] queryParams = new Object[]{postReviewReq.getContent(), postReviewReq.getScore(), userId, restaurantId};
+        jdbcTemplate.update(createReviewQuery, queryParams);
+
+        String lastInserIdQuery = "select id from reviews order by id desc limit 1";
+        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
     }
 }

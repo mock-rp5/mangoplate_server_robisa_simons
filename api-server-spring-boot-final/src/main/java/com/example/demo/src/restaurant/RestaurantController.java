@@ -43,6 +43,7 @@ public class RestaurantController {
             int result = service.increaseView(restaurantId);
 
             if(result == 0) {
+                logger.warn("view increase fail, restaurantId: {}", restaurantId);
                 return new BaseResponse<>(RESTAURANTS_VIEW_INCREASE_FAIL);
             }
 

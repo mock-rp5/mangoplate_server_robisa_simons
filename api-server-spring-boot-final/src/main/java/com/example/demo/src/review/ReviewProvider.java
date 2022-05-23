@@ -41,4 +41,12 @@ public class ReviewProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int checkRestaurantId(int restaurantId) throws BaseException {
+        try {
+            return dao.checkRestaurantId(restaurantId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

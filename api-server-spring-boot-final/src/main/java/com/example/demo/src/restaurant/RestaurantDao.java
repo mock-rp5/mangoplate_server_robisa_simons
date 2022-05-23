@@ -101,7 +101,7 @@ public class RestaurantDao {
 
     }
     public Integer getRestaurantScore(int restaurantId) {
-        String getScoreQuery = "select avg(score) from reviews where restaurant_id = ?";
+        String getScoreQuery = "select avg(score) from reviews where restaurant_id = ? and status = 'ACTIVE'";
         return jdbcTemplate.queryForObject(getScoreQuery, int.class, restaurantId);
     }
 

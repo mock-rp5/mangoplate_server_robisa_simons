@@ -33,7 +33,9 @@ public enum BaseResponseStatus {
     RESTAURANTS_EMPTY_RESTAURANT_ID(false, 2030, "식당 아이디 값을 확인해주세요"),
 
     REVIEWS_EMPTY_REVIEW_ID(false, 2040, "리뷰 아이디 값을 확인해주세요"),
-
+    REVIEWS_EMPTY_RESTAURANT_ID(false, 2041, "식당 아이디 값을 확인해주세요"),
+    REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),
+    REVIEWS_EMPTY_CONTENT(false, 2043, "리뷰 내용을 입력해주세요"),
 
 
     /**
@@ -61,8 +63,9 @@ public enum BaseResponseStatus {
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
-    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다.");
+    PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
 
+    REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다");
 
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
