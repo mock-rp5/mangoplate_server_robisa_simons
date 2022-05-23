@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.example.demo.config.BaseResponseStatus.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
 
@@ -36,16 +37,33 @@ public class RestaurantController {
     @ResponseBody
     @GetMapping("")
     public BaseResponse<List<GetRestaurantRes>> getRestaurant(@RequestParam(value = "search-mode",required = false) String search_mode,
-                                                              @RequestParam(value = "lat", defaultValue = "") Double latitude,
+                                                              @RequestParam(value = "agree-use-location", defaultValue = "Y") String agreeUseLocation,
+                                                              @RequestParam(value = "lat", required = false) Double latitude,
                                                               @RequestParam(value = "long",required = false) Double longitude,
-                                                              @RequestParam(value = "user-id",required = false) Long userId,
-                                                              @RequestParam(value = "food-category",required = false) List<Integer> foodCategories,
+                                                              @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
                                                               @RequestParam(value = "range", defaultValue = "3") Integer range){
         logger.info("user lat -> ", latitude);
         logger.info("user long -> ", longitude);
 
         try{
-            List<GetRestaurantRes> getRestaurantRes = provider.getRestaurant(latitude, longitude, foodCategories.toString().replace("[","(").replace("]",")"), range);
+            List<GetRestaurantRes> getRestaurantRes;
+
+            // 사용자의 위치 정보 사용 동의 여부 체크
+            if(agreeUseLocation.equals("Y")){
+//                위도 경도 validation 필요, 값이 없거나, 값이 범위 안 값이 아닐 경우.
+//                food-category 형식상의 validation 필요.
+
+                if(latitude != null & longitude != null) {
+                    getRestaurantRes = provider.getRestaurant(latitude, longitude,
+                            foodCategories.toString().replace("[", "(").replace("]", ")"), range);
+                }
+                else {
+                    // 사용자의 위도 경도 정보가 없을 경우, 에러 발생
+                    return new BaseResponse<>(EMPTY_LOCATION_INFO);
+                }
+            }else {
+                getRestaurantRes = provider.getRestaurant(latitude, longitude, foodCategories.toString().replace("[", "(").replace("]", ")"), range);
+            }
             return new BaseResponse<>(getRestaurantRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

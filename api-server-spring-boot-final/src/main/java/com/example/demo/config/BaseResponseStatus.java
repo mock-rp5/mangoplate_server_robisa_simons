@@ -37,6 +37,7 @@ public enum BaseResponseStatus {
     REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),
     REVIEWS_EMPTY_CONTENT(false, 2043, "리뷰 내용을 입력해주세요"),
 
+    EMPTY_LOCATION_INFO(false, 2044, "사용자의 위도 경도를 입력해주세요"),
 
     /**
      * 3000 : Response 오류

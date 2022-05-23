@@ -1,5 +1,6 @@
 package com.example.demo.src.restaurant;
 
+import com.example.demo.config.BaseException;
 import com.example.demo.src.comment.model.GetCommentRes;
 
 import com.example.demo.src.restaurant.model.GetRestaurantRes;
@@ -25,7 +26,7 @@ public class RestaurantDao {
     private JdbcTemplate jdbcTemplate;
 
     public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range) {
-        try {
+
             String getRestaurantQuery = "select R.id,\n" +
                     "       R.name,\n" +
                     "       tr.emd_kor_nm as thirdRegion,\n" +
@@ -41,7 +42,8 @@ public class RestaurantDao {
                     "           WHERE DATA.distance < ?) as D\n" +
                     "       on R.id = D.id" +
                     "       inner join third_regions tr on R.third_region_id = tr.id\n" +
-                    "       inner join categories_food cf on R.food_category = cf.id\n";
+                    "       inner join categories_food cf on R.food_category = cf.id\n" +
+                    "       where R.food_category in " + foodCategories;
 
             Object[] params = new Object[] {latitude, longitude, latitude, range};
             List<GetRestaurantRes> getRestaurantRes = this.jdbcTemplate.query(getRestaurantQuery,
@@ -62,13 +64,8 @@ public class RestaurantDao {
                 Double distance = calculateDistance(latitude, longitude, restaurant.getLatitude(), restaurant.getLongitude(), "kilometer");
                 restaurant.setRatingsAvg(ratingsAvg);
                 restaurant.setDistance(distance);
-                System.out.println(restaurant.toString());
             }
             return getRestaurantRes;
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            return null;
-        }
     }
     /*
     * 평점 계산 함수

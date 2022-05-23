@@ -2,12 +2,12 @@ com/example/demo/src/restaurant/model/GetRestaurantRes.java
  com.example.demo.src.restaurant.model.GetRestaurantRes
 com/example/demo/src/review/model/PostReviewReq.java
  com.example.demo.src.review.model.PostReviewReq
-com/example/demo/src/review/model/GetReviewRes.java
- com.example.demo.src.review.model.GetReviewRes
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
 com/example/demo/utils/SHA256.java
  com.example.demo.utils.SHA256
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
+com/example/demo/src/review/model/GetReviewRes.java
+ com.example.demo.src.review.model.GetReviewRes
 com/example/demo/src/user/model/PostUserReq.java
  com.example.demo.src.user.model.PostUserReq
 com/example/demo/config/Constant.java
