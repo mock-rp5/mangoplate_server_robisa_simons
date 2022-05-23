@@ -38,6 +38,12 @@ public enum BaseResponseStatus {
     REVIEWS_EMPTY_CONTENT(false, 2043, "리뷰 내용을 입력해주세요"),
 
     EMPTY_LOCATION_INFO(false, 2044, "사용자의 위도 경도를 입력해주세요"),
+    RESTAURANTS_EMPTY_NAME(false, 2045, "식당 이름을 입력해주세요"),
+    RESTAURANTS_EMPTY_ADDRESS(false, 2046, "식당 주소를 입력해주세요"),
+
+    RESTAURANTS_EMPTY_LOCATION_INFO(false, 2047, "식당의 위도 경도 정보를 입력해주세요"),
+
+    POST_RESTAURANTS_EXISTS_RESTAURANT(false, 2048, "중복된 식당입니다"),
 
     /**
      * 3000 : Response 오류
@@ -62,6 +68,8 @@ public enum BaseResponseStatus {
 
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
+    DELETE_FAIL_RESTAURANT(false,4015,"식당 삭제 실패"),
+
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),

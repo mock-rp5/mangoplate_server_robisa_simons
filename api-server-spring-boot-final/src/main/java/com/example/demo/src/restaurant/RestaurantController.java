@@ -7,9 +7,14 @@ import com.example.demo.src.restaurant.model.GetRestaurantRes;
 
 import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
 
+import com.example.demo.src.restaurant.model.PostRestaurantReq;
+import com.example.demo.src.restaurant.model.PostRestaurantRes;
+import com.example.demo.src.user.model.PostUserReq;
+import com.example.demo.src.user.model.PostUserRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -18,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
+import static com.example.demo.utils.ValidationRegex.isRegexEmail;
 
 
 @RestController
@@ -46,7 +52,7 @@ public class RestaurantController {
         logger.info("user long -> ", longitude);
 
         try{
-            List<GetRestaurantRes> getRestaurantRes;
+            List<GetRestaurantRes> getRestaurantRes ;
 
             // 사용자의 위치 정보 사용 동의 여부 체크
             if(agreeUseLocation.equals("Y")){
@@ -100,5 +106,52 @@ public class RestaurantController {
 
     }
 
+    @ResponseBody
+    @PostMapping("")
+    public BaseResponse<PostRestaurantRes> createRestaurant(@RequestBody PostRestaurantReq postRestaurantReq) {
+        // JWT 인증 필요.
+        // 인증이 성공했다면 isValidJWT = 1,
+        int isValidJWT = 1;
+        int userId = 1;
+
+        // 작성자 ID가 넘어오지 않았을 경우, jwt 토큰을 통해서 userId에 작성자 ID를 넣어준다
+        if (postRestaurantReq.getUserId() == null){
+            // 토큰에서 추출한 값
+            if(isValidJWT == 1) {
+                postRestaurantReq.setUserId(userId);
+            }
+        }
+        if(postRestaurantReq.getName() == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_NAME);
+        }
+        if(postRestaurantReq.getAddress() == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_ADDRESS);
+        }
+        if(postRestaurantReq.getLatitude() == null | postRestaurantReq.getLongitude() == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_LOCATION_INFO);
+        }
+        try{
+            PostRestaurantRes postRestaurantRes = service.createRestaurant(postRestaurantReq);
+            return new BaseResponse<>(postRestaurantRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
+    @DeleteMapping("/{restaurant_id}")
+    public BaseResponse<String> deleteRestaurant(@PathVariable("restaurant_id") Integer restaurantId) {
+        // JWT 인증 필요.
+        // 인증이 성공했다면 isValidJWT = 1,
+        int isValidJWT = 1;
+        int userId = 1;
+
+        try{
+            String result = service.deleteRestaurant(restaurantId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
 
 }
