@@ -2,11 +2,8 @@ package com.example.demo.src.review;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.review.model.GetReviewRes;
+import com.example.demo.src.review.model.*;
 
-import com.example.demo.src.review.model.PostReviewReq;
-import com.example.demo.src.review.model.PostReviewRes;
-import com.example.demo.src.review.model.Review;
 import com.example.demo.src.review.upload.FileStore;
 import com.example.demo.src.review.upload.UploadFile;
 import org.slf4j.Logger;
@@ -63,14 +60,12 @@ public class ReviewController {
             return new BaseResponse<>(REVIEWS_EMPTY_CONTENT);
         }
 
-        Review review = new Review();
-        review.setContent(postReviewReq.getContent());
-        review.setScore(postReviewReq.getScore());
-
+        List<UploadFile> storeImageFiles=null;
         if(postReviewReq.getFile()!=null) {
-            List<UploadFile> storeImageFiles = fileStore.storeFiles(postReviewReq.getFile());
-            review.setFile(storeImageFiles);
+            storeImageFiles = fileStore.storeFiles(postReviewReq.getFile());
         }
+
+        Review review = new Review(postReviewReq.getContent(), postReviewReq.getScore(), storeImageFiles);
 
         try{
             PostReviewRes postReviewRes = new PostReviewRes(service.createReview(restaurantId, userId, review));
@@ -80,6 +75,48 @@ public class ReviewController {
             return new BaseResponse<>(e.getStatus());
         }
 
+
+    }
+
+    /**
+     * 리뷰 수정
+     * @param reviewId
+     * @param putReviewReq
+     * @return
+     * @throws IOException
+     */
+    @PutMapping(value = "/{review_id}", consumes = "multipart/form-data" )
+    @ResponseBody
+    public BaseResponse<PutReviewRes> updateReview(@PathVariable("review_id") Integer reviewId,
+                                                   @ModelAttribute PutReviewReq putReviewReq) throws IOException {
+        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
+        // 일단 임시로...userId = 2
+        int userId = 2;
+
+        if(reviewId == null) {
+            return new BaseResponse<>(REVIEWS_EMPTY_REVIEW_ID);
+        }
+        if(putReviewReq.getScore() == null) {
+            return new BaseResponse<>(REVIEWS_EMPTY_SOCRE);
+        }
+        if(putReviewReq.getContent() == null) {
+            return new BaseResponse<>(REVIEWS_EMPTY_CONTENT);
+        }
+
+        List<UploadFile> storeImageFiles = null;
+
+        if(putReviewReq.getFile()!=null) {
+            storeImageFiles = fileStore.storeFiles(putReviewReq.getFile());
+        }
+
+        Review review = new Review(putReviewReq.getContent(), putReviewReq.getScore(), storeImageFiles);
+
+        try{
+            PutReviewRes putReviewRes = service.updateReview(reviewId, userId, review);
+            return new BaseResponse<>(putReviewRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
 
     }
 
@@ -101,6 +138,21 @@ public class ReviewController {
             return new BaseResponse<>(e.getStatus());
         }
     }
+
+    @DeleteMapping("/{review_id}")
+    @ResponseBody
+    public BaseResponse<DeleteReviewRes> deleteReview(@PathVariable("review_id") Integer reviewId) {
+        if(reviewId == null) {
+            return new BaseResponse<>(REVIEWS_EMPTY_REVIEW_ID);
+        }
+        try {
+            DeleteReviewRes deleteReviewRes = service.deleteReview(reviewId);
+            return new BaseResponse<>(deleteReviewRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
 
 
 }

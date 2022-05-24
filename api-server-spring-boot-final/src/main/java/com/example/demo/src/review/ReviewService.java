@@ -3,7 +3,9 @@ package com.example.demo.src.review;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.src.review.model.DeleteReviewRes;
 import com.example.demo.src.review.model.PostReviewReq;
+import com.example.demo.src.review.model.PutReviewRes;
 import com.example.demo.src.review.model.Review;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,4 +70,38 @@ public class ReviewService {
 
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public PutReviewRes updateReview(Integer reviewId, int userId, Review review) throws BaseException {
+        if(provider.checkReviewId(reviewId) == 0) {
+            throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
+        }
+        try {
+            int result = dao.updateReview(reviewId, review);
+            if(result == 0 ) {
+                logger.warn("[ReviewService] updateReview fail, userId: {}, restaurantId: {}", userId, reviewId);
+                throw new BaseException(REVIEWS_UPDATE_FAIL);
+            }
+            return new PutReviewRes(result);
+
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public DeleteReviewRes deleteReview(Integer reviewId) throws BaseException {
+        if(provider.checkReviewId(reviewId) == 0) {
+            throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
+        }
+        try {
+            int result = dao.deleteReview(reviewId);
+            if(result == 0) {
+                logger.warn("[ReviewService] deleteReview fail, restaurantId: {}", reviewId);
+                throw new BaseException(REVIEWS_DELETE_FAIL);
+            }
+            return new DeleteReviewRes(result);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

@@ -1,19 +1,19 @@
 package com.example.demo.src.review.model;
 
-import com.example.demo.src.review.upload.UploadFile;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
-public class Review {
+@ToString
+public class PutReviewReq {
     private String content;
     private Integer score;
-    private  List<UploadFile> file;
-
+    private  List<MultipartFile> file;
 }
