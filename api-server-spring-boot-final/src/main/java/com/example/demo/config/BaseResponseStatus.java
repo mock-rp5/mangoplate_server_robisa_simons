@@ -37,6 +37,11 @@ public enum BaseResponseStatus {
     REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),
     REVIEWS_EMPTY_CONTENT(false, 2043, "리뷰 내용을 입력해주세요"),
 
+    COMMENTS_EMPTY_REVIEW_ID(false, 2060, "리뷰 아이디를 입력해주세요"),
+    COMMENTS_EMPTY_COMMENT(false, 2061, "댓글 내용을 입력해주세요"),
+    COMMENTS_EMPTY_PARENT_USER_ID(false, 2062, "부모 댓글의 유저 아이디를 입력해주세요"),
+    COMMENTS_EMPTY_COMMENT_ID(false, 2063, "댓글 아이디를 입력해주세요"),
+
 
     /**
      * 3000 : Response 오류
@@ -53,6 +58,10 @@ public enum BaseResponseStatus {
 
     REVIEWS_NOT_EXISTS_REVIEW(false, 3040, "존재하지 않은 리뷰입니다."),
 
+
+    COMMENTS_NOT_EXISTS_REVIEW(false, 3060, "존재하지 않은 리뷰입니다"),
+    COMMENTS_NOT_EXISTS_COMMENT(false, 3061, "존재하지 않은 댓글입니다."),
+    COMMENTS_NOT_EXISTS_PARENT_USER_ID(false, 3062, "존재하지 않은 유저 입니다"),
     /**
      * 4000 : Database, Server 오류
      */
@@ -68,6 +77,7 @@ public enum BaseResponseStatus {
     REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다"),
     REVIEWS_UPDATE_FAIL(false, 4031, "리뷰 수정에 실패했습니다"),
     REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다");
+
 
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요

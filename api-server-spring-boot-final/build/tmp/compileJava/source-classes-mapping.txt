@@ -62,18 +62,32 @@ com/example/demo/src/review/upload/FileStore.java
  com.example.demo.src.review.upload.FileStore
 com/example/demo/src/review/model/Review.java
  com.example.demo.src.review.model.Review
-com/example/demo/src/restaurant/RestaurantService.java
- com.example.demo.src.restaurant.RestaurantService
-com/example/demo/src/review/ReviewDao.java
- com.example.demo.src.review.ReviewDao
-com/example/demo/src/review/ReviewProvider.java
- com.example.demo.src.review.ReviewProvider
-com/example/demo/src/user/UserController.java
- com.example.demo.src.user.UserController
-com/example/demo/config/BaseResponse.java
- com.example.demo.config.BaseResponse
 com/example/demo/src/review/model/DeleteReviewRes.java
  com.example.demo.src.review.model.DeleteReviewRes
+com/example/demo/src/review/ReviewDao.java
+ com.example.demo.src.review.ReviewDao
+com/example/demo/src/comment/model/PostCommentReq.java
+ com.example.demo.src.comment.model.PostCommentReq
+com/example/demo/src/comment/model/PostCommentRes.java
+ com.example.demo.src.comment.model.PostCommentRes
+com/example/demo/src/restaurant/RestaurantService.java
+ com.example.demo.src.restaurant.RestaurantService
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
+com/example/demo/src/review/ReviewProvider.java
+ com.example.demo.src.review.ReviewProvider
+com/example/demo/src/comment/model/PutCommentReq.java
+ com.example.demo.src.comment.model.PutCommentReq
+com/example/demo/src/user/UserController.java
+ com.example.demo.src.user.UserController
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
+com/example/demo/config/BaseResponse.java
+ com.example.demo.config.BaseResponse
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
+com/example/demo/src/comment/model/PutCommentRes.java
+ com.example.demo.src.comment.model.PutCommentRes
 com/example/demo/src/user/UserService.java
  com.example.demo.src.user.UserService
 com/example/demo/config/BaseResponseStatus.java
@@ -86,9 +100,11 @@ com/example/demo/src/restaurant/RestaurantController.java
  com.example.demo.src.restaurant.RestaurantController
 com/example/demo/src/review/ReviewController.java
  com.example.demo.src.review.ReviewController
-com/example/demo/utils/JwtService.java
- com.example.demo.utils.JwtService
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
+com/example/demo/src/comment/CommentDao.java
+ com.example.demo.src.comment.CommentDao
+com/example/demo/src/comment/CommentService.java
+ com.example.demo.src.comment.CommentService
+com/example/demo/src/comment/CommentController.java
+ com.example.demo.src.comment.CommentController
+com/example/demo/src/comment/CommentProvider.java
+ com.example.demo.src.comment.CommentProvider
