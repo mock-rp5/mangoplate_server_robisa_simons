@@ -5,6 +5,7 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.restaurant.model.GetRestaurantRes;
 import com.example.demo.src.restaurant.model.PostRestaurantReq;
 import com.example.demo.src.restaurant.model.PostRestaurantRes;
+import com.example.demo.src.restaurant.model.PutRestaurantReq;
 import com.example.demo.src.user.model.PostUserRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ public class RestaurantService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    @Transactional(rollbackFor = Exception.class)
     public PostRestaurantRes createRestaurant(PostRestaurantReq postRestaurantReq) throws BaseException {
         try {
             if(dao.findByNameAndAddress(postRestaurantReq).equals(1)){
@@ -52,6 +54,7 @@ public class RestaurantService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public String deleteRestaurant(Integer restaurantId) throws BaseException {
         try {
 
@@ -60,6 +63,28 @@ public class RestaurantService {
                     return new String("1 RESTARANT DELETE SUCCESS");
                 }else {
                     throw new BaseException(DELETE_FAIL_RESTAURANT);
+                }
+            } else {
+                throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
+            }
+
+        } catch (BaseException e) {
+            throw new BaseException(e.getStatus());
+        } catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public String updateRestaurant(Integer restaurantId, PutRestaurantReq putRestaurantReq) throws BaseException {
+        try {
+
+            if(dao.checkRestaurantId(restaurantId) == 1){
+                if(dao.updateRestaurant(restaurantId, putRestaurantReq).equals(1)){
+                    return new String("1 RESTARANT UPDATED SUCCESS");
+                }else {
+                    throw new BaseException(UPDATE_FAIL_RESTAURANT);
                 }
             } else {
                 throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);

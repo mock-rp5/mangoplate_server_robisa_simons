@@ -3,15 +3,12 @@ package com.example.demo.src.restaurant;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.comment.model.GetCommentRes;
 
-import com.example.demo.src.restaurant.model.GetRestaurantRes;
-import com.example.demo.src.restaurant.model.PostRestaurantReq;
-import com.example.demo.src.restaurant.model.PostRestaurantRes;
+import com.example.demo.src.restaurant.model.*;
 import com.example.demo.src.review.model.GetReviewRes;
 import com.example.demo.src.user.model.GetUserRes;
 
 import com.example.demo.src.comment.model.GetSubComment;
 import com.example.demo.src.menu.model.GetRestaurantMenu;
-import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
 import com.example.demo.src.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 
 @Repository
@@ -297,15 +295,14 @@ public class RestaurantDao {
                 ), restaurantId);
     }
 
-    @Transactional
     public PostRestaurantRes createRestaurant(PostRestaurantReq postRestaurantReq) {
         String createRestaurantQuery =
                 "INSERT INTO restaurants (name, view, address, first_region_id, second_region_id, third_region_id, latitude, longitude, open_hour, " +
                         "close_hour, break_time, min_price, max_price, day_off, park_info, last_order, website, status, created_at, updated_at, food_category, user_id) " +
-                        "VALUES ( ?, 0, ?, null, null, null, ?, ?, null, null, null, null, null, null, DEFAULT, null, null, DEFAULT, DEFAULT, DEFAULT, 1, ?)\n";
+                        "VALUES ( ?, 0, ?, null, null, null, ?, ?, null, null, null, null, null, null, DEFAULT, null, null, DEFAULT, DEFAULT, DEFAULT, ?, ?)\n";
 //        food_category default 값 설정 필요.
-        Object[] createRestaurantParams = new Object[]{postRestaurantReq.getName(), postRestaurantReq.getAddress(),
-                                                    postRestaurantReq.getLatitude(), postRestaurantReq.getLongitude(), postRestaurantReq.getUserId()};
+        Object[] createRestaurantParams = new Object[]{postRestaurantReq.getName(), postRestaurantReq.getAddress(), postRestaurantReq.getLatitude(),
+                postRestaurantReq.getLongitude(), Optional.ofNullable(postRestaurantReq.getFoodCategory()).orElse(null), postRestaurantReq.getUserId()};
         this.jdbcTemplate.update(createRestaurantQuery, createRestaurantParams);
 
         String lastInsertIdQuery = "select name, address, concat(DATEDIFF(NOW(),created_at),'일 전')as 'createdAt'\n" +
@@ -326,12 +323,17 @@ public class RestaurantDao {
                 int.class,
                 findByNameAndAddressParams);
     }
-    @Transactional
     public Integer deleteRestaurant(Integer restaurantId){
         String deleteRestaurantQuery = "UPDATE restaurants r SET r.status = 'INACTIVE' WHERE r.id = ?";
         Integer deleteRestaurantParams = restaurantId;
         return this.jdbcTemplate.update(deleteRestaurantQuery, deleteRestaurantParams);
     }
 
+    public Integer updateRestaurant(Integer restaurantId, PutRestaurantReq putRestaurantReq){
+        String updateRestaurantQuery = "UPDATE restaurants t SET t.name = ?, t.address = ?, t.latitude = ?, t.longitude = ?, t.food_category = ? WHERE t.id = ?";
+        Object[] updateRestaurantParams = new Object[]{putRestaurantReq.getName(), putRestaurantReq.getAddress(), putRestaurantReq.getLatitude(),
+                                                    putRestaurantReq.getLongitude(), Optional.ofNullable(putRestaurantReq.getFoodCategory()).orElse(null), restaurantId};
+        return this.jdbcTemplate.update(updateRestaurantQuery, updateRestaurantParams);
+    }
 
 }

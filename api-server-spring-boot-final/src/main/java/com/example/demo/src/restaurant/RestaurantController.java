@@ -3,12 +3,8 @@ package com.example.demo.src.restaurant;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 
-import com.example.demo.src.restaurant.model.GetRestaurantRes;
+import com.example.demo.src.restaurant.model.*;
 
-import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
-
-import com.example.demo.src.restaurant.model.PostRestaurantReq;
-import com.example.demo.src.restaurant.model.PostRestaurantRes;
 import com.example.demo.src.user.model.PostUserReq;
 import com.example.demo.src.user.model.PostUserRes;
 import org.slf4j.Logger;
@@ -148,6 +144,27 @@ public class RestaurantController {
 
         try{
             String result = service.deleteRestaurant(restaurantId);
+            return new BaseResponse<>(result);
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    @ResponseBody
+    @PutMapping("/{restaurant_id}")
+    public BaseResponse<String> updateRestaurant(@PathVariable("restaurant_id") Integer restaurantId, @RequestBody PutRestaurantReq putRestaurantReq) {
+        // JWT 인증 필요.
+        // 인증이 성공했다면 isValidJWT = 1,
+        int isValidJWT = 1;
+        int userId = 1;
+
+        try{
+            if (putRestaurantReq.getName() == null){
+                return new BaseResponse<>(RESTAURANTS_EMPTY_NAME);
+            }
+            if (putRestaurantReq.getAddress() == null){
+                return new BaseResponse<>(RESTAURANTS_EMPTY_ADDRESS);
+            }
+            String result = service.updateRestaurant(restaurantId,putRestaurantReq);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

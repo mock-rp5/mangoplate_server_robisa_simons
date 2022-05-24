@@ -69,12 +69,14 @@ public enum BaseResponseStatus {
     //[PATCH] /users/{userIdx}
     MODIFY_FAIL_USERNAME(false,4014,"유저네임 수정 실패"),
     DELETE_FAIL_RESTAURANT(false,4015,"식당 삭제 실패"),
-
+    UPDATE_FAIL_RESTAURANT(false,4016,"식당 수정 실패"),
 
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
 
-    REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다");
+    REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다"),
+
+    WISHES_POST_FAIL(false, 4041, "가고싶다 등록에 실패하였습니다");
 
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
