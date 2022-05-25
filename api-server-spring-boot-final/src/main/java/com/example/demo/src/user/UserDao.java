@@ -7,7 +7,6 @@ import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,16 +111,16 @@ public class UserDao {
 
 
     public int createUser(PostUserReq postUserReq){
-        String createUserQuery = "insert into users (userName, ID, password, email) VALUES (?,?,?,?)";
-        Object[] createUserParams = new Object[]{postUserReq.getUserName(), postUserReq.getId(), postUserReq.getPassword(), postUserReq.getEmail()};
+        String createUserQuery = "insert into users (password, email, user_name, is_holic, status) VALUES (?,?,?, 0, 'ACTIVE')";
+        Object[] createUserParams = new Object[]{postUserReq.getPassword(), postUserReq.getEmail(), postUserReq.getUserName()};
         this.jdbcTemplate.update(createUserQuery, createUserParams);
 
-        String lastInserIdQuery = "select last_insert_id()";
+        String lastInserIdQuery = "select id from users order by id desc limit 1";
         return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
     }
 
     public int checkEmail(String email){
-        String checkEmailQuery = "select exists(select email from users where email = ?)";
+        String checkEmailQuery = "select exists(select email from users where email = ? and social_provider is null)";
         String checkEmailParams = email;
         return this.jdbcTemplate.queryForObject(checkEmailQuery,
                 int.class,
@@ -129,24 +128,24 @@ public class UserDao {
 
     }
 
-    public int modifyUserName(PatchUserReq patchUserReq){
-        String modifyUserNameQuery = "update users set userName = ? where userIdx = ? ";
-        Object[] modifyUserNameParams = new Object[]{patchUserReq.getUserName(), patchUserReq.getUserIdx()};
+    public int modifyUserName(PutUserReq putUserReq){
+        String modifyUserNameQuery = "update users set user_name = ?, user_phone = ? where id = ?";
+        Object[] modifyUserNameParams = new Object[]{putUserReq.getPhoneNumber(), putUserReq.getUserName(), putUserReq.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
     }
 
     public User getPwd(PostLoginReq postLoginReq){
-        String getPwdQuery = "select userIdx, password,email,userName,ID from users where ID = ?";
-        String getPwdParams = postLoginReq.getId();
+        String getPwdQuery = "select id, password, email, user_name, user_phone from users where email = ?";
+        String getPwdParams = postLoginReq.getEmail();
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
                 (rs,rowNum)-> new User(
-                        rs.getInt("userIdx"),
-                        rs.getString("ID"),
-                        rs.getString("userName"),
+                        rs.getInt("id"),
                         rs.getString("password"),
-                        rs.getString("email")
+                        rs.getString("email"),
+                        rs.getString("user_name"),
+                        rs.getString("user_phone")
                 ),
                 getPwdParams
                 );

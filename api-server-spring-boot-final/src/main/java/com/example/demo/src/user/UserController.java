@@ -42,7 +42,7 @@ public class UserController {
      */
     //Query String
     @ResponseBody
-    @GetMapping("") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("/email") // (GET) 127.0.0.1:9000/app/users
     public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String Email) {
         try{
             if(Email == null){
@@ -64,15 +64,19 @@ public class UserController {
      */
     // Path-variable
     @ResponseBody
-    @GetMapping("/{userIdx}") // (GET) 127.0.0.1:9000/app/users/:userIdx
-    public BaseResponse<GetUserRes> getUser(@PathVariable(value = "userIdx", required = false) Integer userIdx) {
-        if(userIdx == null) {
+    @GetMapping("") // (GET) 127.0.0.1:9000/app/users/:userIdx
+    public BaseResponse<GetUserRes> getUser() throws BaseException {
+        //jwt에서 idx 추출.
+        Integer userIdxByJwt = jwtService.getUserIdx();
+        //userIdx와 접근한 유저가 같은지 확인
+
+        if(userIdxByJwt == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
 
         // Get Users
         try{
-            GetUserRes getUserRes = userProvider.getUser(userIdx);
+            GetUserRes getUserRes = userProvider.getUser(userIdxByJwt);
             return new BaseResponse<>(getUserRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -89,13 +93,18 @@ public class UserController {
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
-        // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
         if(postUserReq.getEmail() == null){
             return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
         }
         //이메일 정규표현
         if(!isRegexEmail(postUserReq.getEmail())){
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        if(postUserReq.getPassword() == null ){
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
+        if(postUserReq.getUserName() == null) {
+            return new BaseResponse<>(POST_USERS_EMPTY_USER_NAME);
         }
         try{
             PostUserRes postUserRes = userService.createUser(postUserReq);
@@ -110,11 +119,19 @@ public class UserController {
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
-    @PostMapping("/logIn")
+    @PostMapping("/login")
     public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
+        if(postLoginReq.getEmail() == null){
+            return new BaseResponse<>(POST_USERS_EMPTY_EMAIL);
+        }
+        //이메일 정규표현
+        if(!isRegexEmail(postLoginReq.getEmail())){
+            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
+        }
+        if(postLoginReq.getPassword() == null ){
+            return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
+        }
         try{
-            // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
-            // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
             PostLoginRes postLoginRes = userProvider.logIn(postLoginReq);
             return new BaseResponse<>(postLoginRes);
         } catch (BaseException exception){
@@ -128,8 +145,8 @@ public class UserController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/{userIdx}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody User user){
+    @PutMapping("/{userIdx}")
+    public BaseResponse<Integer> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody PutUserReq user){
         try {
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
@@ -138,10 +155,9 @@ public class UserController {
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
             //같다면 유저네임 변경
-            PatchUserReq patchUserReq = new PatchUserReq(userIdx,user.getUserName());
-            userService.modifyUserName(patchUserReq);
+            PutUserReq patchUserReq = new PutUserReq(userIdx,user.getPhoneNumber(),user.getUserName());
+            int result =  userService.modifyUserName(patchUserReq);
 
-            String result = "";
         return new BaseResponse<>(result);
         } catch (BaseException exception) {
             return new BaseResponse<>((exception.getStatus()));
