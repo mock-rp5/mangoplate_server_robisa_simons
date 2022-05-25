@@ -31,24 +31,24 @@ public class WishController {
      * @param restaurantId
      * @return
      */
-//    @ResponseBody
-//    @GetMapping("/{restaurant_id}")
-//    public BaseResponse<Integer> getWish(@PathVariable("restaurant_id") Integer restaurantId) {
-//        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-//        // 비회원이면 로그인으로 넘겨야함
-//        // 일단 임시로...userId = 1
-//        // 인증이 성공했다면 isValidJWT = 1,
-//
-//        int isValidJWT = 1;
-//        int userId = 1;
-//
-//        try{
-//            int result = service.getWish(restaurantId, userId);
-//            return new BaseResponse<>(result);
-//        } catch (BaseException exception){
-//            return new BaseResponse<>((exception.getStatus()));
-//        }
-//    }
+    @ResponseBody
+    @GetMapping("/{restaurant_id}")
+    public BaseResponse<Integer> getWish(@PathVariable("restaurant_id") Integer restaurantId) {
+        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
+        // 비회원이면 로그인으로 넘겨야함
+        // 일단 임시로...userId = 1
+        // 인증이 성공했다면 isValidJWT = 1,
+
+        int isValidJWT = 1;
+        int userId = 1;
+
+        try{
+            int result = provider.getWish(restaurantId, userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
     /**
      * 가고싶다 등록
      * @param restaurantId
@@ -74,8 +74,8 @@ public class WishController {
     }
 
     @ResponseBody
-    @DeleteMapping("/{wish_id}")
-    public BaseResponse<Integer> deleteWish(@PathVariable("wish_id") Integer wishId) {
+    @DeleteMapping("/{restaurant_id}")
+    public BaseResponse<Integer> deleteWish(@PathVariable("restaurant_id") Integer restaurantId) {
         // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
         // 비회원이면 로그인으로 넘겨야함
         // 일단 임시로...userId = 1
@@ -85,7 +85,7 @@ public class WishController {
         int userId = 1;
 
         try{
-            int result = service.deleteWish(wishId);
+            int result = service.deleteWish(restaurantId, userId);
             return new BaseResponse<>(result);
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

@@ -55,19 +55,15 @@ public class WishService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public int deleteWish(Integer wishId) throws BaseException {
-
+    public int deleteWish(Integer restaurantId,Integer userId) throws BaseException {
+// 요청을 두번 보냈을때,
         try {
-            if(dao.checkWishId(wishId) == 1){
-                int result = dao.deleteWish(wishId);
-                if(result == 0){
-                    logger.warn("[WishService] deleteWish fail, wishId: {}", wishId);
-                    throw new BaseException(WISHES_POST_FAIL);
-                }
-                return result;
-            } else {
-                throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
-            }
+            int wishId = dao.findWishId(restaurantId,userId);
+
+            if(wishId == 0) throw new BaseException(WISHES_POST_FAIL);
+
+            return dao.deleteWish(restaurantId, userId) == 1 ? 0 : 1;
+
 
         } catch (BaseException e) {
             throw new BaseException(e.getStatus());

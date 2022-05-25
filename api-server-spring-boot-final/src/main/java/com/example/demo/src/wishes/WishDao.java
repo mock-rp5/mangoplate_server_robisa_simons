@@ -48,10 +48,14 @@ public class WishDao {
         Integer Params = wishId;
         return this.jdbcTemplate.update(Query, Params);
     }
-    public int deleteWish(int wishId) {
-        String deleteWishQuery = "UPDATE wishes w SET w.status = 'INACTIVE' WHERE w.id = ?";
-        Integer deleteWishParams = wishId;
+    public int deleteWish(int restaurantId, int userId) {
+        String deleteWishQuery = "UPDATE wishes w SET w.status = 'INACTIVE' WHERE w.restaurant_id = ? and user_id = ?";
+        Object[] deleteWishParams = new Object[]{restaurantId, userId};
         return this.jdbcTemplate.update(deleteWishQuery, deleteWishParams);
     }
 
+    public int getWish(int wishId) {
+        String checkRestaurantQuery = "select exists (select * from wishes where id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkRestaurantQuery, int.class, wishId);
+    }
 }
