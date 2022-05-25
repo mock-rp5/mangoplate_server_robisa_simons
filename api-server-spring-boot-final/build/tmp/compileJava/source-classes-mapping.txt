@@ -8,8 +8,8 @@ com/example/demo/src/review/upload/UploadFile.java
  com.example.demo.src.review.upload.UploadFile
 com/example/demo/utils/SHA256.java
  com.example.demo.utils.SHA256
-com/example/demo/src/user/model/PostUserReq.java
- com.example.demo.src.user.model.PostUserReq
+com/example/demo/src/user/model/GetUserRes.java
+ com.example.demo.src.user.model.GetUserRes
 com/example/demo/config/Constant.java
  com.example.demo.config.Constant
 com/example/demo/src/review/model/PutReviewReq.java
@@ -28,16 +28,16 @@ com/example/demo/config/DBConfig.java
  com.example.demo.config.DBConfig
 com/example/demo/src/restaurant/model/GetRestaurantRes.java
  com.example.demo.src.restaurant.model.GetRestaurantRes
-com/example/demo/src/user/UserDao.java
- com.example.demo.src.user.UserDao
+com/example/demo/src/user/model/GetFollowRes.java
+ com.example.demo.src.user.model.GetFollowRes
 com/example/demo/src/comment/model/Comment.java
  com.example.demo.src.comment.model.Comment
 com/example/demo/src/comment/model/GetCommentRes.java
  com.example.demo.src.comment.model.GetCommentRes
 com/example/demo/src/user/model/PatchUserReq.java
  com.example.demo.src.user.model.PatchUserReq
-com/example/demo/src/user/model/GetUserRes.java
- com.example.demo.src.user.model.GetUserRes
+com/example/demo/src/user/model/PostUserReq.java
+ com.example.demo.src.user.model.PostUserReq
 com/example/demo/src/WebSecurityConfig.java
  com.example.demo.src.WebSecurityConfig
 com/example/demo/src/restaurant/model/GetRestaurantDetailRes.java
@@ -70,26 +70,30 @@ com/example/demo/src/comment/model/PostCommentReq.java
  com.example.demo.src.comment.model.PostCommentReq
 com/example/demo/src/comment/model/PostCommentRes.java
  com.example.demo.src.comment.model.PostCommentRes
-com/example/demo/src/restaurant/RestaurantService.java
- com.example.demo.src.restaurant.RestaurantService
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
-com/example/demo/src/review/ReviewProvider.java
- com.example.demo.src.review.ReviewProvider
+com/example/demo/src/comment/CommentDao.java
+ com.example.demo.src.comment.CommentDao
 com/example/demo/src/comment/model/PutCommentReq.java
  com.example.demo.src.comment.model.PutCommentReq
-com/example/demo/src/user/UserController.java
- com.example.demo.src.user.UserController
-com/example/demo/src/user/UserProvider.java
- com.example.demo.src.user.UserProvider
-com/example/demo/config/BaseResponse.java
- com.example.demo.config.BaseResponse
-com/example/demo/utils/JwtService.java
- com.example.demo.utils.JwtService
 com/example/demo/src/comment/model/PutCommentRes.java
  com.example.demo.src.comment.model.PutCommentRes
-com/example/demo/src/user/UserService.java
- com.example.demo.src.user.UserService
+com/example/demo/src/restaurant/RestaurantService.java
+ com.example.demo.src.restaurant.RestaurantService
+com/example/demo/src/review/ReviewProvider.java
+ com.example.demo.src.review.ReviewProvider
+com/example/demo/src/comment/CommentService.java
+ com.example.demo.src.comment.CommentService
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
+com/example/demo/src/comment/CommentController.java
+ com.example.demo.src.comment.CommentController
+com/example/demo/config/BaseResponse.java
+ com.example.demo.config.BaseResponse
+com/example/demo/src/comment/CommentProvider.java
+ com.example.demo.src.comment.CommentProvider
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
+com/example/demo/src/review/ReviewController.java
+ com.example.demo.src.review.ReviewController
 com/example/demo/config/BaseResponseStatus.java
  com.example.demo.config.BaseResponseStatus
 com/example/demo/src/restaurant/RestaurantProvider.java
@@ -98,13 +102,11 @@ com/example/demo/config/BaseException.java
  com.example.demo.config.BaseException
 com/example/demo/src/restaurant/RestaurantController.java
  com.example.demo.src.restaurant.RestaurantController
-com/example/demo/src/review/ReviewController.java
- com.example.demo.src.review.ReviewController
-com/example/demo/src/comment/CommentDao.java
- com.example.demo.src.comment.CommentDao
-com/example/demo/src/comment/CommentService.java
- com.example.demo.src.comment.CommentService
-com/example/demo/src/comment/CommentController.java
- com.example.demo.src.comment.CommentController
-com/example/demo/src/comment/CommentProvider.java
- com.example.demo.src.comment.CommentProvider
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
+com/example/demo/src/user/UserProvider.java
+ com.example.demo.src.user.UserProvider
+com/example/demo/src/user/UserController.java
+ com.example.demo.src.user.UserController

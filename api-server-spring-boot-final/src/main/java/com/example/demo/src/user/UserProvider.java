@@ -53,10 +53,21 @@ public class UserProvider {
 
 
     public GetUserRes getUser(int userIdx) throws BaseException {
+        if(checkUserId(userIdx) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
             GetUserRes getUserRes = userDao.getUser(userIdx);
             return getUserRes;
         } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    private int checkUserId(int userIdx) throws BaseException {
+        try {
+            return userDao.checkUser(userIdx);
+        } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
     }
