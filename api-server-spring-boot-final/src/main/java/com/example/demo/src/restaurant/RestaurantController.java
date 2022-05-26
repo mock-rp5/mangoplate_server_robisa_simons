@@ -38,10 +38,10 @@ public class RestaurantController {
 
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<GetRestaurantRes>> getRestaurant(@RequestParam(value = "search-mode",required = false) String search_mode,
-                                                              @RequestParam(value = "agree-use-location", defaultValue = "Y") String agreeUseLocation,
+    public BaseResponse<List<GetRestaurantRes>> getRestaurant(@RequestParam(value = "agree-use-location", defaultValue = "N") String agreeUseLocation,
                                                               @RequestParam(value = "lat", required = false) Double latitude,
                                                               @RequestParam(value = "long",required = false) Double longitude,
+                                                              @RequestParam(value = "region-code", required = false) List<Integer> regionCode,
                                                               @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
                                                               @RequestParam(value = "range", defaultValue = "3") Integer range){
         logger.info("user lat -> ", latitude);
@@ -61,11 +61,14 @@ public class RestaurantController {
                 }
                 else {
                     // 사용자의 위도 경도 정보가 없을 경우, 에러 발생
-                    return new BaseResponse<>(EMPTY_LOCATION_INFO);
+                    return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);
                 }
-            }else {
-                getRestaurantRes = provider.getRestaurant(latitude, longitude, foodCategories.toString().replace("[", "(").replace("]", ")"), range);
+                return new BaseResponse<>(getRestaurantRes);
             }
+            // agreeUseLocation.equals("N")
+                // region code가 null일때, 전체지역으로 생각해야함.
+                // if(regionCode == null) return new BaseResponse<>("No region-code");
+            getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"));
             return new BaseResponse<>(getRestaurantRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -118,13 +121,13 @@ public class RestaurantController {
             }
         }
         if(postRestaurantReq.getName() == null){
-            return new BaseResponse<>(RESTAURANTS_EMPTY_NAME);
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
         }
         if(postRestaurantReq.getAddress() == null){
-            return new BaseResponse<>(RESTAURANTS_EMPTY_ADDRESS);
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS);
         }
         if(postRestaurantReq.getLatitude() == null | postRestaurantReq.getLongitude() == null){
-            return new BaseResponse<>(RESTAURANTS_EMPTY_LOCATION_INFO);
+            return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);
         }
         try{
             PostRestaurantRes postRestaurantRes = service.createRestaurant(postRestaurantReq);
@@ -159,10 +162,10 @@ public class RestaurantController {
 
         try{
             if (putRestaurantReq.getName() == null){
-                return new BaseResponse<>(RESTAURANTS_EMPTY_NAME);
+                return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
             }
             if (putRestaurantReq.getAddress() == null){
-                return new BaseResponse<>(RESTAURANTS_EMPTY_ADDRESS);
+                return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS);
             }
             String result = service.updateRestaurant(restaurantId,putRestaurantReq);
             return new BaseResponse<>(result);

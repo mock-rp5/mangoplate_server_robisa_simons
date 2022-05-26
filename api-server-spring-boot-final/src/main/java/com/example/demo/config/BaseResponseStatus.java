@@ -26,24 +26,28 @@ public enum BaseResponseStatus {
     USERS_EMPTY_USER_ID(false, 2010, "유저 아이디 값을 확인해주세요."),
 
     // [POST] /users
+    POST_USERS_EMPTY_PASSWORD(false, 2014, "비밀번호를 입력해주세요"),
     POST_USERS_EMPTY_EMAIL(false, 2015, "이메일을 입력해주세요."),
     POST_USERS_INVALID_EMAIL(false, 2016, "이메일 형식을 확인해주세요."),
     POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
+    POST_USERS_EMPTY_USER_NAME(false, 2018, "유저 이름을 입력해주세요"),
 
     RESTAURANTS_EMPTY_RESTAURANT_ID(false, 2030, "식당 아이디 값을 확인해주세요"),
 
+    RESTAURANTS_EMPTY_USER_LOCATION_INFO(false, 2031, "사용자의 위도 경도 값을 입력해주세요"),
+    RESTAURANTS_EMPTY_RESTAURANT_NAME(false, 2032, "식당 이름 값을 확인해주세요"),
+    RESTAURANTS_EMPTY_RESTAURANT_ADDRESS(false, 2033, "식당 주소 값을 확인해주세요"),
+    RESTAURANTS_EXISTS_RESTAURANT(false, 2034, "중복된 식당 정보입니다"),
     REVIEWS_EMPTY_REVIEW_ID(false, 2040, "리뷰 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_RESTAURANT_ID(false, 2041, "식당 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),
     REVIEWS_EMPTY_CONTENT(false, 2043, "리뷰 내용을 입력해주세요"),
 
-    EMPTY_LOCATION_INFO(false, 2044, "사용자의 위도 경도를 입력해주세요"),
-    RESTAURANTS_EMPTY_NAME(false, 2045, "식당 이름을 입력해주세요"),
-    RESTAURANTS_EMPTY_ADDRESS(false, 2046, "식당 주소를 입력해주세요"),
+    COMMENTS_EMPTY_REVIEW_ID(false, 2060, "리뷰 아이디를 입력해주세요"),
+    COMMENTS_EMPTY_COMMENT(false, 2061, "댓글 내용을 입력해주세요"),
+    COMMENTS_EMPTY_PARENT_USER_ID(false, 2062, "부모 댓글의 유저 아이디를 입력해주세요"),
+    COMMENTS_EMPTY_COMMENT_ID(false, 2063, "댓글 아이디를 입력해주세요"),
 
-    RESTAURANTS_EMPTY_LOCATION_INFO(false, 2047, "식당의 위도 경도 정보를 입력해주세요"),
-
-    POST_RESTAURANTS_EXISTS_RESTAURANT(false, 2048, "중복된 식당입니다"),
 
     /**
      * 3000 : Response 오류
@@ -55,11 +59,17 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3013, "중복된 이메일입니다."),
     FAILED_TO_LOGIN(false,3014,"없는 아이디거나 비밀번호가 틀렸습니다."),
 
+    USERS_NOT_EXISTS_USER(false, 3015, "존재하지 않은 유저입니다."),
+
     RESTAURANTS_NOT_EXISTS_RESTAURANT(false, 3030, "존재하지 않은 식당입니다."),
     RESTAURANTS_VIEW_INCREASE_FAIL(false, 3031, "조회수 증가 실패했습니다"),
 
     REVIEWS_NOT_EXISTS_REVIEW(false, 3040, "존재하지 않은 리뷰입니다."),
 
+
+    COMMENTS_NOT_EXISTS_REVIEW(false, 3060, "존재하지 않은 리뷰입니다"),
+    COMMENTS_NOT_EXISTS_COMMENT(false, 3061, "존재하지 않은 댓글입니다."),
+    COMMENTS_NOT_EXISTS_PARENT_USER_ID(false, 3062, "존재하지 않은 유저 입니다"),
     /**
      * 4000 : Database, Server 오류
      */
@@ -74,9 +84,14 @@ public enum BaseResponseStatus {
     PASSWORD_ENCRYPTION_ERROR(false, 4011, "비밀번호 암호화에 실패하였습니다."),
     PASSWORD_DECRYPTION_ERROR(false, 4012, "비밀번호 복호화에 실패하였습니다."),
 
-    REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다"),
+    WISHES_POST_FAIL(false, 4021, "가고싶다 등록에 실패하였습니다"),
+    WISHES_DELETE_FAIL(false, 4022, "가고싶다 삭제에 실패하였습니다"),
 
-    WISHES_POST_FAIL(false, 4041, "가고싶다 등록에 실패하였습니다");
+
+    REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다"),
+    REVIEWS_UPDATE_FAIL(false, 4031, "리뷰 수정에 실패했습니다"),
+    REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다");
+
 
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요

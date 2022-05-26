@@ -9,6 +9,7 @@ import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class RestaurantProvider {
         this.dao = dao;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range) throws BaseException {
         try {
             if (latitude == null) {
@@ -38,6 +40,15 @@ public class RestaurantProvider {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public List<GetRestaurantRes> getRestaurant(List<Integer> regionCode, String foodCategories) throws BaseException {
+        try {
+            List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(regionCode.toString().replace("[", "(").replace("]", ")"), foodCategories);
+            return getRestaurantRes;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     /**
      * 식당 존재 여부 체크
      * @param restaurantId

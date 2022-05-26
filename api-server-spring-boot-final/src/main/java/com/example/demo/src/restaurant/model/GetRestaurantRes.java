@@ -1,6 +1,5 @@
 package com.example.demo.src.restaurant.model;
 
-import jdk.nashorn.internal.objects.annotations.Constructor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,7 @@ public class GetRestaurantRes {
     @Getter
     private Long id;
     private String name;
-    private String thirdRegion;
+    private String regionName;
     private String foodCategory;
     @Getter
     private Double latitude;
@@ -34,11 +33,11 @@ public class GetRestaurantRes {
     private Integer isWishes;
     private String imgUrl;
 
-    public GetRestaurantRes(Long id, String name, String thirdRegion, String foodCategory, Double latitude, Double longitude,
+    public GetRestaurantRes(Long id, String name, String regionName, String foodCategory, Double latitude, Double longitude,
                             Integer numReviews, String imgUrl) {
         this.id = id;
         this.name = name;
-        this.thirdRegion = thirdRegion;
+        this.regionName = regionName;
         this.foodCategory = foodCategory;
         this.latitude = latitude;
         this.longitude = longitude;

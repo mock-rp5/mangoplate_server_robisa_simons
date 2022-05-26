@@ -31,7 +31,7 @@ public class RestaurantDao {
 
             String getRestaurantQuery = "select R.id,\n" +
                     "       R.name,\n" +
-                    "       tr.emd_kor_nm as thirdRegion,\n" +
+                    "       rgn.name as regionName,\n" +
                     "       cf.name as foodCategory,\n" +
                     "       R.latitude,\n" +
                     "       R.longitude,\n" +
@@ -43,7 +43,7 @@ public class RestaurantDao {
                     "           FROM restaurants) DATA \n" +
                     "           WHERE DATA.distance < ?) as D\n" +
                     "       on R.id = D.id" +
-                    "       inner join third_regions tr on R.third_region_id = tr.id\n" +
+                    "       inner join regions rgn on R.region = rgn.id\n" +
                     "       inner join categories_food cf on R.food_category = cf.id\n" +
                     "       where R.status = 'ACTIVE' and R.food_category in " + foodCategories;
 
@@ -52,7 +52,7 @@ public class RestaurantDao {
                     (rs, rowNum) -> new GetRestaurantRes(
                             rs.getLong("id"),
                             rs.getString("name"),
-                            rs.getString("thirdRegion"),
+                            rs.getString("regionName"),
                             rs.getString("foodCategory"),
                             rs.getDouble("latitude"),
                             rs.getDouble("longitude"),
@@ -68,6 +68,39 @@ public class RestaurantDao {
                 restaurant.setDistance(distance);
             }
             return getRestaurantRes;
+    }
+
+    public List<GetRestaurantRes> getRestaurant(String regionCode, String foodCategories) {
+
+        String getRestaurantQuery = "select R.id,\n" +
+                "       R.name,\n" +
+                "       rgn.name as regionName,\n" +
+                "       cf.name as foodCategory,\n" +
+                "       R.latitude,\n" +
+                "       R.longitude,\n" +
+                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl,\n" +
+                "       (select count(*) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE')as numReviews\n" +
+                "       from restaurants as R\n " +
+                "       inner join regions rgn on R.region = rgn.id\n" +
+                "       inner join categories_food cf on R.food_category = cf.id\n" +
+                "       where R.status = 'ACTIVE' and R.food_category in " + foodCategories +
+                "       and R.region in " + regionCode      ;
+        List<GetRestaurantRes> getRestaurantRes = this.jdbcTemplate.query(getRestaurantQuery,
+                (rs, rowNum) -> new GetRestaurantRes(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("regionName"),
+                        rs.getString("foodCategory"),
+                        rs.getDouble("latitude"),
+                        rs.getDouble("longitude"),
+                        rs.getInt("numReviews"),
+                        rs.getString("imgUrl")));
+        for (GetRestaurantRes restaurant : getRestaurantRes) {
+//          평점 계산
+            Double ratingsAvg = calculateRatings(restaurant.getId());
+            restaurant.setRatingsAvg(ratingsAvg);
+        }
+        return getRestaurantRes;
     }
     /*
     * 평점 계산 함수

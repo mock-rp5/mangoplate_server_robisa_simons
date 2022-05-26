@@ -43,7 +43,7 @@ public class RestaurantService {
     public PostRestaurantRes createRestaurant(PostRestaurantReq postRestaurantReq) throws BaseException {
         try {
             if(dao.findByNameAndAddress(postRestaurantReq).equals(1)){
-                throw new BaseException(POST_RESTAURANTS_EXISTS_RESTAURANT);
+                throw new BaseException(RESTAURANTS_EXISTS_RESTAURANT);
             }else {
                 return dao.createRestaurant(postRestaurantReq);
             }
