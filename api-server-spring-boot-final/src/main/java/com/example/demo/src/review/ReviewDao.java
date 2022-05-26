@@ -21,6 +21,11 @@ public class ReviewDao {
     @Autowired private JdbcTemplate jdbcTemplate;
 
 
+    public int checkReviewAndUserId(int reviewId, Integer userId) {
+        String checkReviewQuery = "select exists (select * from reviews where id = ? and user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId, userId);
+    }
+
     public int checkReviewId(int reviewId) {
         String checkReviewQuery = "select exists (select * from reviews where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId);

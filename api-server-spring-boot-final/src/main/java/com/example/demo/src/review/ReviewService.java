@@ -89,8 +89,8 @@ public class ReviewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public DeleteReviewRes deleteReview(Integer reviewId) throws BaseException {
-        if(provider.checkReviewId(reviewId) == 0) {
+    public DeleteReviewRes deleteReview(Integer reviewId, Integer userId) throws BaseException {
+        if(provider.checkReviewUserId(reviewId, userId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }
         try {

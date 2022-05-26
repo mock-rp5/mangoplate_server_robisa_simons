@@ -296,4 +296,9 @@ public class RestaurantDao {
                 ), restaurantId);
     }
 
+    public int checkUser(Integer userId) {
+        String checkUserQuery = "select exists (select * from users where id = ?)";
+        return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
+    }
+
 }

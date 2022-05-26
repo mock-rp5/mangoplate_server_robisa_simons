@@ -34,6 +34,14 @@ public class ReviewProvider {
 
     }
 
+    public int checkReviewUserId(int reviewId, Integer userId) throws BaseException {
+        try{
+            return dao.checkReviewAndUserId(reviewId, userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public int checkReviewId(int reviewId) throws BaseException {
         try{
             return dao.checkReviewId(reviewId);

@@ -6,6 +6,7 @@ import com.example.demo.src.comment.model.PostCommentReq;
 import com.example.demo.src.comment.model.PostCommentRes;
 import com.example.demo.src.comment.model.PutCommentReq;
 import com.example.demo.src.comment.model.PutCommentRes;
+import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,15 @@ import static com.example.demo.config.BaseResponseStatus.*;
 public class CommentController {
     private final CommentService service;
     private final CommentProvider provider;
+    private final JwtService jwtService;
 
     final Logger logger = LoggerFactory.getLogger(CommentController.class);
 
     @Autowired
-    public CommentController(CommentService service, CommentProvider provider) {
+    public CommentController(CommentService service, CommentProvider provider, JwtService jwtService) {
         this.service = service;
         this.provider = provider;
+        this.jwtService = jwtService;
     }
 
     @PutMapping("")
@@ -37,6 +40,13 @@ public class CommentController {
             return new BaseResponse<>(COMMENTS_EMPTY_COMMENT);
         }
         try {
+            Integer userId = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+
             PutCommentRes putCommentRes = service.updateComment(putCommentReq);
             return new BaseResponse<>(putCommentRes);
         }catch (BaseException e) {
@@ -52,6 +62,13 @@ public class CommentController {
             return new BaseResponse<>(COMMENTS_EMPTY_COMMENT_ID);
         }
         try {
+            Integer userId = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+
             return new BaseResponse<>(service.deleteComment(commentId));
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -60,10 +77,7 @@ public class CommentController {
 
     @PostMapping("")
     @ResponseBody
-    public BaseResponse<PostCommentRes> createComment(@RequestBody PostCommentReq postCommentReq) {
-        // 임시 유저 아이디
-        int userId = 3;
-
+    public BaseResponse<PostCommentRes> createComment(@RequestBody PostCommentReq postCommentReq) throws BaseException {
         if(postCommentReq.getReviewId()==null) {
             return new BaseResponse<>(COMMENTS_EMPTY_REVIEW_ID);
         }
@@ -77,6 +91,13 @@ public class CommentController {
         }
 
         try {
+            Integer userId = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+
             PostCommentRes postCommentRes = service.createComment(postCommentReq, userId);
             return new BaseResponse<>(postCommentRes);
         }catch (BaseException e) {

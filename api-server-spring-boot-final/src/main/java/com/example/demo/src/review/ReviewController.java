@@ -6,6 +6,7 @@ import com.example.demo.src.review.model.*;
 
 import com.example.demo.src.review.upload.FileStore;
 import com.example.demo.src.review.upload.UploadFile;
+import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,17 @@ import static com.example.demo.config.BaseResponseStatus.*;
 public class ReviewController {
     private final ReviewProvider provider;
     private final ReviewService service;
+    private final JwtService jwtService;
 
     private final FileStore fileStore;
 
     final Logger logger = LoggerFactory.getLogger(ReviewController.class);
 
     @Autowired
-    public ReviewController(ReviewProvider provider, ReviewService service, FileStore fileStore) {
+    public ReviewController(ReviewProvider provider, ReviewService service, JwtService jwtService, FileStore fileStore) {
         this.provider = provider;
         this.service = service;
+        this.jwtService = jwtService;
         this.fileStore = fileStore;
     }
 
@@ -44,11 +47,8 @@ public class ReviewController {
     @PostMapping(value = "/{restaurant_id}", consumes = "multipart/form-data" )
     @ResponseBody
     public BaseResponse<PostReviewRes> createReview(@PathVariable("restaurant_id") Integer restaurantId,
-                                                    @RequestParam PostReviewReq postReviewReq) throws IOException {
+                                                    @ModelAttribute PostReviewReq postReviewReq) throws IOException {
         logger.info("[ReviewController] createReview, restaurantId: {}, postReviewReq: {}", restaurantId, postReviewReq.toString());
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 일단 임시로...userId = 2
-        int userId = 2;
 
         if(restaurantId == null) {
             return new BaseResponse<>(REVIEWS_EMPTY_RESTAURANT_ID);
@@ -61,20 +61,25 @@ public class ReviewController {
         }
 
         List<UploadFile> storeImageFiles=null;
-        if(postReviewReq.getFile()!=null) {
-            storeImageFiles = fileStore.storeFiles(postReviewReq.getFile());
-        }
+
 
         Review review = new Review(postReviewReq.getContent(), postReviewReq.getScore(), storeImageFiles);
 
         try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            if(postReviewReq.getFile()!=null) {
+                storeImageFiles = fileStore.storeFiles(postReviewReq.getFile());
+            }
+
             PostReviewRes postReviewRes = new PostReviewRes(service.createReview(restaurantId, userId, review));
             logger.info("[ReviewController] createReview, userId: {}, reviewId: {}", userId, postReviewRes.getId());
             return new BaseResponse<>(postReviewRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-
 
     }
 
@@ -88,10 +93,7 @@ public class ReviewController {
     @PutMapping(value = "/{review_id}", consumes = "multipart/form-data" )
     @ResponseBody
     public BaseResponse<PutReviewRes> updateReview(@PathVariable("review_id") Integer reviewId,
-                                                   @ModelAttribute PutReviewReq putReviewReq) throws IOException {
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 일단 임시로...userId = 2
-        int userId = 2;
+                                                   @ModelAttribute PutReviewReq putReviewReq) throws BaseException, IOException {
 
         if(reviewId == null) {
             return new BaseResponse<>(REVIEWS_EMPTY_REVIEW_ID);
@@ -105,13 +107,17 @@ public class ReviewController {
 
         List<UploadFile> storeImageFiles = null;
 
-        if(putReviewReq.getFile()!=null) {
-            storeImageFiles = fileStore.storeFiles(putReviewReq.getFile());
-        }
-
-        Review review = new Review(putReviewReq.getContent(), putReviewReq.getScore(), storeImageFiles);
-
         try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+
+            if(putReviewReq.getFile()!=null) {
+                storeImageFiles = fileStore.storeFiles(putReviewReq.getFile());
+            }
+
+            Review review = new Review(putReviewReq.getContent(), putReviewReq.getScore(), storeImageFiles);
             PutReviewRes putReviewRes = service.updateReview(reviewId, userId, review);
             return new BaseResponse<>(putReviewRes);
         }catch (BaseException e) {
@@ -141,12 +147,19 @@ public class ReviewController {
 
     @DeleteMapping("/{review_id}")
     @ResponseBody
-    public BaseResponse<DeleteReviewRes> deleteReview(@PathVariable("review_id") Integer reviewId) {
+    public BaseResponse<DeleteReviewRes> deleteReview(@PathVariable("review_id") Integer reviewId) throws BaseException {
+        Integer userId = jwtService.getUserIdx();
+        //userIdx와 접근한 유저가 같은지 확인
+
+        if(userId == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+
         if(reviewId == null) {
             return new BaseResponse<>(REVIEWS_EMPTY_REVIEW_ID);
         }
         try {
-            DeleteReviewRes deleteReviewRes = service.deleteReview(reviewId);
+            DeleteReviewRes deleteReviewRes = service.deleteReview(reviewId, userId);
             return new BaseResponse<>(deleteReviewRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
