@@ -30,9 +30,6 @@ public class RestaurantProvider {
     @Transactional(rollbackFor = Exception.class)
     public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range) throws BaseException {
         try {
-            if (latitude == null) {
-                System.out.println("this is a Null Data2");
-            }
             List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(latitude, longitude, foodCategories, range);
             return getRestaurantRes;
         } catch (Exception exception) {
