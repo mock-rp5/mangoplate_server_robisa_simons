@@ -1,6 +1,5 @@
 package com.example.demo.src.review.model;
 
-import com.example.demo.src.review.upload.UploadFile;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @ToString
-public class PostReviewReq {
+public class PutReviewReq {
     private String content;
     private Integer score;
     private  List<MultipartFile> file;

@@ -5,6 +5,8 @@ import com.example.demo.src.comment.model.GetCommentRes;
 import com.example.demo.src.comment.model.GetSubComment;
 import com.example.demo.src.review.model.GetReviewRes;
 import com.example.demo.src.review.model.PostReviewReq;
+import com.example.demo.src.review.model.Review;
+import com.example.demo.src.review.upload.UploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.parameters.P;
@@ -20,7 +22,7 @@ public class ReviewDao {
 
 
     public int checkReviewId(int reviewId) {
-        String checkReviewQuery = "select exists (select * from reviews where id = ?)";
+        String checkReviewQuery = "select exists (select * from reviews where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId);
     }
 
@@ -120,13 +122,53 @@ public class ReviewDao {
         return jdbcTemplate.queryForObject(checkReviewQuery, int.class, restaurantId);
     }
 
-    public int createReview(int restaurantId, int userId, PostReviewReq postReviewReq) {
+    public int createReview(int restaurantId, int userId, Review review) {
         String createReviewQuery = "insert into reviews(content, score, status, user_id, restaurant_id) " +
                 "values(?, ?, 'ACTIVE', ?, ?) ";
-        Object[] queryParams = new Object[]{postReviewReq.getContent(), postReviewReq.getScore(), userId, restaurantId};
+        Object[] queryParams = new Object[]{review.getContent(), review.getScore(), userId, restaurantId};
         jdbcTemplate.update(createReviewQuery, queryParams);
 
         String lastInserIdQuery = "select id from reviews order by id desc limit 1";
-        return this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+        int reviewId =  this.jdbcTemplate.queryForObject(lastInserIdQuery,int.class);
+
+        if(review.getFile()!=null) {
+            storeReviewImg(reviewId, review.getFile());
+        }
+        return reviewId;
+    }
+
+    private void storeReviewImg(int reviewId, List<UploadFile> files) {
+        String storeReviewImgQuery = "insert into images_review(review_id, img_url, status) " +
+                "values(?, ?, 'ACTIVE')";
+        for(UploadFile uploadFile : files) {
+            jdbcTemplate.update(storeReviewImgQuery, reviewId, uploadFile.getStoreFileUrl());
+        }
+    }
+
+    public int updateReview(Integer reviewId, Review review) {
+        String updateReviewQuery = "update reviews set content = ?, score = ? where id = ?";
+        Object[] updateQueryParams = new Object[]{review.getContent(), review.getScore(), reviewId};
+
+        int result = jdbcTemplate.update(updateReviewQuery, updateQueryParams);
+
+        if(review.getFile()!= null) {
+            storeReviewImg(reviewId, review.getFile());
+        }
+
+        return result;
+    }
+
+    public int deleteReview(Integer reviewId) {
+        String deleteReviewQuery = "update reviews set status = 'INACTIVE' where id = ?";
+        int result = jdbcTemplate.update(deleteReviewQuery, reviewId);
+
+        deleteReviewImg(reviewId);
+
+        return result;
+    }
+
+    private void deleteReviewImg(Integer reviewId) {
+        String deleteReviewImgQuery = "update images_review set status = 'INACTIVE' where review_id = ?";
+        jdbcTemplate.update(deleteReviewImgQuery, reviewId);
     }
 }

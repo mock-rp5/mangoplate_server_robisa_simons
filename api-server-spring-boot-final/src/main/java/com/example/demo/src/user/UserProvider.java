@@ -2,7 +2,6 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
@@ -53,10 +52,21 @@ public class UserProvider {
 
 
     public GetUserRes getUser(int userIdx) throws BaseException {
+        if(checkUserId(userIdx) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
             GetUserRes getUserRes = userDao.getUser(userIdx);
             return getUserRes;
         } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    private int checkUserId(int userIdx) throws BaseException {
+        try {
+            return userDao.checkUser(userIdx);
+        } catch (Exception exception){
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -79,7 +89,7 @@ public class UserProvider {
         }
 
         if(user.getPassword().equals(encryptPwd)){
-            int userIdx = user.getUserIdx();
+            int userIdx = user.getId();
             String jwt = jwtService.createJwt(userIdx);
             return new PostLoginRes(userIdx,jwt);
         }

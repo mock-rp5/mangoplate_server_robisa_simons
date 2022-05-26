@@ -7,7 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PatchUserReq {
-    private int userIdx;
+public class GetFollowRes {
+    private int userId;
     private String userName;
+    private String isHolic;
+    private int postCnt;
+    private int followerCnt;
 }

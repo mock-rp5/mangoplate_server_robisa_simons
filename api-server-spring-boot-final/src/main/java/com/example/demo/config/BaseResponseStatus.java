@@ -87,7 +87,6 @@ public enum BaseResponseStatus {
     WISHES_POST_FAIL(false, 4021, "가고싶다 등록에 실패하였습니다"),
     WISHES_DELETE_FAIL(false, 4022, "가고싶다 삭제에 실패하였습니다"),
 
-
     REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다"),
     REVIEWS_UPDATE_FAIL(false, 4031, "리뷰 수정에 실패했습니다"),
     REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다");

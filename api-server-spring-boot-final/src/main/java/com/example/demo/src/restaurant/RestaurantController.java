@@ -5,12 +5,9 @@ import com.example.demo.config.BaseResponse;
 
 import com.example.demo.src.restaurant.model.*;
 
-import com.example.demo.src.user.model.PostUserReq;
-import com.example.demo.src.user.model.PostUserRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.demo.config.BaseResponseStatus.*;
