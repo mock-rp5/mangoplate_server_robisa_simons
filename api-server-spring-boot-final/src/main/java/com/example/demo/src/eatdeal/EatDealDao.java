@@ -1,9 +1,9 @@
 package com.example.demo.src.eatdeal;
 
+import com.example.demo.src.eatdeal.model.GetEatDeal;
 import com.example.demo.src.eatdeal.model.GetEatDealOrderRes;
 import com.example.demo.src.eatdeal.model.GetEatDealRes;
 import com.example.demo.src.eatdeal.model.PostEatDealReq;
-import org.graalvm.compiler.nodes.calc.ObjectEqualsNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,26 +14,34 @@ import java.util.List;
 public class EatDealDao {
     @Autowired private JdbcTemplate jdbcTemplate;
 
-    public List<GetEatDealRes> getEatDeals(Double latitude, Double longitude, Integer range) {
-        String getEatDealQuery = "select R.id, R.name, M.name, M.price, M.discount_rate, M.eatdeal_desc " +
-                "    from menus as M " +
-                "    join restaurants as R " +
-                "    on M.restaurant_id = R.id " +
-                "    join (SELECT * FROM ( " +
-                "             SELECT ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id " +
-                "    FROM restaurants) DATA " +
-                "                  WHERE DATA.distance < ?) as D " +
-                "    on R.id = D.id " +
-                "    where M.discount_rate >0 and M.status = 'ACTIVE'";
+    public List<GetEatDeal> getEatDeals(Double latitude, Double longitude, Integer range) {
+        String getEatDealQuery = "select D.id, D.name, E.restaurant_desc, E.menu_desc, E.notice, E.manual, E.refund_policy, E.question, E.price, E.discount_rate, E.menu_name, date_format(E.start_date, '%Y-%m-%d'), DATE_ADD(date_format(E.start_date, '%Y-%m-%d'), interval E.expired_date DAY), E.expired_date, E.emphasis\n" +
+                "from eat_deals as E\n" +
+                "join (SELECT * FROM \n" +
+                "\t\t(SELECT name, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id\n" +
+                "        FROM restaurants) DATA\n" +
+                "      WHERE DATA.distance < ?\n" +
+                "      ) as D\n" +
+                " on E.restaurant_id = D.id\n" +
+                " where E.status = 'ACTIVE'";
 
         return jdbcTemplate.query(getEatDealQuery,
-                (rs, rowNum) -> new GetEatDealRes(
+                (rs, rowNum) -> new GetEatDeal(
                         rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
-                        rs.getInt(4),
-                        rs.getDouble(5),
-                        rs.getString(6)
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getInt(9),
+                        rs.getInt(10),
+                        rs.getString(11),
+                        rs.getString(12),
+                        rs.getString(13),
+                        rs.getInt(14),
+                        rs.getString(15)
                 )
                 ,latitude, longitude, latitude, range);
 
