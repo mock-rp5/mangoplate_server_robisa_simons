@@ -48,6 +48,8 @@ public enum BaseResponseStatus {
     COMMENTS_EMPTY_PARENT_USER_ID(false, 2062, "부모 댓글의 유저 아이디를 입력해주세요"),
     COMMENTS_EMPTY_COMMENT_ID(false, 2063, "댓글 아이디를 입력해주세요"),
 
+    OAUTH_FAIL_LOAD_FACEBOOK_USER_INFO(false,2081,"페이스북에서 유저 정보를 가져오는데 실패했습니다"),
+    OAUTH_FAIL_LOAD_DATABASE_USER(false,2082,"DB에서 유저 정보를 가져오는데 실패했습니다"),
 
     /**
      * 3000 : Response 오류
@@ -89,7 +91,14 @@ public enum BaseResponseStatus {
 
     REVIEWS_CREATE_FAIL(false, 4030, "리뷰 생성에 실패하였습니다"),
     REVIEWS_UPDATE_FAIL(false, 4031, "리뷰 수정에 실패했습니다"),
-    REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다");
+    REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다"),
+
+    MYLISTS_NOT_EXISTS_MYLIST(false, 4050, "마이리스트가 존재하지 않습니다"),
+    MYLISTS_EMPTY_TITLE(false, 4051, "마이리스트의 제목을 입력해주세요"),
+    MYLISTS_EMPTY_MYLIST_ID(false, 4052, "마이리스트 아이디를 입력해주세요"),
+    MYLISTS_EMPTY_RESTAURANT_ID(false, 4053, "마이리스트에 추가할 식당 아이디를 입력해주세요"),
+    MYLISTS_DELETE_FAIL(false, 4054, "마이리스트 삭제에 실패했습니다");
+
 
 
     // 5000 : 필요시 만들어서 쓰세요
