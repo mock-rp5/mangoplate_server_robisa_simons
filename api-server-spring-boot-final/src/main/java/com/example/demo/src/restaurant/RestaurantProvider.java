@@ -28,7 +28,7 @@ public class RestaurantProvider {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range) throws BaseException {
+    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String sortBy) throws BaseException {
         try {
             List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(latitude, longitude, foodCategories, range);
             return getRestaurantRes;
@@ -38,7 +38,7 @@ public class RestaurantProvider {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<GetRestaurantRes> getRestaurant(List<Integer> regionCode, String foodCategories) throws BaseException {
+    public List<GetRestaurantRes> getRestaurant(List<Integer> regionCode, String foodCategories, String sortBy) throws BaseException {
         try {
             List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(regionCode.toString().replace("[", "(").replace("]", ")"), foodCategories);
             return getRestaurantRes;
@@ -71,4 +71,19 @@ public class RestaurantProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+//
+//    public List<GetRestaurantRes> sortRestaurant(List<GetRestaurantRes> restaurantRes, String sortBy){
+//        GetRestaurantRes tmp;
+//        Double min = 0.0;
+//        if(sortBy.equals("rating")){
+//            for (GetRestaurantRes element : restaurantRes){
+//                Double num = element.getRatingsAvg();
+//                if (num == null || min > num){
+//
+//                }
+//                if (num < element.getRatingsAvg());
+//
+//            }
+//        }
+//    }
 }

@@ -14,7 +14,13 @@ public class MyListDao {
 
 
     public List<GetMyListRes> getMyList(int userId){
-        String getMyListQuery = "select id, title, content, imgUrl  from mylists where user_id = ? and status='ACTIVE'";
+        String getMyListQuery = "select m2.id, m2.title, m2.content, \n" +
+                "       (select r.img_url \n" +
+                "        from mylist_restaurant m \n" +
+                "        inner join images_restaurant r on m.restaurant_id = r.id\n" +
+                "        where m.mylist_id = m2.id\n" +
+                "        limit 1) as imgUrl \n" +
+                "from mylists m2 where m2.user_id = ? and status='ACTIVE'";
         return this.jdbcTemplate.query(getMyListQuery,
                 (rs,rowNum) -> new GetMyListRes(
                         rs.getInt("id"),
@@ -24,7 +30,7 @@ public class MyListDao {
     }
 
     public GetMyListDetailRes getMyListDetail(int userId, int myListId){
-        String getMyListQuery = "select m.id, m.created_at, m.view, m.title, m.user_id as userId, u.user_name as userName, u.profile_img_url as profileImgUrl,\n" +
+        String getMyListQuery = "select m.id, m.created_at as createdAt, m.view, m.title, m.user_id as userId, u.user_name as userName, u.profile_img_url as profileImgUrl,\n" +
                 "       (select COUNT(*) from reviews r where r.user_id = m.user_id) as numReviews,\n" +
                 "       (select COUNT(*) from follows f where f.user_id = m.user_id) as numFollowers,\n" +
                 "       m.content\n" +
@@ -125,11 +131,11 @@ public class MyListDao {
         return jdbcTemplate.queryForObject(checkDuplicatedQuery, int.class, new Object[]{myListId, restaurantId});
     }
 
-    public Integer createMyList(PostMyListReq postMyListReq) {
+    public Integer createMyList(PostMyListReq postMyListReq, Integer userId) {
         String createMyListQuery = "insert into mylists(title, content, view, status, created_at, updated_at, user_id) " +
                     "values(?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?)";
 
-        Object[] createMyListParams = new Object[] {postMyListReq.getTitle(), postMyListReq.getContent(), postMyListReq.getUserId()};
+        Object[] createMyListParams = new Object[] {postMyListReq.getTitle(), postMyListReq.getContent(), userId};
         int result = jdbcTemplate.update(createMyListQuery, createMyListParams);
 
         return result;
@@ -145,9 +151,9 @@ public class MyListDao {
         return jdbcTemplate.update(deleteMyListQuery, myListId);
     }
     public int deleteAllRestaurants(int myListId) {
-        String deleteAllQuery = "update mylist_restaurant set status = case mylist_id when 2 then 'INACTIVE' END\n" +
+        String deleteAllQuery = "update mylist_restaurant set status = case mylist_id when ? then 'INACTIVE' END\n" +
                 "where mylist_id = ?;";
-        return jdbcTemplate.update(deleteAllQuery, myListId);
+        return jdbcTemplate.update(deleteAllQuery, myListId, myListId);
     }
     public void updateView(Integer view , Integer myListId) {
         String updateView = "update mylists set view = ? where id = ?;\n";

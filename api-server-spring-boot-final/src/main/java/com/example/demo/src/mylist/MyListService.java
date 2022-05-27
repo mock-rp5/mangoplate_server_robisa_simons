@@ -27,19 +27,19 @@ public class MyListService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public PostMyListRes createMyList(PostMyListReq postMyListReq) throws BaseException {
+    public PostMyListRes createMyList(PostMyListReq postMyListReq, Integer userId) throws BaseException {
         if(postMyListReq.getTitle().equals(null)) throw new BaseException(MYLISTS_EMPTY_TITLE);
         try {
-            PostMyListRes postMyListRes = new PostMyListRes(dao.createMyList(postMyListReq), 0);
+            PostMyListRes postMyListRes = new PostMyListRes(dao.createMyList(postMyListReq, userId), 0);
             return postMyListRes;
         }catch (Exception e) {
+            System.out.println(e.toString());
             throw new BaseException(DATABASE_ERROR);
         }
     }
     @Transactional(rollbackFor = Exception.class)
     public PostMyListRes insert2MyList(List<Integer> restaurantId, Integer myListId) throws BaseException {
         int count = 0;
-
         try {
             for(Integer resId : restaurantId){
                 if(provider.checkDuplicated(myListId, resId) == 1) { count++;}
@@ -47,6 +47,8 @@ public class MyListService {
             }
             return new PostMyListRes(myListId, count);
         }catch (Exception e) {
+            System.out.println(e.toString());
+
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -58,6 +60,8 @@ public class MyListService {
         try{
             return dao.updateMyList(putMyListReq);
         }catch (Exception e) {
+            System.out.println(e.toString());
+
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -70,6 +74,7 @@ public class MyListService {
             deleteAllRestaurants(deleteMyListReq.getMyListId());
             return dao.deleteMyList(deleteMyListReq.getMyListId());
         }catch (Exception e) {
+            System.out.println(e.toString());
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -80,8 +85,12 @@ public class MyListService {
             int result = dao.deleteAllRestaurants(myListId);
             if(result != 1) throw new BaseException(MYLISTS_DELETE_FAIL);
         }catch (BaseException e) {
+            System.out.println(e.toString());
+            System.out.println(e.toString());
             throw new BaseException(e.getStatus());
         }catch (Exception e) {
+            System.out.println(e.toString());
+
             throw new BaseException(DATABASE_ERROR);
         }
     }

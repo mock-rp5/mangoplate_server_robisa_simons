@@ -35,41 +35,40 @@ public class RestaurantController {
 
     @ResponseBody
     @GetMapping("")
-    public BaseResponse<List<GetRestaurantRes>> getRestaurant(@RequestParam(value = "agree-use-location", defaultValue = "N") String agreeUseLocation,
-                                                              @RequestParam(value = "lat", required = false) Double latitude,
+    public BaseResponse<List<GetRestaurantRes>> getRestaurant(@RequestParam(value = "lat", required = false) Double latitude,
                                                               @RequestParam(value = "long",required = false) Double longitude,
-                                                              @RequestParam(value = "region-code", required = false) List<Integer> regionCode,
+                                                              @RequestParam(value = "region-code", required = false, defaultValue = "1") List<Integer> regionCode,
                                                               @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
-                                                              @RequestParam(value = "range", defaultValue = "3") Integer range){
+                                                              @RequestParam(value = "range", defaultValue = "3") Integer range,
+                                                              @RequestParam(value = "sort", defaultValue = "rating") String sortBy) {
         logger.info("user lat -> ", latitude);
         logger.info("user long -> ", longitude);
-
-        try{
-            List<GetRestaurantRes> getRestaurantRes ;
-
-            // 사용자의 위치 정보 사용 동의 여부 체크
-            if(agreeUseLocation.equals("Y")){
-//                위도 경도 validation 필요, 값이 없거나, 값이 범위 안 값이 아닐 경우.
+//      food-category를 설정했는데 검색해보니 없는 경우엔 현재 [] 빈값을 리턴함
+//      region-code에 대해서도 같은 결과가 있으므로 고쳐야돼.
 //                food-category 형식상의 validation 필요.
+//         region code가 null일때, 전체지역으로 생각해야함. 전체지역도 코드를 부여하자!
+        try {
+            List<GetRestaurantRes> getRestaurantRes;
 
-                if(latitude != null & longitude != null) {
-                    getRestaurantRes = provider.getRestaurant(latitude, longitude,
-                            foodCategories.toString().replace("[", "(").replace("]", ")"), range);
-                }
-                else {
-                    // 사용자의 위도 경도 정보가 없을 경우, 에러 발생
-                    return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);
-                }
-                return new BaseResponse<>(getRestaurantRes);
+            // 위도와 경도가 들어오면 사용자가 위치 정보 사용을 동의했다고 가정.
+            if (latitude != null && longitude != null) {
+                getRestaurantRes = provider.getRestaurant(latitude, longitude,
+                        foodCategories.toString().replace("[", "(").replace("]", ")"), range, sortBy);
+
+                return new BaseResponse<>(round(getRestaurantRes));
             }
-            // agreeUseLocation.equals("N")
-                // region code가 null일때, 전체지역으로 생각해야함.
-                // if(regionCode == null) return new BaseResponse<>("No region-code");
-            getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"));
-            return new BaseResponse<>(getRestaurantRes);
+            // 지역코드가 들어오면 사용자가 임의로 지역을 설정하여 검색
+            else if (regionCode != null) {
+                getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"),sortBy);
+                return new BaseResponse<>(round(getRestaurantRes));// 사용자의 위도 경도 정보가 없을 경우, 에러 발생
+            }
+            // 사용자의 위도 경도 정보와 지역 정보도 없을 경우, 에러 발생
+            else {return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);}
+
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
+
     }
 
 
@@ -171,4 +170,12 @@ public class RestaurantController {
         }
     }
 
+    public List<GetRestaurantRes> round(List<GetRestaurantRes> element){
+        for(GetRestaurantRes res : element){
+            Double avg = Optional.ofNullable(Math.round(res.getRatingsAvg()*10)/10.0).get();
+            System.out.println(avg);
+            res.setRatingsAvg(avg);
+        }
+        return element;
+    }
 }

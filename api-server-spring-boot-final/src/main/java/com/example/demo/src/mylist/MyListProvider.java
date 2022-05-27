@@ -31,16 +31,23 @@ public class MyListProvider {
             //다른 유저에 접근할 수 있지
             if(checkMyList(userId) == 0 ) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
             return dao.getMyList(userId);
+        }catch (BaseException e) {
+            System.out.println(e.toString());
+            throw new BaseException(e.getStatus());
         }catch (Exception e) {
+            System.out.println(e.toString());
             throw new BaseException(DATABASE_ERROR);
         }
     }
     public GetMyListDetailRes getMyListDetail(Integer userId, Integer myListId) throws BaseException {
         try{
             if(checkMyListId(myListId) == 0 ) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
-
             return dao.getMyListDetail(userId,myListId);
+        }catch (BaseException e) {
+            System.out.println(e.toString());
+            throw new BaseException(e.getStatus());
         }catch (Exception e) {
+            System.out.println(e.toString());
             throw new BaseException(DATABASE_ERROR);
         }
     }

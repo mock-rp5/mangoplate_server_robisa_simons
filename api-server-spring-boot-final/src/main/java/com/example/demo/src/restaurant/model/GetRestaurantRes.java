@@ -1,9 +1,6 @@
 package com.example.demo.src.restaurant.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigInteger;
 
@@ -11,6 +8,7 @@ import java.math.BigInteger;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetRestaurantRes {
     @Getter
     private Long id;

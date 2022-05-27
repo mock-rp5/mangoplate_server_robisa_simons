@@ -44,6 +44,7 @@ public class MyListController {
 
     }
     // [DONE]특정 유저의 특정 마이리스트 조회
+//    특정 유저의 마이리스트 번호가 아니면 밸리데이션
     @GetMapping("/{user_id}/{mylist_id}")
     @ResponseBody
     public BaseResponse<GetMyListDetailRes> getMyListDetail(@PathVariable(value = "user_id", required = false) Integer userId,
@@ -66,7 +67,7 @@ public class MyListController {
 //    새로운 마이리스트 등록, 다른 사람의 마이리스트에는 접근 X, 식당을 바로 마이리스트에 추가할 수 있음.
     @PostMapping("")
     @ResponseBody
-    public BaseResponse<PostMyListRes> createMyList(@RequestParam(value = "restaurant-id",required = false) List<Integer> restaurantId,
+    public BaseResponse<PostMyListRes> createMyList(@RequestParam(value = "restaurant-id",required = false) Optional<List<Integer>> restaurantId,
                                                     @RequestBody PostMyListReq postMyListReq) {
         // jwt 밸리데이션 필요.
         Integer userId = 1;
@@ -75,11 +76,11 @@ public class MyListController {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
         try {
-            postMyListReq.setUserId(userId);
-            if(restaurantId.equals(null))
-                postMyListRes = service.createMyList(postMyListReq);
+//            postMyListReq.setUserId(userId);
+            if(restaurantId.isEmpty())
+                postMyListRes = service.createMyList(postMyListReq, userId);
             else
-                postMyListRes = service.insert2MyList(restaurantId,service.createMyList(postMyListReq).getMyListId());
+                postMyListRes = service.insert2MyList(restaurantId.get(),service.createMyList(postMyListReq, userId).getMyListId());
             return new BaseResponse<>(postMyListRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
