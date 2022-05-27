@@ -15,7 +15,7 @@ public class EatDealDao {
     @Autowired private JdbcTemplate jdbcTemplate;
 
     public List<GetEatDeal> getEatDeals(Double latitude, Double longitude, Integer range) {
-        String getEatDealQuery = "select D.id, D.name, E.restaurant_desc, E.menu_desc, E.notice, E.manual, E.refund_policy, E.question, E.price, E.discount_rate, E.menu_name, date_format(E.start_date, '%Y-%m-%d'), DATE_ADD(date_format(E.start_date, '%Y-%m-%d'), interval E.expired_date DAY), E.expired_date, E.emphasis\n" +
+        String getEatDealQuery = "select D.id, D.name, E.restaurant_desc, E.menu_desc, E.notice, E.manual, E.refund_policy, E.question, E.price, E.discount_rate, E.menu_name, date_format(E.start_date, '%Y-%m-%d'), DATE_ADD(date_format(E.start_date, '%Y-%m-%d'), interval E.expired_date DAY), E.expired_date, E.emphasis,  E.id\n" +
                 "from eat_deals as E\n" +
                 "join (SELECT * FROM \n" +
                 "\t\t(SELECT name, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id\n" +
@@ -25,7 +25,7 @@ public class EatDealDao {
                 " on E.restaurant_id = D.id\n" +
                 " where E.status = 'ACTIVE'";
 
-        return jdbcTemplate.query(getEatDealQuery,
+        List<GetEatDeal> getEatDeals = jdbcTemplate.query(getEatDealQuery,
                 (rs, rowNum) -> new GetEatDeal(
                         rs.getInt(1),
                         rs.getString(2),
@@ -41,10 +41,20 @@ public class EatDealDao {
                         rs.getString(12),
                         rs.getString(13),
                         rs.getInt(14),
-                        rs.getString(15)
+                        rs.getString(15),
+                        rs.getInt(16)
                 )
                 ,latitude, longitude, latitude, range);
 
+        for(GetEatDeal getEatDeal : getEatDeals) {
+            getEatDeal.setImgUrls(getEatDealUrl(getEatDeal.getEatDealId()));
+        }
+        return getEatDeals;
+    }
+
+    private List<String> getEatDealUrl(int eatDealId) {
+        String eatDealUrlQuery = "select img_url from eat_deal_imgs where eat_deal_id = ?";
+        return jdbcTemplate.query(eatDealUrlQuery, (rs, rowNum) -> rs.getString("img_url"), eatDealId);
     }
 
     public int checkRestaurant(Integer restaurantId) {

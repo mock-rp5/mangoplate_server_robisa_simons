@@ -25,5 +25,25 @@ public class GetEatDeal {
     private String endDate;
     private int expiredDate;
     private String emphasis;
+    private List<String> imgUrls;
+    private int eatDealId;
 
+    public GetEatDeal(int restaurantId, String restaurantName, String restaurantDesc, String menuDesc, String notice, String manual, String refundPolicy, String question, int price, int discountRate, String menuName, String startDate, String endDate, int expiredDate, String emphasis, int eatDealId) {
+        this.eatDealId = eatDealId;
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
+        this.restaurantDesc = restaurantDesc;
+        this.menuDesc = menuDesc;
+        this.notice = notice;
+        this.manual = manual;
+        this.refundPolicy = refundPolicy;
+        this.question = question;
+        this.price = price;
+        this.discountRate = discountRate;
+        this.menuName = menuName;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.expiredDate = expiredDate;
+        this.emphasis = emphasis;
+    }
 }
