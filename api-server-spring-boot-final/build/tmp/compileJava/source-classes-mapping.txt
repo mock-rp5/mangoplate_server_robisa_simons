@@ -24,10 +24,10 @@ com/example/demo/config/DBConfig.java
  com.example.demo.config.DBConfig
 com/example/demo/src/test/TestController.java
  com.example.demo.src.test.TestController
-com/example/demo/config/WebConfig.java
- com.example.demo.config.WebConfig
-com/example/demo/src/review/upload/FileStore.java
- com.example.demo.src.review.upload.FileStore
+com/example/demo/src/eatdeal/EatDealController.java
+ com.example.demo.src.eatdeal.EatDealController
+com/example/demo/src/eatdeal/EatDealService.java
+ com.example.demo.src.eatdeal.EatDealService
 com/example/demo/src/comment/model/GetCommentRes.java
  com.example.demo.src.comment.model.GetCommentRes
 com/example/demo/src/user/model/GetUserRes.java
@@ -78,8 +78,8 @@ com/example/demo/src/review/model/GetReviewImageRes.java
  com.example.demo.src.review.model.GetReviewImageRes
 com/example/demo/utils/JwtService.java
  com.example.demo.utils.JwtService
-com/example/demo/src/review/ReviewController.java
- com.example.demo.src.review.ReviewController
+com/example/demo/src/eatdeal/model/GetEatDealRes.java
+ com.example.demo.src.eatdeal.model.GetEatDealRes
 com/example/demo/src/user/model/PostLoginReq.java
  com.example.demo.src.user.model.PostLoginReq
 com/example/demo/src/comment/model/PutCommentReq.java
@@ -150,15 +150,15 @@ com/example/demo/src/restaurant/RestaurantProvider.java
  com.example.demo.src.restaurant.RestaurantProvider
 com/example/demo/src/oauth/kakao/KakaoController.java
  com.example.demo.src.oauth.kakao.KakaoController
-com/example/demo/src/eatdeal/EatDealController.java
- com.example.demo.src.eatdeal.EatDealController
+com/example/demo/config/WebConfig.java
+ com.example.demo.config.WebConfig
+com/example/demo/src/review/upload/FileStore.java
+ com.example.demo.src.review.upload.FileStore
 com/example/demo/src/eatdeal/model/GetEatDeal.java
  com.example.demo.src.eatdeal.model.GetEatDeal
-com/example/demo/src/eatdeal/EatDealService.java
- com.example.demo.src.eatdeal.EatDealService
-com/example/demo/src/eatdeal/model/GetEatDealRes.java
- com.example.demo.src.eatdeal.model.GetEatDealRes
 com/example/demo/src/eatdeal/EatDealProvider.java
  com.example.demo.src.eatdeal.EatDealProvider
+com/example/demo/src/review/ReviewController.java
+ com.example.demo.src.review.ReviewController
 com/example/demo/src/eatdeal/EatDealDao.java
  com.example.demo.src.eatdeal.EatDealDao

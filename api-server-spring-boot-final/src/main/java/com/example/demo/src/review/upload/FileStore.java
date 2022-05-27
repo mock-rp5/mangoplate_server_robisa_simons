@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Component
 public class FileStore {
-    private String fileDir = "C:/Users/Public/Downloads/";
+    private String fileDir = "/var/www/images/";
    // private String storeFuleDir = "http://localhost"
 
     public String getFullPath(String filename) {
@@ -50,7 +50,7 @@ public class FileStore {
     }
 
     public String getFileUrl(String storeFileUrl) {
-        String fileUrl = "http://13.166.50.5:9000/imges/"+storeFileUrl;
+        String fileUrl = "https://halfmbbn.shop/imges/"+storeFileUrl;
         return fileUrl;
     }
 }
