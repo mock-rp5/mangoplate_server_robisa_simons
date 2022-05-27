@@ -24,6 +24,7 @@ public class GetRestaurantDetailRes {
     private String openHour;
     private String closeHour;
     private String breakTime;
+    private String updatedAt;
     private int minPrice;
     private int maxPrice;
     private String parkInfo;
@@ -34,7 +35,7 @@ public class GetRestaurantDetailRes {
     private List<GetReviewRes> reviews;
     private List<GetRestaurantMenu> menus;
 
-    public GetRestaurantDetailRes(Integer id, String name, Integer view, String address, Double latitude, Double longitude, String dayOff, String openHour, String closeHour, String breakTime,int minPrice, int maxPrice, String parkInfo, String website, int foodCategoryId,String foodCategoryName) {
+    public GetRestaurantDetailRes(Integer id, String name, Integer view, String address, Double latitude, Double longitude, String dayOff, String openHour, String closeHour, String breakTime,int minPrice, int maxPrice, String parkInfo, String website, int foodCategoryId,String foodCategoryName, String updatedAt) {
         this.id = id;
         this.name = name;
         this.view = view;
@@ -51,5 +52,6 @@ public class GetRestaurantDetailRes {
         this.website = website;
         this.foodCategoryId = foodCategoryId;
         this.foodCategoryName = foodCategoryName;
+        this.updatedAt = updatedAt;
     }
 }

@@ -143,7 +143,7 @@ public class RestaurantDao {
     }
 
     public GetRestaurantDetailRes getRestaurantDetail(Integer restaurantId) {
-        String getRestaurantQuery = " select R.id, R.name, R.view, R.address, R.latitude, R.longitude, R.day_off, R.open_hour, R.close_hour, R.break_time, R.min_price, R.max_price, R.park_info, R.website, R.food_category, C.name " +
+        String getRestaurantQuery = " select R.id, R.name, R.view, R.address, R.latitude, R.longitude, R.day_off, R.open_hour, R.close_hour, R.break_time, R.min_price, R.max_price, R.park_info, R.website, R.food_category, C.name, date_format(R.updated_at, '%Y-%m-%d') " +
                 "from restaurants as R " +
                 "join categories_food as C " +
                 "on R.food_category = C.id " +
@@ -166,7 +166,8 @@ public class RestaurantDao {
                         rs.getString(13),
                         rs.getString(14),
                         rs.getInt(15),
-                        rs.getString(16)
+                        rs.getString(16),
+                        rs.getString(17)
                 ), restaurantId);
 
         getRestaurantDetailRes.setImgUrls(getRestaurantImgUrls(restaurantId));
