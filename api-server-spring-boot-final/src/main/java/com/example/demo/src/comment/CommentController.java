@@ -47,7 +47,7 @@ public class CommentController {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
 
-            PutCommentRes putCommentRes = service.updateComment(putCommentReq);
+            PutCommentRes putCommentRes = service.updateComment(putCommentReq, userId);
             return new BaseResponse<>(putCommentRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -69,7 +69,7 @@ public class CommentController {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
 
-            return new BaseResponse<>(service.deleteComment(commentId));
+            return new BaseResponse<>(service.deleteComment(commentId, userId));
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }

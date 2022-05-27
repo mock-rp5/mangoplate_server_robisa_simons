@@ -42,4 +42,12 @@ public class CommentProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int checkUser(Integer userId) throws BaseException {
+        try {
+            return dao.checkUserId(userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

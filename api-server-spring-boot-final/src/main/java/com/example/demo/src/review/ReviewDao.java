@@ -176,4 +176,38 @@ public class ReviewDao {
         String deleteReviewImgQuery = "update images_review set status = 'INACTIVE' where review_id = ?";
         jdbcTemplate.update(deleteReviewImgQuery, reviewId);
     }
+
+    public int checkUser(Integer userId) {
+        String checkUserQuery = "select exists (select * from users where id = ?)";
+        return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
+    }
+
+    public List<GetReviewRes> getReviewByUser(Integer userId) {
+        String getReviewByUserQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
+                "U.profile_img_url, R.restaurant_id, RT.name " +
+                "from reviews as R " +
+                "join users as U " +
+                "on R.user_id = U.id " +
+                "join restaurants as RT " +
+                "on R.restaurant_id = RT.id " +
+                "where R.user_id = ?";
+
+        List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewByUserQuery,
+                (rs, rowNum) -> new GetReviewRes(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getInt(7),
+                        rs.getString(8)
+                ), userId);
+
+        for(GetReviewRes review: getReviewRes) {
+            review.setImgUrls(getReviewImgURLs(review.getId()));
+            review.setComments(getComments(review.getId()));
+        }
+        return getReviewRes;
+    }
 }

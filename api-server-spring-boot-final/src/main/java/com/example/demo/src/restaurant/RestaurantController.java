@@ -17,7 +17,7 @@ import static com.example.demo.config.BaseResponseStatus.*;
 
 import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 
 @RestController

@@ -38,6 +38,21 @@ public class ReviewController {
         this.fileStore = fileStore;
     }
 
+    @GetMapping()
+    @ResponseBody
+    public BaseResponse<List<GetReviewRes>> getReviewByUser() {
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            List<GetReviewRes> getReviewRes = provider.getReviewByUser(userId);
+            return new BaseResponse<>(getReviewRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
     /**
      * 리뷰 작성
      * @param restaurantId

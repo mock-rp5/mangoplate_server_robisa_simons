@@ -52,6 +52,8 @@ public enum BaseResponseStatus {
     EAT_DEALS_EMPTY_LATITUDE(false, 2070, "위도를 입력해주세요"),
     EAT_DEALS_EMPTY_LONGITUDE(false, 2071, "경도를 입력해주세요"),
 
+    VISITS_EMPTY_VISIT_ID(false, 2080, "가봤어요 아이디를 입력해주세요"),
+
 
     /**
      * 3000 : Response 오류
@@ -76,6 +78,8 @@ public enum BaseResponseStatus {
     COMMENTS_NOT_EXISTS_REVIEW(false, 3060, "존재하지 않은 리뷰입니다"),
     COMMENTS_NOT_EXISTS_COMMENT(false, 3061, "존재하지 않은 댓글입니다."),
     COMMENTS_NOT_EXISTS_PARENT_USER_ID(false, 3062, "존재하지 않은 유저 입니다"),
+
+    VISITS_NOT_EXISTS_VISIT(false, 3080, "존재하지 않은 가봤어요 입니다"),
     /**
      * 4000 : Database, Server 오류
      */

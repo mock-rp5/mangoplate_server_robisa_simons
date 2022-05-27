@@ -1,71 +1,79 @@
-com/example/demo/src/eatdeal/EatDealController.java
- com.example.demo.src.eatdeal.EatDealController
+com/example/demo/src/restaurant/model/GetRestaurantRes.java
+ com.example.demo.src.restaurant.model.GetRestaurantRes
 com/example/demo/src/review/model/PostReviewReq.java
  com.example.demo.src.review.model.PostReviewReq
 com/example/demo/src/review/model/GetReviewRes.java
  com.example.demo.src.review.model.GetReviewRes
-com/example/demo/src/restaurant/RestaurantService.java
- com.example.demo.src.restaurant.RestaurantService
+com/example/demo/src/comment/model/PutCommentRes.java
+ com.example.demo.src.comment.model.PutCommentRes
 com/example/demo/config/Constant.java
  com.example.demo.config.Constant
 com/example/demo/src/review/ReviewDao.java
  com.example.demo.src.review.ReviewDao
 com/example/demo/src/menu/model/GetRestaurantMenu.java
  com.example.demo.src.menu.model.GetRestaurantMenu
-com/example/demo/src/comment/CommentService.java
- com.example.demo.src.comment.CommentService
+com/example/demo/DemoApplication.java
+ com.example.demo.DemoApplication
 com/example/demo/utils/ValidationRegex.java
  com.example.demo.utils.ValidationRegex
 com/example/demo/src/comment/model/GetSubComment.java
  com.example.demo.src.comment.model.GetSubComment
 com/example/demo/config/DBConfig.java
  com.example.demo.config.DBConfig
-com/example/demo/src/comment/CommentProvider.java
- com.example.demo.src.comment.CommentProvider
+com/example/demo/src/comment/model/Comment.java
+ com.example.demo.src.comment.model.Comment
 com/example/demo/config/WebConfig.java
  com.example.demo.config.WebConfig
 com/example/demo/src/review/upload/FileStore.java
  com.example.demo.src.review.upload.FileStore
-com/example/demo/config/BaseResponseStatus.java
- com.example.demo.config.BaseResponseStatus
-com/example/demo/src/restaurant/RestaurantProvider.java
- com.example.demo.src.restaurant.RestaurantProvider
-com/example/demo/src/review/ReviewController.java
- com.example.demo.src.review.ReviewController
+com/example/demo/src/comment/model/GetCommentRes.java
+ com.example.demo.src.comment.model.GetCommentRes
+com/example/demo/src/user/model/GetUserRes.java
+ com.example.demo.src.user.model.GetUserRes
+com/example/demo/src/user/model/PostLoginReq.java
+ com.example.demo.src.user.model.PostLoginReq
 com/example/demo/src/eatdeal/model/GetEatDealOrderRes.java
  com.example.demo.src.eatdeal.model.GetEatDealOrderRes
 com/example/demo/src/review/model/PutReviewRes.java
  com.example.demo.src.review.model.PutReviewRes
 com/example/demo/src/user/model/PutUserReq.java
  com.example.demo.src.user.model.PutUserReq
+com/example/demo/src/restaurant/model/GetRestaurantDetailRes.java
+ com.example.demo.src.restaurant.model.GetRestaurantDetailRes
 com/example/demo/src/eatdeal/model/PostEatDealRes.java
  com.example.demo.src.eatdeal.model.PostEatDealRes
 com/example/demo/config/secret/Secret.java
  com.example.demo.config.secret.Secret
-com/example/demo/src/eatdeal/EatDealProvider.java
- com.example.demo.src.eatdeal.EatDealProvider
+com/example/demo/src/visit/model/PostVisitReq.java
+ com.example.demo.src.visit.model.PostVisitReq
+com/example/demo/src/user/model/GetFollowRes.java
+ com.example.demo.src.user.model.GetFollowRes
 com/example/demo/src/user/model/PostUserRes.java
  com.example.demo.src.user.model.PostUserRes
-com/example/demo/src/comment/CommentController.java
- com.example.demo.src.comment.CommentController
+com/example/demo/src/eatdeal/EatDealDao.java
+ com.example.demo.src.eatdeal.EatDealDao
 com/example/demo/src/review/model/PostReviewRes.java
  com.example.demo.src.review.model.PostReviewRes
-com/example/demo/config/BaseResponse.java
- com.example.demo.config.BaseResponse
+com/example/demo/src/comment/model/PostCommentReq.java
+ com.example.demo.src.comment.model.PostCommentReq
+com/example/demo/src/review/model/Review.java
+ com.example.demo.src.review.model.Review
 com/example/demo/src/review/model/DeleteReviewRes.java
  com.example.demo.src.review.model.DeleteReviewRes
+com/example/demo/src/comment/CommentDao.java
+ com.example.demo.src.comment.CommentDao
 com/example/demo/src/eatdeal/model/PostEatDealReq.java
  com.example.demo.src.eatdeal.model.PostEatDealReq
-com/example/demo/src/user/UserService.java
- com.example.demo.src.user.UserService
+com/example/demo/src/user/model/User.java
+ com.example.demo.src.user.model.User
 com/example/demo/src/review/model/PutReviewReq.java
  com.example.demo.src.review.model.PutReviewReq
-com/example/demo/src/oauth/kakao/KakaoController.java
- com.example.demo.src.oauth.kakao.KakaoController
+com/example/demo/src/test/TestController.java
+ com.example.demo.src.test.TestController
 com/example/demo/src/eatdeal/model/GetEatDealRes.java
  com.example.demo.src.eatdeal.model.GetEatDealRes
-com/example/demo/config/BaseException.java
- com.example.demo.config.BaseException
+com/example/demo/src/WebSecurityConfig.java
+ com.example.demo.src.WebSecurityConfig
 com/example/demo/src/comment/model/PutCommentReq.java
  com.example.demo.src.comment.model.PutCommentReq
 com/example/demo/src/restaurant/RestaurantDao.java
@@ -76,63 +84,75 @@ com/example/demo/src/user/model/PostUserReq.java
  com.example.demo.src.user.model.PostUserReq
 com/example/demo/src/comment/model/PostCommentRes.java
  com.example.demo.src.comment.model.PostCommentRes
+com/example/demo/src/oauth/kakao/model/PostLoginRes.java
+ com.example.demo.src.oauth.kakao.model.PostLoginRes
 com/example/demo/src/review/upload/UploadFile.java
  com.example.demo.src.review.upload.UploadFile
+com/example/demo/src/user/UserDao.java
+ com.example.demo.src.user.UserDao
 com/example/demo/src/user/model/PostLoginRes.java
  com.example.demo.src.user.model.PostLoginRes
 com/example/demo/src/oauth/kakao/KakaoDao.java
  com.example.demo.src.oauth.kakao.KakaoDao
-com/example/demo/src/comment/model/PutCommentRes.java
- com.example.demo.src.comment.model.PutCommentRes
+com/example/demo/src/eatdeal/EatDealController.java
+ com.example.demo.src.eatdeal.EatDealController
+com/example/demo/src/restaurant/RestaurantService.java
+ com.example.demo.src.restaurant.RestaurantService
+com/example/demo/utils/JwtService.java
+ com.example.demo.utils.JwtService
+com/example/demo/src/comment/CommentService.java
+ com.example.demo.src.comment.CommentService
+com/example/demo/src/restaurant/RestaurantController.java
+ com.example.demo.src.restaurant.RestaurantController
+com/example/demo/src/comment/CommentProvider.java
+ com.example.demo.src.comment.CommentProvider
 com/example/demo/src/oauth/kakao/KakaoProvider.java
  com.example.demo.src.oauth.kakao.KakaoProvider
-com/example/demo/src/user/UserDao.java
- com.example.demo.src.user.UserDao
-com/example/demo/src/comment/model/Comment.java
- com.example.demo.src.comment.model.Comment
-com/example/demo/src/WebSecurityConfig.java
- com.example.demo.src.WebSecurityConfig
-com/example/demo/src/test/TestController.java
- com.example.demo.src.test.TestController
-com/example/demo/src/user/model/PostLoginReq.java
- com.example.demo.src.user.model.PostLoginReq
+com/example/demo/config/BaseResponseStatus.java
+ com.example.demo.config.BaseResponseStatus
+com/example/demo/src/restaurant/RestaurantProvider.java
+ com.example.demo.src.restaurant.RestaurantProvider
+com/example/demo/src/review/ReviewController.java
+ com.example.demo.src.review.ReviewController
+com/example/demo/src/review/ReviewService.java
+ com.example.demo.src.review.ReviewService
 com/example/demo/src/oauth/kakao/KakaoService.java
  com.example.demo.src.oauth.kakao.KakaoService
-com/example/demo/src/comment/CommentDao.java
- com.example.demo.src.comment.CommentDao
-com/example/demo/src/review/model/Review.java
- com.example.demo.src.review.model.Review
+com/example/demo/src/eatdeal/EatDealProvider.java
+ com.example.demo.src.eatdeal.EatDealProvider
 com/example/demo/src/review/ReviewProvider.java
  com.example.demo.src.review.ReviewProvider
 com/example/demo/src/user/UserController.java
  com.example.demo.src.user.UserController
-com/example/demo/src/eatdeal/EatDealDao.java
- com.example.demo.src.eatdeal.EatDealDao
-com/example/demo/src/comment/model/PostCommentReq.java
- com.example.demo.src.comment.model.PostCommentReq
-com/example/demo/src/user/model/GetFollowRes.java
- com.example.demo.src.user.model.GetFollowRes
-com/example/demo/src/user/model/User.java
- com.example.demo.src.user.model.User
-com/example/demo/src/restaurant/model/GetRestaurantDetailRes.java
- com.example.demo.src.restaurant.model.GetRestaurantDetailRes
-com/example/demo/src/eatdeal/EatDealService.java
- com.example.demo.src.eatdeal.EatDealService
-com/example/demo/src/user/model/GetUserRes.java
- com.example.demo.src.user.model.GetUserRes
-com/example/demo/src/comment/model/GetCommentRes.java
- com.example.demo.src.comment.model.GetCommentRes
-com/example/demo/DemoApplication.java
- com.example.demo.DemoApplication
-com/example/demo/src/restaurant/RestaurantController.java
- com.example.demo.src.restaurant.RestaurantController
-com/example/demo/utils/JwtService.java
- com.example.demo.utils.JwtService
+com/example/demo/src/comment/CommentController.java
+ com.example.demo.src.comment.CommentController
+com/example/demo/config/BaseResponse.java
+ com.example.demo.config.BaseResponse
+com/example/demo/config/BaseException.java
+ com.example.demo.config.BaseException
 com/example/demo/src/user/UserProvider.java
  com.example.demo.src.user.UserProvider
-com/example/demo/src/oauth/kakao/model/PostLoginRes.java
- com.example.demo.src.oauth.kakao.model.PostLoginRes
-com/example/demo/src/review/ReviewService.java
- com.example.demo.src.review.ReviewService
-com/example/demo/src/restaurant/model/GetRestaurantRes.java
- com.example.demo.src.restaurant.model.GetRestaurantRes
+com/example/demo/src/user/UserService.java
+ com.example.demo.src.user.UserService
+com/example/demo/src/eatdeal/EatDealService.java
+ com.example.demo.src.eatdeal.EatDealService
+com/example/demo/src/oauth/kakao/KakaoController.java
+ com.example.demo.src.oauth.kakao.KakaoController
+com/example/demo/src/visit/model/GetVisitRes.java
+ com.example.demo.src.visit.model.GetVisitRes
+com/example/demo/src/visit/model/GetUserInfo.java
+ com.example.demo.src.visit.model.GetUserInfo
+com/example/demo/src/visit/model/GetRestaurantInfo.java
+ com.example.demo.src.visit.model.GetRestaurantInfo
+com/example/demo/src/visit/VisitDao.java
+ com.example.demo.src.visit.VisitDao
+com/example/demo/src/visit/VisitController.java
+ com.example.demo.src.visit.VisitController
+com/example/demo/src/visit/VisitProvider.java
+ com.example.demo.src.visit.VisitProvider
+com/example/demo/src/visit/model/GetVisitByUserRes.java
+ com.example.demo.src.visit.model.GetVisitByUserRes
+com/example/demo/src/visit/model/GetVisit.java
+ com.example.demo.src.visit.model.GetVisit
+com/example/demo/src/visit/VisitService.java
+ com.example.demo.src.visit.VisitService

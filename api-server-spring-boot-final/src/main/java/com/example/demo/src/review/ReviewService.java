@@ -35,6 +35,9 @@ public class ReviewService {
 
     @Transactional(rollbackFor = Exception.class)
     public int createReview(int restaurantId, int userId, Review review) throws BaseException {
+        if(provider.checkUser(userId)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkRestaurantId(restaurantId) == 0 ){
             logger.warn("[ReviewService] restaurant not exists, restaurantId: {}", restaurantId);
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
@@ -72,6 +75,9 @@ public class ReviewService {
 
     @Transactional(rollbackFor = Exception.class)
     public PutReviewRes updateReview(Integer reviewId, int userId, Review review) throws BaseException {
+        if(provider.checkUser(userId)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkReviewId(reviewId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }

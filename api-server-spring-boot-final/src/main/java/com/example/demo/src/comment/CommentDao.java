@@ -22,7 +22,7 @@ public class CommentDao {
         return jdbcTemplate.queryForObject(checkCommentQuery, int.class, commentId);
     }
 
-    public int checkUserId(Integer parentUserId) {
+    public int  checkUserId(Integer parentUserId) {
         String checkUserQuery = "select exists (select * from users where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, parentUserId);
     }

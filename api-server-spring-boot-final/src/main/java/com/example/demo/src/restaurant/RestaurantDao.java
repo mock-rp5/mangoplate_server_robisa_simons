@@ -173,9 +173,15 @@ public class RestaurantDao {
         getRestaurantDetailRes.setReviews(getReviews(restaurantId));
         getRestaurantDetailRes.setScore(getRestaurantScore(restaurantId));
         getRestaurantDetailRes.setMenus(getRestaurantMenus(restaurantId));
+        getRestaurantDetailRes.setWishCnt(getWishCnt(restaurantId));
 
         return getRestaurantDetailRes;
 
+    }
+
+    private int getWishCnt(int restaurantId) {
+        String getWishCntQuery = "select count(*) from wishes where restaurant_id = ? and status ='ACTIVE'";
+        return jdbcTemplate.queryForObject(getWishCntQuery, int.class, restaurantId);
     }
 
     private List<String> getRestaurantImgUrls(Integer restaurantId) {
