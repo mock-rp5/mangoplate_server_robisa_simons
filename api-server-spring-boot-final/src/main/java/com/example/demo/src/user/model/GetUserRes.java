@@ -14,17 +14,15 @@ public class GetUserRes {
     private int userIdx;
     private String userName;
     private String email;
-    private String password;
     private String phoneNumber;
     private String profileImg;
     private List<GetFollowRes> followings;
     private List<GetFollowRes> followers;
 
-    public GetUserRes(int userIdx, String userName, String email, String password, String phoneNumber, String profileImg) {
+    public GetUserRes(int userIdx, String userName, String email, String phoneNumber, String profileImg) {
         this.userIdx = userIdx;
         this.userName = userName;
         this.email = email;
-        this.password = password;
         this.phoneNumber = phoneNumber;
         this.profileImg = profileImg;
     }

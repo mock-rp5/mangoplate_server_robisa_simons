@@ -110,4 +110,22 @@ public class ReviewService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public Integer deleteReviewImg(Integer userId, Integer imgId) throws BaseException {
+        if(provider.checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        if(provider.checkReviewImg(imgId, userId) == 0) {
+            throw new BaseException(REVIEWS_NOT_EXISTS_IMG);
+        }
+        try {
+            int result = dao.deleteReviewImgByUser(imgId);
+            if(result == 0) {
+                throw new BaseException(REVIEW_DELETE_IMG_FAIL);
+            }
+            return result;
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

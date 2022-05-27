@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,6 +49,41 @@ public class ReviewController {
             }
             List<GetReviewRes> getReviewRes = provider.getReviewByUser(userId);
             return new BaseResponse<>(getReviewRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @GetMapping("/images")
+    @ResponseBody
+    public BaseResponse<GetReviewImageRes> getReviewImgUrl() {
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            GetReviewImageRes getReviewRes = provider.getReviewImages(userId);
+            return new BaseResponse<>(getReviewRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
+    @DeleteMapping("/images/{img_id}")
+    @ResponseBody
+    public BaseResponse<Integer> deleteReviewImg(@PathVariable("img_id") Integer imgId) {
+        if(imgId == null) {
+            return new BaseResponse<>(REVIEWS_EMPTY_IMG_ID);
+        }
+        try {
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            Integer result = service.deleteReviewImg(userId, imgId);
+            return new BaseResponse<>(result);
+
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
