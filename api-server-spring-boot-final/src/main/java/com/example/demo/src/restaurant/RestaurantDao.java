@@ -175,7 +175,7 @@ public class RestaurantDao {
     }
 
     public GetRestaurantDetailRes getRestaurantDetail(Integer restaurantId) {
-        String getRestaurantQuery = " select R.id, R.name, R.view, R.address, R.latitude, R.longitude, R.day_off, R.open_hour, R.close_hour, R.break_time, R.min_price, R.max_price, R.park_info, R.website, R.food_category, C.name " +
+        String getRestaurantQuery = " select R.id, R.name, R.view, R.address, R.latitude, R.longitude, R.day_off, R.open_hour, R.close_hour, R.break_time, R.min_price, R.max_price, R.park_info, R.website, R.food_category, C.name, date_format(R.updated_at, '%Y-%m-%d') " +
                 "from restaurants as R " +
                 "join categories_food as C " +
                 "on R.food_category = C.id " +
@@ -198,16 +198,23 @@ public class RestaurantDao {
                         rs.getString(13),
                         rs.getString(14),
                         rs.getInt(15),
-                        rs.getString(16)
+                        rs.getString(16),
+                        rs.getString(17)
                 ), restaurantId);
 
         getRestaurantDetailRes.setImgUrls(getRestaurantImgUrls(restaurantId));
         getRestaurantDetailRes.setReviews(getReviews(restaurantId));
         getRestaurantDetailRes.setScore(getRestaurantScore(restaurantId));
         getRestaurantDetailRes.setMenus(getRestaurantMenus(restaurantId));
+        getRestaurantDetailRes.setWishCnt(getWishCnt(restaurantId));
 
         return getRestaurantDetailRes;
 
+    }
+
+    private int getWishCnt(int restaurantId) {
+        String getWishCntQuery = "select count(*) from wishes where restaurant_id = ? and status ='ACTIVE'";
+        return jdbcTemplate.queryForObject(getWishCntQuery, int.class, restaurantId);
     }
 
     private List<String> getRestaurantImgUrls(Integer restaurantId) {
@@ -362,11 +369,15 @@ public class RestaurantDao {
         return this.jdbcTemplate.update(deleteRestaurantQuery, deleteRestaurantParams);
     }
 
-    public Integer updateRestaurant(Integer restaurantId, PutRestaurantReq putRestaurantReq){
+    public Integer updateRestaurant(Integer restaurantId, PutRestaurantReq putRestaurantReq) {
         String updateRestaurantQuery = "UPDATE restaurants t SET t.name = ?, t.address = ?, t.latitude = ?, t.longitude = ?, t.food_category = ? WHERE t.id = ?";
         Object[] updateRestaurantParams = new Object[]{putRestaurantReq.getName(), putRestaurantReq.getAddress(), putRestaurantReq.getLatitude(),
-                                                    putRestaurantReq.getLongitude(), Optional.ofNullable(putRestaurantReq.getFoodCategory()).orElse(null), restaurantId};
+                putRestaurantReq.getLongitude(), Optional.ofNullable(putRestaurantReq.getFoodCategory()).orElse(null), restaurantId};
         return this.jdbcTemplate.update(updateRestaurantQuery, updateRestaurantParams);
+    }
+    public int checkUser(Integer userId) {
+        String checkUserQuery = "select exists (select * from users where id = ?)";
+        return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
     }
 
 }

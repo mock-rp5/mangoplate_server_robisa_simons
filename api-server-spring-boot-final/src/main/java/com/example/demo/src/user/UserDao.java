@@ -28,35 +28,32 @@ public class UserDao {
                         rs.getInt("id"),
                         rs.getString("user_name"),
                         rs.getString("email"),
-                        rs.getString("password"),
                         rs.getString("user_phone"),
                         rs.getString("profile_img_url"))
                 );
     }
 
     public List<GetUserRes> getUsersByEmail(String email){
-        String getUsersByEmailQuery = "select id, user_name, email, password, user_phone, profile_img_url from users where email =?";
+        String getUsersByEmailQuery = "select id, user_name, email, user_phone, profile_img_url from users where email =?";
         String getUsersByEmailParams = email;
         return this.jdbcTemplate.query(getUsersByEmailQuery,
                 (rs, rowNum) -> new GetUserRes(
                         rs.getInt("id"),
                         rs.getString("user_name"),
                         rs.getString("email"),
-                        rs.getString("password"),
                         rs.getString("user_phone"),
                         rs.getString("profile_img_url")),
                 getUsersByEmailParams);
     }
 
     public GetUserRes getUser(int userIdx){
-        String getUserQuery = "select id, user_name, email, password, user_phone, profile_img_url from users where id = ?";
+        String getUserQuery = "select id, user_name, email, user_phone, profile_img_url from users where id = ?";
         int getUserParams = userIdx;
         GetUserRes getUserRes = this.jdbcTemplate.queryForObject(getUserQuery,
                 (rs, rowNum) -> new GetUserRes(
                         rs.getInt("id"),
                         rs.getString("user_name"),
                         rs.getString("email"),
-                        rs.getString("password"),
                         rs.getString("user_phone"),
                         rs.getString("profile_img_url")),
                 getUserParams);

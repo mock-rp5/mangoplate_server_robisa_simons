@@ -14,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
-import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_NOT_EXISTS_RESTAURANT;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @Service
 public class RestaurantProvider {
@@ -67,6 +66,15 @@ public class RestaurantProvider {
     public int checkRestaurantId(int restaurantId) throws BaseException {
         try {
             return dao.checkRestaurantId(restaurantId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
+    private int checkUser(Integer userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

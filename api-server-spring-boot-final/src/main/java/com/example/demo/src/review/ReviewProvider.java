@@ -1,11 +1,14 @@
 package com.example.demo.src.review;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.review.model.GetReviewImageRes;
 import com.example.demo.src.review.model.GetReviewRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -34,6 +37,14 @@ public class ReviewProvider {
 
     }
 
+    public int checkReviewUserId(int reviewId, Integer userId) throws BaseException {
+        try{
+            return dao.checkReviewAndUserId(reviewId, userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public int checkReviewId(int reviewId) throws BaseException {
         try{
             return dao.checkReviewId(reviewId);
@@ -45,6 +56,46 @@ public class ReviewProvider {
     public int checkRestaurantId(int restaurantId) throws BaseException {
         try {
             return dao.checkRestaurantId(restaurantId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkUser(int userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetReviewRes> getReviewByUser(Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            List<GetReviewRes> getReviewRes = dao.getReviewByUser(userId);
+            return getReviewRes;
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetReviewImageRes getReviewImages(Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            GetReviewImageRes getReviewImageRes = dao.getReviewImages(userId);
+            return getReviewImageRes;
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkReviewImg(Integer imgId, Integer userId) throws BaseException {
+        try {
+            return dao.checkReviewImg(imgId, userId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -35,6 +35,9 @@ public class ReviewService {
 
     @Transactional(rollbackFor = Exception.class)
     public int createReview(int restaurantId, int userId, Review review) throws BaseException {
+        if(provider.checkUser(userId)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkRestaurantId(restaurantId) == 0 ){
             logger.warn("[ReviewService] restaurant not exists, restaurantId: {}", restaurantId);
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
@@ -72,6 +75,9 @@ public class ReviewService {
 
     @Transactional(rollbackFor = Exception.class)
     public PutReviewRes updateReview(Integer reviewId, int userId, Review review) throws BaseException {
+        if(provider.checkUser(userId)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkReviewId(reviewId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }
@@ -89,8 +95,8 @@ public class ReviewService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public DeleteReviewRes deleteReview(Integer reviewId) throws BaseException {
-        if(provider.checkReviewId(reviewId) == 0) {
+    public DeleteReviewRes deleteReview(Integer reviewId, Integer userId) throws BaseException {
+        if(provider.checkReviewUserId(reviewId, userId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }
         try {
@@ -100,6 +106,24 @@ public class ReviewService {
                 throw new BaseException(REVIEWS_DELETE_FAIL);
             }
             return new DeleteReviewRes(result);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public Integer deleteReviewImg(Integer userId, Integer imgId) throws BaseException {
+        if(provider.checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        if(provider.checkReviewImg(imgId, userId) == 0) {
+            throw new BaseException(REVIEWS_NOT_EXISTS_IMG);
+        }
+        try {
+            int result = dao.deleteReviewImgByUser(imgId);
+            if(result == 0) {
+                throw new BaseException(REVIEW_DELETE_IMG_FAIL);
+            }
+            return result;
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

@@ -5,6 +5,7 @@ import com.example.demo.config.BaseResponse;
 
 import com.example.demo.src.restaurant.model.*;
 
+import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 
 @RestController
@@ -24,13 +26,15 @@ import static com.example.demo.utils.ValidationRegex.isRegexEmail;
 public class RestaurantController {
     private final RestaurantProvider provider;
     private final RestaurantService service;
+    private final JwtService jwtService;
 
     final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
 
     @Autowired
-    public RestaurantController(RestaurantProvider provider, RestaurantService service) {
+    public RestaurantController(RestaurantProvider provider, RestaurantService service, JwtService jwtService) {
         this.provider = provider;
         this.service = service;
+        this.jwtService = jwtService;
     }
 
     @ResponseBody

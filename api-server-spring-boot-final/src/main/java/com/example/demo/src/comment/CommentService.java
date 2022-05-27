@@ -49,7 +49,10 @@ public class CommentService {
         }
     }
 
-    public PutCommentRes updateComment(PutCommentReq putCommentReq) throws BaseException {
+    public PutCommentRes updateComment(PutCommentReq putCommentReq, Integer userId) throws BaseException {
+        if(provider.checkUser(userId)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkCommentId(putCommentReq.getCommentId()) == 0) {
             throw new BaseException(COMMENTS_NOT_EXISTS_COMMENT);
         }
@@ -61,7 +64,10 @@ public class CommentService {
         }
     }
 
-    public int deleteComment(int commentId) throws BaseException {
+    public int deleteComment(int commentId, int userId) throws BaseException {
+        if(provider.checkUser(userId)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkCommentId(commentId) == 0) {
             throw new BaseException(COMMENTS_NOT_EXISTS_COMMENT);
         }
