@@ -138,7 +138,7 @@ public class RestaurantDao {
     }
 
     public int checkRestaurantId(int restaurantId) {
-        String checkRestaurantQuery = "select exists (select * from restaurants where id = ?)";
+        String checkRestaurantQuery = "select exists (select * from restaurants where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkRestaurantQuery, int.class, restaurantId);
     }
 
@@ -147,34 +147,41 @@ public class RestaurantDao {
                 "from restaurants as R " +
                 "join categories_food as C " +
                 "on R.food_category = C.id " +
-                "where R.id = ?";
+                "where R.id = ? and R.status = 'ACTIVE'";
 
-        GetRestaurantDetailRes getRestaurantDetailRes = jdbcTemplate.queryForObject(getRestaurantQuery,
-                (rs, rowNum) -> new GetRestaurantDetailRes(
-                        rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4),
-                        rs.getDouble(5),
-                        rs.getDouble(6),
-                        rs.getString(7),
-                        rs.getString(8),
-                        rs.getString(9),
-                        rs.getString(10),
-                        rs.getInt(11),
-                        rs.getInt(12),
-                        rs.getString(13),
-                        rs.getString(14),
-                        rs.getInt(15),
-                        rs.getString(16),
-                        rs.getString(17)
-                ), restaurantId);
+        GetRestaurantDetailRes getRestaurantDetailRes = null;
 
-        getRestaurantDetailRes.setImgUrls(getRestaurantImgUrls(restaurantId));
-        getRestaurantDetailRes.setReviews(getReviews(restaurantId));
-        getRestaurantDetailRes.setScore(getRestaurantScore(restaurantId));
-        getRestaurantDetailRes.setMenus(getRestaurantMenus(restaurantId));
-        getRestaurantDetailRes.setWishCnt(getWishCnt(restaurantId));
+        try {
+            getRestaurantDetailRes = jdbcTemplate.queryForObject(getRestaurantQuery,
+                    (rs, rowNum) -> new GetRestaurantDetailRes(
+                            rs.getInt(1),
+                            rs.getString(2),
+                            rs.getInt(3),
+                            rs.getString(4),
+                            rs.getDouble(5),
+                            rs.getDouble(6),
+                            rs.getString(7),
+                            rs.getString(8),
+                            rs.getString(9),
+                            rs.getString(10),
+                            rs.getInt(11),
+                            rs.getInt(12),
+                            rs.getString(13),
+                            rs.getString(14),
+                            rs.getInt(15),
+                            rs.getString(16),
+                            rs.getString(17)
+                    ), restaurantId);
+
+            getRestaurantDetailRes.setImgUrls(getRestaurantImgUrls(restaurantId));
+            getRestaurantDetailRes.setReviews(getReviews(restaurantId));
+            getRestaurantDetailRes.setScore(getRestaurantScore(restaurantId));
+            getRestaurantDetailRes.setMenus(getRestaurantMenus(restaurantId));
+            getRestaurantDetailRes.setWishCnt(getWishCnt(restaurantId));
+
+        } catch (EmptyResultDataAccessException e) {
+            return new GetRestaurantDetailRes();
+        }
 
         return getRestaurantDetailRes;
 
@@ -196,7 +203,7 @@ public class RestaurantDao {
     }
 
     public List<GetReviewRes> getReviews(int restaurantId) {
-        String getReviewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, U.profile_img_url, R.restaurant_id, RT.name " +
+        String getReviewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, U.profile_img_url, R.restaurant_id, RT.name, U.is_holic,  date_format(R.updated_at, '%Y-%m-%d') " +
                 "from reviews as R " +
                 "join users as U " +
                 "on R.user_id = U.id " +
@@ -213,23 +220,37 @@ public class RestaurantDao {
                         rs.getInt(5),
                         rs.getString(6),
                         rs.getInt(7),
-                        rs.getString(8)
+                        rs.getString(8),
+                        rs.getBoolean(9),
+                        rs.getString(10)
                 ), restaurantId);
 
         for(GetReviewRes review : getReviewRes) {
             //List<GetCommentRes> commentRes = getComments(review.getId());
             List<String> imgUrls = getReviewImgURLs(review.getId());
-
             //review.setComments(commentRes);
             review.setImgUrls(imgUrls);
+            review.setReviewCnt(getReviewCnt(review.getUserId()));
+            review.setFollowCnt(getFollowCnt(review.getUserId()));
         }
 
         return getReviewRes;
 
     }
-    public Integer getRestaurantScore(int restaurantId) {
+
+    private int getFollowCnt(int userId) {
+        String getFollowCntQuery = "select count(*) from follows where user_id = ?";
+        return jdbcTemplate.queryForObject(getFollowCntQuery, int.class, userId);
+    }
+
+    private int getReviewCnt(int userId) {
+        String getReviewCntQuery = "select count(*) from reviews where user_id = ?";
+        return jdbcTemplate.queryForObject(getReviewCntQuery, int.class, userId);
+    }
+
+    public Float getRestaurantScore(int restaurantId) {
         String getScoreQuery = "select avg(score) from reviews where restaurant_id = ? and status = 'ACTIVE'";
-        return jdbcTemplate.queryForObject(getScoreQuery, int.class, restaurantId);
+        return jdbcTemplate.queryForObject(getScoreQuery, Float.class, restaurantId);
     }
 
     public List<String> getReviewImgURLs(int reviewId) {
@@ -242,7 +263,7 @@ public class RestaurantDao {
     }
 
     public List<GetCommentRes> getComments(int reviewId) {
-        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order` " +
+        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.is_holic, date_format(C.updated_at, '%Y-%m-%d')" +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id and C.review_id = ? " +
@@ -255,7 +276,9 @@ public class RestaurantDao {
                         rs.getInt(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getInt(5)
+                        rs.getInt(5),
+                        rs.getBoolean(6),
+                        rs.getString(7)
                 ), reviewId);
 
         for(GetCommentRes comment : getCommentRes) {

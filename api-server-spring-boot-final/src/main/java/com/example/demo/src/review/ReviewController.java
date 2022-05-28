@@ -39,6 +39,23 @@ public class ReviewController {
         this.fileStore = fileStore;
     }
 
+    @GetMapping("/today")
+    @ResponseBody
+    public BaseResponse<GetReviewTodayRes> getTodayReview() {
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            GetReviewTodayRes getReviewTodayRes = provider.getReviewTodayRes(userId);
+            return new BaseResponse<>(getReviewTodayRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+
+    }
+
     @GetMapping()
     @ResponseBody
     public BaseResponse<List<GetReviewRes>> getReviewByUser() {
@@ -50,6 +67,7 @@ public class ReviewController {
             List<GetReviewRes> getReviewRes = provider.getReviewByUser(userId);
             return new BaseResponse<>(getReviewRes);
         }catch (BaseException e) {
+
             return new BaseResponse<>(e.getStatus());
         }
     }

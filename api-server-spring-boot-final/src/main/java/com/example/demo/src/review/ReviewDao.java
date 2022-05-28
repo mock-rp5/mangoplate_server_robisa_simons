@@ -7,6 +7,8 @@ import com.example.demo.src.review.model.*;
 import com.example.demo.src.review.upload.UploadFile;
 import com.example.demo.src.visit.model.GetUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
@@ -32,13 +34,13 @@ public class ReviewDao {
 
     public GetReviewRes getReviewDetail(int reviewId) {
         String getReviewDetailQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
-                "U.profile_img_url, R.restaurant_id, RT.name " +
+                "U.profile_img_url, R.restaurant_id, RT.name,  U.is_holic, date_format(R.updated_at, '%Y-%m-%d') " +
                 "from reviews as R " +
                 "join users as U " +
                 "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.id = ?";
+                "where R.id = ? and R.status = 'ACTIVE'";
 
         GetReviewRes getReviewRes = jdbcTemplate.queryForObject(getReviewDetailQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -49,32 +51,49 @@ public class ReviewDao {
                         rs.getInt(5),
                         rs.getString(6),
                         rs.getInt(7),
-                        rs.getString(8)
+                        rs.getString(8),
+                        rs.getBoolean(9),
+                        rs.getString(10)
                 ), reviewId );
 
         getReviewRes.setImgUrls(getReviewImgURLs(reviewId));
         getReviewRes.setComments(getComments(reviewId));
+        getReviewRes.setReviewCnt(getReviewCnt(getReviewRes.getUserId()));
+        getReviewRes.setFollowCnt(getFollowCnt(getReviewRes.getUserId()));
 
         return getReviewRes;
 
     }
 
-    public List<String> getReviewImgURLs(int reviewId) {
-        String getReviewImgQuery = "select img_url from images_review where review_id = ?";
-        List<String> imgUrls = new ArrayList<>();
+    private int getFollowCnt(int userId) {
+        String getFollowCntQuery = "select count(*) from follows where user_id = ? and status = 'ACTIVE' ";
+        return jdbcTemplate.queryForObject(getFollowCntQuery, int.class, userId);
+    }
 
-        jdbcTemplate.query(getReviewImgQuery,
-                (rs, rowNum) -> imgUrls.add(rs.getString("img_url")), reviewId);
-        return imgUrls;
+    private int getReviewCnt(int userId) {
+        String getReviewCntQuery = "select count(*) from reviews where user_id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.queryForObject(getReviewCntQuery, int.class, userId);
+    }
+
+    public List<String> getReviewImgURLs(int reviewId) {
+        String getReviewImgQuery = "select img_url from images_review where review_id = ? and status = 'ACTIVE'";
+
+        try {
+            return jdbcTemplate.query(getReviewImgQuery,
+                    (rs, rowNum) -> rs.toString(), reviewId);
+        }catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+
     }
 
 
     public List<GetCommentRes> getComments(int reviewId) {
-        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order` " +
+        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.is_holic, date_format(C.updated_at, '%Y-%m-%d') " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id and C.review_id = ? " +
-                "where level = 1 " +
+                "where level = 1 and C.status = 'ACTIVE' " +
                 "order by `order` asc";
 
         List<GetCommentRes> getCommentRes = jdbcTemplate.query(getComments,
@@ -83,7 +102,9 @@ public class ReviewDao {
                         rs.getInt(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getInt(5)
+                        rs.getInt(5),
+                        rs.getBoolean(6),
+                        rs.getString(7)
                 ), reviewId);
 
         for(GetCommentRes comment : getCommentRes) {
@@ -183,13 +204,13 @@ public class ReviewDao {
 
     public List<GetReviewRes> getReviewByUser(Integer userId) {
         String getReviewByUserQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
-                "U.profile_img_url, R.restaurant_id, RT.name " +
+                "U.profile_img_url, R.restaurant_id, RT.name , U.is_holic, date_format(R.updated_at, '%Y-%m-%d') " +
                 "from reviews as R " +
                 "join users as U " +
                 "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.user_id = ?";
+                "where R.user_id = ? and R.status = 'ACTIVE'";
 
         List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewByUserQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -200,7 +221,9 @@ public class ReviewDao {
                         rs.getInt(5),
                         rs.getString(6),
                         rs.getInt(7),
-                        rs.getString(8)
+                        rs.getString(8),
+                        rs.getBoolean(9),
+                        rs.getString(10)
                 ), userId);
 
         for(GetReviewRes review: getReviewRes) {
@@ -219,7 +242,7 @@ public class ReviewDao {
                 "on IR.review_id = R.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.user_id = ? ";
+                "where R.user_id = ? IR.status = 'ACTIVE'";
 
         List<GetReviewImage> getReviewImages = jdbcTemplate.query(getReviewImageQuery,
                 (rs, rowNum) -> new GetReviewImage(
@@ -265,4 +288,8 @@ public class ReviewDao {
         String deleteReviewImgQuery = "update images_review set status = 'INACTIVE' where id = ? ";
         return jdbcTemplate.update(deleteReviewImgQuery, imgId);
     }
+
+//    public GetReviewTodayRes getReviewToday(Integer userId) {
+//
+//    }
 }

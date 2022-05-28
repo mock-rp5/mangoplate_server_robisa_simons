@@ -4,6 +4,7 @@ import com.example.demo.src.menu.model.GetRestaurantMenu;
 import com.example.demo.src.review.model.GetReviewRes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,12 +12,13 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetRestaurantDetailRes {
     private Integer id;
     private String name;
     private Integer view;
     private Integer wishCnt;
-    private float score;
+    private Float score;
     private String address;
     private Double latitude;
     private Double longitude;
@@ -25,11 +27,11 @@ public class GetRestaurantDetailRes {
     private String closeHour;
     private String breakTime;
     private String updatedAt;
-    private int minPrice;
-    private int maxPrice;
+    private Integer minPrice;
+    private Integer maxPrice;
     private String parkInfo;
     private String website;
-    private int foodCategoryId;
+    private Integer foodCategoryId;
     private String foodCategoryName;
     private List<String> imgUrls;
     private List<GetReviewRes> reviews;

@@ -3,7 +3,6 @@ package com.example.demo.src.review.model;
 import com.example.demo.src.comment.model.GetCommentRes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,8 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetReviewRes {
-    private Integer id;
+public class GetReviewTodayRes {
+    private Integer reviewId;
     private Integer userId;
     private String userName;
     private String profileImgUrl;
@@ -26,9 +25,11 @@ public class GetReviewRes {
     private Integer followCnt;
     private Boolean isHolic;
     private String updatedAt;
+    private Boolean wish;
+    private Boolean like;
 
-    public GetReviewRes(Integer id, int userId, String userName, String content, int score, String profileImgUrl, int restaurantId, String restaurantName, boolean isHolic, String updatedAt) {
-        this.id = id;
+    public GetReviewTodayRes(Integer id, int userId, String userName, String content, int score, String profileImgUrl, int restaurantId, String restaurantName, boolean isHolic, String updatedAt, Boolean wish) {
+        this.reviewId = id;
         this.userId = userId;
         this.userName = userName;
         this.content = content;
@@ -38,6 +39,7 @@ public class GetReviewRes {
         this.restaurantName = restaurantName;
         this.isHolic = isHolic;
         this.updatedAt = updatedAt;
+        this.wish = wish;
     }
 
 }

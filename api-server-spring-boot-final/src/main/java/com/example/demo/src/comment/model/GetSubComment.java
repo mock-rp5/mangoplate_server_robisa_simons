@@ -14,6 +14,7 @@ public class GetSubComment {
     private String content;
     private String parentCommentUserName;
     private int order;
+    private boolean isHolic;
 
     public GetSubComment(Integer id, int userId, String userName, String content, int order) {
         this.id = id;
