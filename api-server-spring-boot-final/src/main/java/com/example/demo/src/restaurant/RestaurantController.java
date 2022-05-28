@@ -105,6 +105,22 @@ public class RestaurantController {
 
     }
 
+//    @ResponseBody
+//    @GetMapping("/{user_id}")
+//    public BaseResponse<GetRestaurantDetailRes> getMyRestaurant(@PathVariable("user_id") Integer userId) {
+//        if(userId == null ) {
+//            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+//        }
+//
+//        try{
+//            GetRestaurantDetailRes getMyRes = provider.getMyRestaurant(userId);
+//            return new BaseResponse<>(getMyRes);
+//        }catch (BaseException e) {
+//            return new BaseResponse<>(e.getStatus());
+//        }
+//
+//    }
+
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostRestaurantRes> createRestaurant(@RequestBody PostRestaurantReq postRestaurantReq) {
