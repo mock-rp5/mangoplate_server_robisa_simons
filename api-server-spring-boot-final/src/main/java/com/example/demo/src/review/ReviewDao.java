@@ -289,7 +289,7 @@ public class ReviewDao {
         return jdbcTemplate.update(deleteReviewImgQuery, imgId);
     }
 
-//    public GetReviewTodayRes getReviewToday(Integer userId) {
-//
-//    }
+    public GetReviewTodayRes getReviewToday(Integer userId) {
+        return null;
+    }
 }
