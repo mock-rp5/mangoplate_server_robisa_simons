@@ -44,7 +44,7 @@ public class RestaurantController {
                                                               @RequestParam(value = "region-code", required = false, defaultValue = "1") List<Integer> regionCode,
                                                               @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
                                                               @RequestParam(value = "range", defaultValue = "3") Integer range,
-                                                              @RequestParam(value = "sort", defaultValue = "rating") String sortBy) {
+                                                              @RequestParam(value = "sort", defaultValue = "rating") String sortOption) {
         logger.info("user lat -> ", latitude);
         logger.info("user long -> ", longitude);
 //      food-category를 설정했는데 검색해보니 없는 경우엔 현재 [] 빈값을 리턴함
@@ -57,14 +57,14 @@ public class RestaurantController {
             // 위도와 경도가 들어오면 사용자가 위치 정보 사용을 동의했다고 가정.
             if (latitude != null && longitude != null) {
                 getRestaurantRes = provider.getRestaurant(latitude, longitude,
-                        foodCategories.toString().replace("[", "(").replace("]", ")"), range, sortBy);
+                        foodCategories.toString().replace("[", "(").replace("]", ")"), range, sortOption);
 
-                return new BaseResponse<>(round(getRestaurantRes));
+                return new BaseResponse<>(getRestaurantRes);
             }
             // 지역코드가 들어오면 사용자가 임의로 지역을 설정하여 검색
             else if (regionCode != null) {
-                getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"),sortBy);
-                return new BaseResponse<>(round(getRestaurantRes));// 사용자의 위도 경도 정보가 없을 경우, 에러 발생
+                getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"),sortOption);
+                return new BaseResponse<>(getRestaurantRes);// 사용자의 위도 경도 정보가 없을 경우, 에러 발생
             }
             // 사용자의 위도 경도 정보와 지역 정보도 없을 경우, 에러 발생
             else {return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);}

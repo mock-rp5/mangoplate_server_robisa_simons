@@ -1,6 +1,7 @@
 package com.example.demo.src.mylist;
 
 import com.example.demo.src.mylist.model.*;
+import com.example.demo.src.restaurant.model.PostRestaurantRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -125,6 +126,15 @@ public class MyListDao {
         String checkMyListIdQuery = "select exists (select * from mylists where id = ? and status ='ACTIVE')";
         return jdbcTemplate.queryForObject(checkMyListIdQuery, int.class, myListId);
     }
+    public int checkMyListEmpty(Integer myListId) {
+        String checkMyListIdQuery = "select exists (select * from mylist_restaurant where mylist_id = ? and status ='ACTIVE')";
+        return jdbcTemplate.queryForObject(checkMyListIdQuery, int.class, myListId);
+    }
+
+    public int checkUserMyListId(Integer myListId, Integer userId) {
+        String checkMyListIdQuery = "select exists (select * from mylists where id = ? and user_id = ? and status ='ACTIVE')";
+        return jdbcTemplate.queryForObject(checkMyListIdQuery, int.class, myListId, userId);
+    }
 
     public int checkDuplicated(Integer myListId, Integer restaurantId) {
         String checkDuplicatedQuery = "select exists (select * from mylist_restaurant where mylist_id = ? and restaurant_id = ? and status = 'ACTIVE')";
@@ -136,9 +146,14 @@ public class MyListDao {
                     "values(?, ?, DEFAULT, DEFAULT, DEFAULT, DEFAULT, ?)";
 
         Object[] createMyListParams = new Object[] {postMyListReq.getTitle(), postMyListReq.getContent(), userId};
-        int result = jdbcTemplate.update(createMyListQuery, createMyListParams);
+        this.jdbcTemplate.update(createMyListQuery, createMyListParams);
 
-        return result;
+        String lastInsertIdQuery = "select id\n" +
+                "from mylists\n" +
+                "order by created_at desc\n" +
+                "limit 1";
+        return this.jdbcTemplate.queryForObject(lastInsertIdQuery,int.class);
+
     }
 
     public int updateMyList(PutMyListReq putMyListReq) {
@@ -151,10 +166,24 @@ public class MyListDao {
         return jdbcTemplate.update(deleteMyListQuery, myListId);
     }
     public int deleteAllRestaurants(int myListId) {
-        String deleteAllQuery = "update mylist_restaurant set status = case mylist_id when ? then 'INACTIVE' END\n" +
-                "where mylist_id = ?;";
-        return jdbcTemplate.update(deleteAllQuery, myListId, myListId);
-    }
+        try{
+            String deleteAllQuery = "update mylist_restaurant set status = case mylist_id when ? then 'INACTIVE' END where mylist_id = ?";
+            return jdbcTemplate.update(deleteAllQuery, myListId, myListId);
+        }catch (Exception e){
+            System.out.println(e.toString());
+            System.out.println(e.getMessage());
+            return 0;
+        }}
+
+    public int deleteRestaurants(int restaurantId, int myListId) {
+        try{
+            String deleteAllQuery = "update mylist_restaurant set status = 'INACTIVE' where mylist_id = ? and restaurant_id = ?";
+            return jdbcTemplate.update(deleteAllQuery, myListId, restaurantId);
+        }catch (Exception e){
+            System.out.println(e.toString());
+            System.out.println(e.getMessage());
+            return 0;
+        }}
     public void updateView(Integer view , Integer myListId) {
         String updateView = "update mylists set view = ? where id = ?;\n";
         this.jdbcTemplate.update(updateView, view, myListId);

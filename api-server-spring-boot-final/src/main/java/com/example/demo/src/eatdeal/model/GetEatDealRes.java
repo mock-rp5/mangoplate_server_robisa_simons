@@ -4,14 +4,38 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class GetEatDealRes {
     private int restaurantId;
     private String restaurantName;
-    private String menuName;
+    private String[] restaurantDesc;
+    private String[] menuDesc;
+    private String[] notice;
+    private String[] manual;
+    private String[] refundPolicy;
+    private String[] question;
     private int price;
-    private double discountRate;
-    private String desc;
+    private int discountRate;
+    private String menuName;
+    private String startDate;
+    private String endDate;
+    private Integer expiredDate;
+    private String[] emphasis;
+    private List<String> imgUrls;
+
+    public GetEatDealRes(int restaurantId, String restaurantName, int price, int discountRate, String startDate, String endDate, String menuName, Integer expiredDate, List<String> imgUrls) {
+        this.restaurantId = restaurantId;
+        this.restaurantName = restaurantName;
+        this.price = price;
+        this.discountRate = discountRate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.menuName = menuName;
+        this.expiredDate = expiredDate;
+        this.imgUrls = imgUrls;
+    }
 }

@@ -42,6 +42,7 @@ public class MyListProvider {
     public GetMyListDetailRes getMyListDetail(Integer userId, Integer myListId) throws BaseException {
         try{
             if(checkMyListId(myListId) == 0 ) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
+            if(checkUserMyListId(myListId, userId) == 0 ) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
             return dao.getMyListDetail(userId,myListId);
         }catch (BaseException e) {
             System.out.println(e.toString());
@@ -52,7 +53,7 @@ public class MyListProvider {
         }
     }
 
-
+// 유저 아이디로 mylist를 가지고 있는지 검사
     public int checkMyList(Integer userId) throws BaseException {
         try{
             return dao.checkMyList(userId);
@@ -61,6 +62,7 @@ public class MyListProvider {
         }
     }
 
+//    마이리스트가 활성화 되어있는 리스트인지 검사
     public int checkMyListId(Integer myListId) throws BaseException {
         try{
             return dao.checkMyListId(myListId);
@@ -68,6 +70,23 @@ public class MyListProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+    //    마이리스트는 있지만 안에 아무것도 없을 경우 검사
+    public int checkMyListEmpty(Integer myListId) throws BaseException {
+        try{
+            return dao.checkMyListEmpty(myListId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+// 유저의 마이리스트인지 검사, 다른 유저의 마이리스트에 추가를 할 수 없음.
+    public int checkUserMyListId(Integer myListId, Integer userId) throws BaseException {
+        try{
+            return dao.checkUserMyListId(myListId,userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 
     public int checkDuplicated(Integer myListId, Integer restaurantId) throws BaseException {
         try{

@@ -114,7 +114,7 @@ public class ReviewController {
         List<UploadFile> storeImageFiles=null;
 
 
-        Review review = new Review(postReviewReq.getContent(), postReviewReq.getScore(), storeImageFiles);
+
 
         try{
             Integer userId = jwtService.getUserIdx();
@@ -125,6 +125,7 @@ public class ReviewController {
                 storeImageFiles = fileStore.storeFiles(postReviewReq.getFile());
             }
 
+            Review review = new Review(postReviewReq.getContent(), postReviewReq.getScore(), storeImageFiles);
             PostReviewRes postReviewRes = new PostReviewRes(service.createReview(restaurantId, userId, review));
             logger.info("[ReviewController] createReview, userId: {}, reviewId: {}", userId, postReviewRes.getId());
             return new BaseResponse<>(postReviewRes);

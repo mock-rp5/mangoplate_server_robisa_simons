@@ -32,7 +32,7 @@ public class GetRestaurantRes {
     private String imgUrl;
 
     public GetRestaurantRes(Long id, String name, String regionName, String foodCategory, Double latitude, Double longitude,
-                            Integer numReviews, String imgUrl) {
+                            Integer numReviews, Double ratingsAvg, Double distance, String imgUrl) {
         this.id = id;
         this.name = name;
         this.regionName = regionName;
@@ -40,6 +40,20 @@ public class GetRestaurantRes {
         this.latitude = latitude;
         this.longitude = longitude;
         this.numReviews = numReviews;
+        this.ratingsAvg = ratingsAvg;
+        this.distance = distance;
+        this.imgUrl = imgUrl;
+    }
+    public GetRestaurantRes(Long id, String name, String regionName, String foodCategory, Double latitude, Double longitude,
+                            Integer numReviews, Double ratingsAvg, String imgUrl) {
+        this.id = id;
+        this.name = name;
+        this.regionName = regionName;
+        this.foodCategory = foodCategory;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.numReviews = numReviews;
+        this.ratingsAvg = ratingsAvg;
         this.imgUrl = imgUrl;
     }
 }

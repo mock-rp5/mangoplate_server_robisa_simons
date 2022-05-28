@@ -39,6 +39,7 @@ public class MyListService {
     }
     @Transactional(rollbackFor = Exception.class)
     public PostMyListRes insert2MyList(List<Integer> restaurantId, Integer myListId) throws BaseException {
+        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
         int count = 0;
         try {
             for(Integer resId : restaurantId){
@@ -53,7 +54,8 @@ public class MyListService {
         }
     }
     @Transactional(rollbackFor = Exception.class)
-    public Integer updateMyList(PutMyListReq putMyListReq ) throws BaseException {
+    public Integer updateMyList(PutMyListReq putMyListReq, Integer userId ) throws BaseException {
+        if(provider.checkUserMyListId(putMyListReq.getMyListId(), userId) == 0) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
         if(provider.checkMyListId(putMyListReq.getMyListId()) == 0) {
             throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
         }
@@ -66,13 +68,13 @@ public class MyListService {
         }
     }
     @Transactional(rollbackFor = Exception.class)
-    public int deleteMyList(DeleteMyListReq deleteMyListReq) throws BaseException {
-        if(provider.checkMyListId(deleteMyListReq.getMyListId()) == 0) {
-            throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
-        }
+    public int deleteMyList(Integer myListId, Integer userId ) throws BaseException {
+        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
+        if(provider.checkUserMyListId(myListId, userId) == 0) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
+
         try{
-            deleteAllRestaurants(deleteMyListReq.getMyListId());
-            return dao.deleteMyList(deleteMyListReq.getMyListId());
+            deleteAllRestaurants(myListId);
+            return dao.deleteMyList(myListId);
         }catch (Exception e) {
             System.out.println(e.toString());
             throw new BaseException(DATABASE_ERROR);
@@ -83,10 +85,33 @@ public class MyListService {
     public void deleteAllRestaurants(Integer myListId) throws BaseException {
         try{
             int result = dao.deleteAllRestaurants(myListId);
-            if(result != 1) throw new BaseException(MYLISTS_DELETE_FAIL);
+            if(result < 1) throw new BaseException(MYLISTS_DELETE_FAIL);
         }catch (BaseException e) {
             System.out.println(e.toString());
+            throw new BaseException(e.getStatus());
+        }catch (Exception e) {
             System.out.println(e.toString());
+
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteSomeRestaurants(Integer myListId,Integer userId, List<Integer> restaurantId) throws BaseException {
+        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
+        if(provider.checkUserMyListId(myListId, userId) == 0) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
+        if(provider.checkMyListEmpty(myListId) == 0) throw new BaseException(MYLISTS_EMPTY_RESTAURANT_IN_MYLIST);
+
+        try{
+            int count = 0, result = 0;
+            for(Integer resId : restaurantId){
+                result = dao.deleteRestaurants(resId,myListId);
+                if(result == 1) count++;
+            }
+            if(count != restaurantId.size()) throw new BaseException(MYLISTS_DELETE_FAIL);
+            return 1;
+
+        }catch (BaseException e) {
+            System.out.println(e.getMessage());
             throw new BaseException(e.getStatus());
         }catch (Exception e) {
             System.out.println(e.toString());

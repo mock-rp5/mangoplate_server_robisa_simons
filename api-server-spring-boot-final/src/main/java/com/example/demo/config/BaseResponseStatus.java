@@ -114,8 +114,10 @@ public enum BaseResponseStatus {
     MYLISTS_NOT_EXISTS_MYLIST(false, 4050, "마이리스트가 존재하지 않습니다"),
     MYLISTS_EMPTY_TITLE(false, 4051, "마이리스트의 제목을 입력해주세요"),
     MYLISTS_EMPTY_MYLIST_ID(false, 4052, "마이리스트 아이디를 입력해주세요"),
-    MYLISTS_EMPTY_RESTAURANT_ID(false, 4053, "마이리스트에 추가할 식당 아이디를 입력해주세요"),
-    MYLISTS_DELETE_FAIL(false, 4054, "마이리스트 삭제에 실패했습니다");
+    MYLISTS_EMPTY_RESTAURANT_ID(false, 4053, "식당 아이디를 입력해주세요"),
+    MYLISTS_NOT_USERS_MYLIST(false, 4054, "해당 유저의 마이리스트 항목이 아닙니다"),
+    MYLISTS_EMPTY_RESTAURANT_IN_MYLIST(false, 4055, "마이리스트에 등록된 식당이 없습니다."),
+    MYLISTS_DELETE_FAIL(false, 4056, "마이리스트 삭제에 실패했습니다");
 
 
 
