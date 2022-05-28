@@ -3,7 +3,6 @@ package com.example.demo.src.eatdeal;
 import com.example.demo.src.eatdeal.model.GetEatDealOrderRes;
 import com.example.demo.src.eatdeal.model.GetEatDealRes;
 import com.example.demo.src.eatdeal.model.PostEatDealReq;
-import org.graalvm.compiler.nodes.calc.ObjectEqualsNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
