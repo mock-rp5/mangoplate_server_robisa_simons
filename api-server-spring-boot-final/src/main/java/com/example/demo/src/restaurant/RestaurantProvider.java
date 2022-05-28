@@ -58,7 +58,7 @@ public class RestaurantProvider {
         try {
             return dao.getRestaurantDetail(restaurantId);
         } catch (Exception e) {
-
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

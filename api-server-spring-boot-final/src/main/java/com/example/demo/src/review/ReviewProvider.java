@@ -3,6 +3,7 @@ package com.example.demo.src.review;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.review.model.GetReviewImageRes;
 import com.example.demo.src.review.model.GetReviewRes;
+import com.example.demo.src.review.model.GetReviewTodayRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,7 @@ public class ReviewProvider {
             List<GetReviewRes> getReviewRes = dao.getReviewByUser(userId);
             return getReviewRes;
         }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -96,6 +98,18 @@ public class ReviewProvider {
     public int checkReviewImg(Integer imgId, Integer userId) throws BaseException {
         try {
             return dao.checkReviewImg(imgId, userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetReviewTodayRes getReviewTodayRes(Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            GetReviewTodayRes getReviewTodayRes = dao.getReviewToday(userId);
+            return getReviewTodayRes;
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

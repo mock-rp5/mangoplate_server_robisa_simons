@@ -98,6 +98,7 @@ public class RestaurantController {
             }
 
             GetRestaurantDetailRes getReviewRes = provider.getRestaurantDetail(restaurantId);
+
             return new BaseResponse<>(getReviewRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

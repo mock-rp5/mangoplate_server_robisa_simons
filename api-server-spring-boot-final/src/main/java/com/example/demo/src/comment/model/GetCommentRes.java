@@ -17,12 +17,17 @@ public class GetCommentRes {
     private String content;
     private int order;
     private List<GetSubComment> subComments;
+    private boolean isHolic;
+    private String updated_at;
 
-    public GetCommentRes(Integer id, int userId, String userName, String content, int order) {
+
+    public GetCommentRes(Integer id, int userId, String userName, String content, int order, boolean isHolic, String updated_at) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
         this.content = content;
         this.order = order;
+        this.isHolic = isHolic;
+        this.updated_at = updated_at;
     }
 }

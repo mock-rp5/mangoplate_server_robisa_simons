@@ -100,6 +100,13 @@ public class UserController {
         if(!isRegexEmail(postUserReq.getEmail())){
             return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
         }
+        try {
+            if(userProvider.checkEmail(postUserReq.getEmail()) == 1){
+                throw new BaseException(POST_USERS_EXISTS_EMAIL);
+            }
+        } catch(BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
         if(postUserReq.getPassword() == null ){
             return new BaseResponse<>(POST_USERS_EMPTY_PASSWORD);
         }

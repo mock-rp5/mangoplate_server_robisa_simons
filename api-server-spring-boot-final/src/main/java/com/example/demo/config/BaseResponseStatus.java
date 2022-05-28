@@ -62,6 +62,27 @@ public enum BaseResponseStatus {
 
     VISITS_EMPTY_VISIT_ID(false, 2080, "가봤어요 아이디를 입력해주세요"),
 
+    FOLLOWS_EMPTY_FOLLOWEE_ID(false, 2090, "팔로우하려는 유저 아이디를 입력해주세요"),
+    FOLLOWS_CANT_FOLLOW_SELF(false, 2091, "사용자 아이디와 팔로우하려는 아이디가 같습니다"),
+    FOLLOWS_CANT_UNFOLLOW_SELF(false, 2092, "사용자 아이디와 언팔로우하려는 아이디가 같습니다"),
+    FOLLOWS_ALREADY_FOLLOWED_USER(false, 2093, "이미 팔로우한 유저입니다"),
+    FOLLOWS_ALREADY_UNFOLLOWED_USER(false, 2094, "이미 언팔로우한 유저입니다"),
+
+    MYLISTS_NOT_EXISTS_MYLIST(false, 2100, "마이리스트가 존재하지 않습니다"),
+    MYLISTS_EMPTY_TITLE(false, 2101, "마이리스트의 제목을 입력해주세요"),
+    MYLISTS_EMPTY_MYLIST_ID(false, 2102, "마이리스트 아이디를 입력해주세요"),
+    MYLISTS_EMPTY_RESTAURANT_ID(false, 2103, "식당 아이디를 입력해주세요"),
+    MYLISTS_NOT_USERS_MYLIST(false, 2104, "해당 유저의 마이리스트 항목이 아닙니다"),
+    MYLISTS_EMPTY_RESTAURANT_IN_MYLIST(false, 2105, "마이리스트에 등록된 식당이 없습니다."),
+
+    WISHES_EMPTY_TARGET_USER_ID(false, 2110, "가고싶다 항목을 조회할 유저 아이디를 입력해주세요"),
+    WISHES_EMPTY_MEMO_CONTENT(false, 2111, "메모 내용을 입력해주세요"),
+    WISHES_EMPTY_WISH_ID(false, 2112, "가고싶다 항목의 아이디를 입력해주세요"),
+
+    LIKES_EMPTY_REVIEW_ID(false, 2120, "좋아요 요청할 리뷰 아이디를 입력해주세요"),
+    LIKES_ALREADY_LIKED_REVIEW(false, 2121, "이미 좋아요 상태인 리뷰입니다"),
+    LIKES_ALREADY_CANCELED_LIKE(false, 2122, "이미 좋아요 취소 상태인 리뷰입니다"),
+
 
     /**
      * 3000 : Response 오류
@@ -89,6 +110,10 @@ public enum BaseResponseStatus {
     COMMENTS_NOT_EXISTS_PARENT_USER_ID(false, 3062, "존재하지 않은 유저 입니다"),
 
     VISITS_NOT_EXISTS_VISIT(false, 3080, "존재하지 않은 가봤어요 입니다"),
+
+    WISHES_NOT_EXISTS_WISH(false, 3090, "존재하지 않은 가고싶다 항목입니다"),
+    WISHES_NOT_ALLOWED_MEMO(false, 3091, "메모를 추가할 수 있는 권한이 없습니다"),
+
     /**
      * 4000 : Database, Server 오류
      */
@@ -110,14 +135,12 @@ public enum BaseResponseStatus {
     REVIEWS_UPDATE_FAIL(false, 4031, "리뷰 수정에 실패했습니다"),
     REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다"),
     REVIEW_DELETE_IMG_FAIL(false, 4033, "리뷰 이미지 삭제에 실패했습니다."),
-
-    MYLISTS_NOT_EXISTS_MYLIST(false, 4050, "마이리스트가 존재하지 않습니다"),
-    MYLISTS_EMPTY_TITLE(false, 4051, "마이리스트의 제목을 입력해주세요"),
-    MYLISTS_EMPTY_MYLIST_ID(false, 4052, "마이리스트 아이디를 입력해주세요"),
-    MYLISTS_EMPTY_RESTAURANT_ID(false, 4053, "식당 아이디를 입력해주세요"),
-    MYLISTS_NOT_USERS_MYLIST(false, 4054, "해당 유저의 마이리스트 항목이 아닙니다"),
-    MYLISTS_EMPTY_RESTAURANT_IN_MYLIST(false, 4055, "마이리스트에 등록된 식당이 없습니다."),
     MYLISTS_DELETE_FAIL(false, 4056, "마이리스트 삭제에 실패했습니다");
+
+
+
+
+
 
 
 

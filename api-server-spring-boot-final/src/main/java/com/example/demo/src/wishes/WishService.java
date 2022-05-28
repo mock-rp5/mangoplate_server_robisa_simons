@@ -72,4 +72,18 @@ public class WishService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public Integer putMemo(Integer wishId, String memo, Integer userId) throws BaseException {
+// 요청을 두번 보냈을때,
+        if(provider.checkWishId(wishId) == 0) throw new BaseException(WISHES_NOT_EXISTS_WISH);
+        if(provider.getUserIdFromWish(wishId) != userId) throw new BaseException(WISHES_NOT_ALLOWED_MEMO);
+
+        try {
+            return dao.putMemo(wishId, memo);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            System.out.println(e.getMessage());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }
