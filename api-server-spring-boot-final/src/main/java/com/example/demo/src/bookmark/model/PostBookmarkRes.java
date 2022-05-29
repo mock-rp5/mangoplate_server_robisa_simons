@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetBookmarkCountRes {
-    private String contentsType;
-    private Integer Count;
-    private String ImgUrl;
+public class PostBookmarkRes {
+    private Integer result;
+    private Integer bookmarkId;
 }

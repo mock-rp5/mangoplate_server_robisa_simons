@@ -33,7 +33,6 @@ public class FollowService {
         if(provider.checkFollowed(userId,followeeId) == 1) {
             throw new BaseException(FOLLOWS_ALREADY_FOLLOWED_USER);
         }
-
         try {
             if(provider.checkUnFollowed(userId,followeeId) == 0)
                 return dao.createRelation(userId,followeeId);

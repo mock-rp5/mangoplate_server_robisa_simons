@@ -27,6 +27,9 @@ public class MyListProvider {
     }
 
     public List<GetMyListRes> getMyList(Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try{
             //다른 유저에 접근할 수 있지
             if(checkMyList(userId) == 0 ) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
@@ -40,6 +43,9 @@ public class MyListProvider {
         }
     }
     public GetMyListDetailRes getMyListDetail(Integer userId, Integer myListId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try{
             if(checkMyListId(myListId) == 0 ) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
             if(checkUserMyListId(myListId, userId) == 0 ) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
@@ -86,11 +92,16 @@ public class MyListProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
-
     public int checkDuplicated(Integer myListId, Integer restaurantId) throws BaseException {
         try{
             return dao.checkDuplicated(myListId, restaurantId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public int checkUser(Integer userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

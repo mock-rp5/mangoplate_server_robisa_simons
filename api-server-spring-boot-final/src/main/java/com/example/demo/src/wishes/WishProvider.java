@@ -1,6 +1,7 @@
 package com.example.demo.src.wishes;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.wishes.model.GetWishRes;
 import com.example.demo.src.wishes.model.GetWishRestaurantRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,21 +23,25 @@ public class WishProvider {
     @Autowired
     public WishProvider(WishDao dao) { this.dao = dao;}
 
-    public int getWish(int restaurantId, int userId) throws BaseException{
+    public GetWishRes getWish(int restaurantId, int userId) throws BaseException{
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
-            //유저-레스토랑 관계의 wish는 하나의 row만 있으면 되므로, 특정 유저가 특정 식당에 대한 wish 데이터가 존재하면 status로 관리한다.
-            int wishId = dao.findWishId(restaurantId,userId);
-            return wishId != 0 ? dao.getWish(wishId) : 0;
+            GetWishRes getWishRes = dao.getWish(restaurantId, userId);
+//            if(getWishRes.getResult().equals(0)) throw new BaseException(WISHES_FAIL_GET_WISH);
+            return getWishRes;
+//        } catch (BaseException e) {
+//            System.out.println(e.toString());
+//            throw new BaseException(e.getStatus());
         } catch (Exception e) {
             System.out.println(e.toString());
             throw new BaseException(DATABASE_ERROR);
         }
     }
     public List<GetWishRestaurantRes> getWishRestaurants(Integer userId, Integer targetUserId) throws BaseException{
-        if(dao.checkUser(targetUserId) == 0 ) throw new BaseException(USERS_NOT_EXISTS_USER);
-
+        if(checkUser(targetUserId) == 0 ) throw new BaseException(USERS_NOT_EXISTS_USER);
         try {
-            //유저-레스토랑 관계의 wish는 하나의 row만 있으면 되므로, 특정 유저가 특정 식당에 대한 wish 데이터가 존재하면 status로 관리한다.
             List<GetWishRestaurantRes> getWishRestaurantRes = dao.getWishRestaurants(userId,targetUserId);
             return getWishRestaurantRes;
         } catch (Exception e) {
@@ -58,6 +63,13 @@ public class WishProvider {
             return dao.getUserIdFromWish(wishId);
         } catch (Exception e) {
             System.out.println(e.toString());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    public int checkUser(int userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
+        }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }

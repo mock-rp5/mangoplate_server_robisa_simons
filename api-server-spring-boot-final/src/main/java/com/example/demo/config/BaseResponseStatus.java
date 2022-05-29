@@ -43,6 +43,7 @@ public enum BaseResponseStatus {
     RESTAURANTS_EMPTY_RESTAURANT_NAME(false, 2032, "식당 이름 값을 확인해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_ADDRESS(false, 2033, "식당 주소 값을 확인해주세요"),
     RESTAURANTS_EXISTS_RESTAURANT(false, 2034, "중복된 식당 정보입니다"),
+    RESTAURANTS_CANT_ACCESS_RESTAURANT(false, 2035, "식당 수정 및 삭제에 접근 가능한 권한이 없습니다"),
     REVIEWS_EMPTY_REVIEW_ID(false, 2040, "리뷰 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_RESTAURANT_ID(false, 2041, "식당 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),
@@ -87,11 +88,11 @@ public enum BaseResponseStatus {
     BOOKMARKS_EMPTY_CONTENT_TYPE(false, 2130, "북마크할 컨텐츠 유형을 입력해주세요"),
     BOOKMARKS_EMPTY_CONTENT_ID(false, 2131, "북마크할 컨텐츠 아이디를 입력해주세요"),
     BOOKMARKS_CONTENT_TYPE_INVALID_FORM(false, 2132, "잘못된 컨텐츠 유형 형식입니다"),
-    REPORTS_EMPTY_USER_ID(false, 2040, "유저 아이디를 입력해주세요"),
-    REPORTS_EMPTY_EMAIL(false, 2041, "이메일을 입력해주세요"),
-    REPORTS_EMPTY_REASON(false, 2042, "신고 사유 입력해주세요"),
-    USER_ID_SAME_REPORT_USER_ID(false, 2043, "신고하는 유저와 리뷰 작성 유저와 동일합니다"),
 
+    REPORTS_EMPTY_USER_ID(false, 2140, "유저 아이디를 입력해주세요"),
+    REPORTS_EMPTY_EMAIL(false, 2141, "이메일을 입력해주세요"),
+    REPORTS_EMPTY_REASON(false, 2142, "신고 사유 입력해주세요"),
+    USER_ID_SAME_REPORT_USER_ID(false, 2143, "신고하는 유저와 리뷰 작성 유저와 동일합니다"),
     /**
      * 3000 : Response 오류
      */
@@ -121,6 +122,7 @@ public enum BaseResponseStatus {
 
     WISHES_NOT_EXISTS_WISH(false, 3090, "존재하지 않은 가고싶다 항목입니다"),
     WISHES_NOT_ALLOWED_MEMO(false, 3091, "메모를 추가할 수 있는 권한이 없습니다"),
+    WISHES_FAIL_GET_WISH(false, 3092, "가고싶다 항목을 불러올 수 없습니다."),
 
     BOOKMARKS_NOT_EXISTS_CONTENT(false, 3100, "존재하지 않은 컨텐츠입니다"),
     BOOKMARKS_ALREADY_BOOKMARKED(false, 3101, "이미 북마크한 컨텐츠입니다"),

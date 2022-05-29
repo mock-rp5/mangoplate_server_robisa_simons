@@ -21,6 +21,7 @@ public class GetWishRestaurantRes {
     @Getter
     @Setter
     private Integer isWishes;
+    private String memo;
     private String imgUrl;
 
 

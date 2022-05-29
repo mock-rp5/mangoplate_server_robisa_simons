@@ -28,16 +28,14 @@ public class LikeController {
     @GetMapping("/{review_id}")
     @ResponseBody
     public BaseResponse<Integer> getLikeStatus(@PathVariable(value = "review_id") Integer reviewId) throws BaseException {
-        Integer userId = 1;
         if(reviewId == null) {
             return new BaseResponse<>(FOLLOWS_EMPTY_FOLLOWEE_ID);
         }
-        if(userId == null) {
-            return new BaseResponse<>(USERS_EMPTY_USER_ID);
-        }
         try {
-//            Integer userId = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             Integer result = provider.checkLiked(userId, reviewId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {
@@ -49,17 +47,14 @@ public class LikeController {
     @PostMapping("/{review_id}")
     @ResponseBody
     public BaseResponse<Integer> postLike(@PathVariable(value = "review_id") Integer reviewId) throws BaseException {
-        Integer userId = 1;
         if(reviewId == null) {
             return new BaseResponse<>(LIKES_EMPTY_REVIEW_ID);
         }
-        if(userId == null) {
-            return new BaseResponse<>(USERS_EMPTY_USER_ID);
-        }
         try {
-//            Integer userId = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
-
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             if(userId == null) {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
@@ -75,16 +70,14 @@ public class LikeController {
     @DeleteMapping("/{review_id}")
     @ResponseBody
     public BaseResponse<Integer> cancelLike(@PathVariable(value = "review_id") Integer reviewId) throws BaseException {
-        Integer userId = 1;
         if(reviewId == null) {
             return new BaseResponse<>(FOLLOWS_EMPTY_FOLLOWEE_ID);
         }
-        if(userId == null) {
-            return new BaseResponse<>(USERS_EMPTY_USER_ID);
-        }
         try {
-//            Integer userId = jwtService.getUserIdx();
-            //userIdx와 접근한 유저가 같은지 확인
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             Integer result = service.cancelLike(userId, reviewId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {

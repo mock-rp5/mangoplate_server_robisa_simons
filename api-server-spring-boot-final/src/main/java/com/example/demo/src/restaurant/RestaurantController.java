@@ -14,11 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import static com.example.demo.config.BaseResponseStatus.*;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.demo.config.BaseResponseStatus.RESTAURANTS_EMPTY_RESTAURANT_ID;
-import static com.example.demo.utils.ValidationRegex.isRegexEmail;
-import static com.example.demo.config.BaseResponseStatus.*;
 
 
 @RestController
@@ -111,6 +108,27 @@ public class RestaurantController {
 
     }
 
+    /**
+     * 내가 등록한 식당 목록 조회
+     * @param restaurantId
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/my-restaurants")
+    public BaseResponse<List<GetMyRestaurantsRes>> getMyRestaurants() {
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            List<GetMyRestaurantsRes> getMyRestaurantsRes = provider.getMyRestaurants(userId);
+
+            return new BaseResponse<>(getMyRestaurantsRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
 //    @ResponseBody
 //    @GetMapping("/{user_id}")
 //    public BaseResponse<GetRestaurantDetailRes> getMyRestaurant(@PathVariable("user_id") Integer userId) {
@@ -130,18 +148,7 @@ public class RestaurantController {
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostRestaurantRes> createRestaurant(@RequestBody PostRestaurantReq postRestaurantReq) {
-        // JWT 인증 필요.
-        // 인증이 성공했다면 isValidJWT = 1,
-        int isValidJWT = 1;
-        int userId = 1;
-
         // 작성자 ID가 넘어오지 않았을 경우, jwt 토큰을 통해서 userId에 작성자 ID를 넣어준다
-        if (postRestaurantReq.getUserId() == null){
-            // 토큰에서 추출한 값
-            if(isValidJWT == 1) {
-                postRestaurantReq.setUserId(userId);
-            }
-        }
         if(postRestaurantReq.getName() == null){
             return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
         }
@@ -152,7 +159,11 @@ public class RestaurantController {
             return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);
         }
         try{
-            PostRestaurantRes postRestaurantRes = service.createRestaurant(postRestaurantReq);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            PostRestaurantRes postRestaurantRes = service.createRestaurant(postRestaurantReq, userId);
             return new BaseResponse<>(postRestaurantRes);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -162,13 +173,12 @@ public class RestaurantController {
     @ResponseBody
     @DeleteMapping("/{restaurant_id}")
     public BaseResponse<String> deleteRestaurant(@PathVariable("restaurant_id") Integer restaurantId) {
-        // JWT 인증 필요.
-        // 인증이 성공했다면 isValidJWT = 1,
-        int isValidJWT = 1;
-        int userId = 1;
-
         try{
-            String result = service.deleteRestaurant(restaurantId);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            String result = service.deleteRestaurant(restaurantId, userId);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -177,31 +187,21 @@ public class RestaurantController {
     @ResponseBody
     @PutMapping("/{restaurant_id}")
     public BaseResponse<String> updateRestaurant(@PathVariable("restaurant_id") Integer restaurantId, @RequestBody PutRestaurantReq putRestaurantReq) {
-        // JWT 인증 필요.
-        // 인증이 성공했다면 isValidJWT = 1,
-        int isValidJWT = 1;
-        int userId = 1;
-
+        if(putRestaurantReq.getName() == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
+        }
+        if(putRestaurantReq.getAddress() == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS);
+        }
         try{
-            if (putRestaurantReq.getName() == null){
-                return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
-            if (putRestaurantReq.getAddress() == null){
-                return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS);
-            }
-            String result = service.updateRestaurant(restaurantId,putRestaurantReq);
+            String result = service.updateRestaurant(restaurantId,putRestaurantReq, userId);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
-    }
-
-    public List<GetRestaurantRes> round(List<GetRestaurantRes> element){
-        for(GetRestaurantRes res : element){
-            Double avg = Optional.ofNullable(Math.round(res.getRatingsAvg()*10)/10.0).get();
-            System.out.println(avg);
-            res.setRatingsAvg(avg);
-        }
-        return element;
     }
 }

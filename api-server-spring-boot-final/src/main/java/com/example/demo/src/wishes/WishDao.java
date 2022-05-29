@@ -2,7 +2,9 @@ package com.example.demo.src.wishes;
 
 import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
 import com.example.demo.src.restaurant.model.PutRestaurantReq;
+import com.example.demo.src.wishes.model.GetWishRes;
 import com.example.demo.src.wishes.model.GetWishRestaurantRes;
+import com.example.demo.src.wishes.model.PostWishRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +29,8 @@ public class WishDao {
                 "       ROUND((select avg(Rev.score) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE'),1)as ratingsAvg,\n" +
                 "       (select count(*) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE')as numReviews,\n" +
                 "       (select EXISTS(select id from wishes w2 where w2.user_id = ? and w2.status = 'ACTIVE' and w2.restaurant_id = R.id)) as isWish,\n" +
-                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl\n" +
+                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl,\n" +
+                "       w.memo\n" +
                 "from wishes w\n" +
                 "inner join restaurants R on w.restaurant_id = R.id\n" +
                 "where w.user_id = ? and w.status = 'ACTIVE'";
@@ -42,11 +45,18 @@ public class WishDao {
                         rs.getDouble(6),
                         rs.getInt(7),
                         rs.getInt(8),
+                        rs.getString(10),
                         rs.getString(9)), userId, targetUserId);
+
+        if(!targetUserId.equals(userId)){
+            for(GetWishRestaurantRes element : getWishRestaurantRes){
+                element.setMemo("");
+            }
+        }
         return getWishRestaurantRes;
     }
 
-    public int putMemo(Integer wishId, String memo) {
+    public int postMemo(Integer wishId, String memo) {
         String putMemoQuery = "UPDATE wishes w SET w.memo = ? WHERE w.id = ?";
         return jdbcTemplate.update(putMemoQuery, memo, wishId);
     }
@@ -71,11 +81,17 @@ public class WishDao {
         return jdbcTemplate.queryForObject(checkWishIdQuery, int.class, wishId);
     }
 
-    public int postWish(Integer restaurantId, Integer userId) {
+    public PostWishRes postWish(Integer restaurantId, Integer userId) {
         String postWishQuery = "insert into wishes(restaurant_id, status, created_at, updated_at, user_id, memo) " +
                 "values(?, 'ACTIVE', DEFAULT , DEFAULT , ?, null) ";
         Object[] queryParams = new Object[]{restaurantId, userId};
-        return jdbcTemplate.update(postWishQuery, queryParams);
+        int result = this.jdbcTemplate.update(postWishQuery, queryParams);
+
+        if(result == 0) return new PostWishRes(result, null);
+
+        String lastInsertQuery = "select id from wishes where restaurant_id = ? and user_id = ?";
+        int wishId = jdbcTemplate.queryForObject(lastInsertQuery,int.class, restaurantId, userId);
+        return new PostWishRes(result, wishId);
     }
 
     public int changeStatusToActive(int wishId){
@@ -88,20 +104,27 @@ public class WishDao {
         Object[] deleteWishParams = new Object[]{restaurantId, userId};
         return this.jdbcTemplate.update(deleteWishQuery, deleteWishParams);
     }
-
-    public int getWish(int wishId) {
-        String getWishQuery = "select exists (select * from wishes where id = ? and status = 'ACTIVE')";
-        return jdbcTemplate.queryForObject(getWishQuery, int.class, wishId);
-    }
     public int checkUser(int userIdx) {
         String checkUserQuery = "select exists (select * from users where id =? and status = 'ACTIVE') ";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, userIdx);
     }
 
     public int getUserIdFromWish(int wishId) {
-        String getUserIdFromWishQuery = "select user_id from wishes where id =? and status = 'ACTIVE'";
+        String getUserIdFromWishQuery = "select user_id from wishes where id = ? and status = 'ACTIVE'";
         Integer result = jdbcTemplate.queryForObject(getUserIdFromWishQuery, int.class, wishId);
         return result;
+    }
+    public GetWishRes getWish(int restaurantId, int userId) {
+        String getWishQuery = "select exists (select * from wishes where restaurant_id = ? and user_id = ? and status = 'ACTIVE')";
+        int result = jdbcTemplate.queryForObject(getWishQuery, int.class, restaurantId, userId);
+
+        if (result == 0) return new GetWishRes(0,null,null);
+
+        String getIdQuery = "select id from wishes where restaurant_id = ? and user_id = ? and status = 'ACTIVE'";
+        int wishId = jdbcTemplate.queryForObject(getIdQuery, int.class, restaurantId, userId);
+
+        return new GetWishRes(1,1,wishId);
+
     }
 
 }

@@ -1,28 +1,23 @@
-package com.example.demo.src.oauth;
+package com.example.demo.src.oauth.facebook;
 
 import com.example.demo.config.BaseException;
-import static com.example.demo.config.BaseResponseStatus.*;
-
-import com.example.demo.src.oauth.model.FacebookUser;
+import com.example.demo.src.oauth.facebook.model.FacebookUser;
 import com.example.demo.src.user.model.PostLoginRes;
+import com.example.demo.utils.JwtService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.demo.utils.JwtService;
-
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
 
-import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @Service
 public class OauthProvider {
