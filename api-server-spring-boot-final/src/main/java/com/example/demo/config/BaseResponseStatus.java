@@ -54,6 +54,7 @@ public enum BaseResponseStatus {
     COMMENTS_EMPTY_COMMENT(false, 2061, "댓글 내용을 입력해주세요"),
     COMMENTS_EMPTY_PARENT_USER_ID(false, 2062, "부모 댓글의 유저 아이디를 입력해주세요"),
     COMMENTS_EMPTY_COMMENT_ID(false, 2063, "댓글 아이디를 입력해주세요"),
+    REVIEWS_EMPTY_SCORE(false, 2064, "점수를 하나라도 입력해주세요"),
 
     OAUTH_FAIL_LOAD_FACEBOOK_USER_INFO(false,2081,"페이스북에서 유저 정보를 가져오는데 실패했습니다"),
     OAUTH_FAIL_LOAD_DATABASE_USER(false,2082,"DB에서 유저 정보를 가져오는데 실패했습니다"),
@@ -113,6 +114,8 @@ public enum BaseResponseStatus {
 
     WISHES_NOT_EXISTS_WISH(false, 3090, "존재하지 않은 가고싶다 항목입니다"),
     WISHES_NOT_ALLOWED_MEMO(false, 3091, "메모를 추가할 수 있는 권한이 없습니다"),
+
+    REVIEWS_NOT_EXISTS_TODAY_REVIEW(false, 3063, "오늘 작성한 소식이 없습니다."),
 
     /**
      * 4000 : Database, Server 오류

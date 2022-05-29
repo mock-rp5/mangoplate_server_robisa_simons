@@ -1,6 +1,5 @@
 package com.example.demo.src.review;
 
-import com.example.demo.src.comment.model.Comment;
 import com.example.demo.src.comment.model.GetCommentRes;
 import com.example.demo.src.comment.model.GetSubComment;
 import com.example.demo.src.review.model.*;
@@ -8,12 +7,11 @@ import com.example.demo.src.review.upload.UploadFile;
 import com.example.demo.src.visit.model.GetUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,10 +75,11 @@ public class ReviewDao {
 
     public List<String> getReviewImgURLs(int reviewId) {
         String getReviewImgQuery = "select img_url from images_review where review_id = ? and status = 'ACTIVE'";
-
+        List<String> imgUrls = new ArrayList<>();
         try {
-            return jdbcTemplate.query(getReviewImgQuery,
-                    (rs, rowNum) -> rs.toString(), reviewId);
+             jdbcTemplate.query(getReviewImgQuery,
+                    (rs, rowNum) -> imgUrls.add(rs.getString("img_url")), reviewId);
+             return imgUrls;
         }catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -229,6 +228,8 @@ public class ReviewDao {
         for(GetReviewRes review: getReviewRes) {
             review.setImgUrls(getReviewImgURLs(review.getId()));
             review.setComments(getComments(review.getId()));
+            review.setFollowCnt(getFollowCnt(userId));
+            review.setReviewCnt(getReviewCnt(userId));
         }
         return getReviewRes;
     }
@@ -289,7 +290,205 @@ public class ReviewDao {
         return jdbcTemplate.update(deleteReviewImgQuery, imgId);
     }
 
-    public GetReviewTodayRes getReviewToday(Integer userId) {
-        return null;
+    public GetNewsRes getReviewToday(Integer userId) {
+        String reviewTodayQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, \n" +
+                "U.profile_img_url, R.restaurant_id, RT.name , U.is_holic, R.updated_at \n" +
+                "from reviews as R\n" +
+                "join users as U\n" +
+                "on R.user_id = U.id \n" +
+                "join restaurants as RT \n" +
+                "on R.restaurant_id = RT.id\n" +
+                "join (select max(A.count + B.count), A.user_id as user_id\n" +
+                "from (select count(*) as count, user_id from reviews group by user_id) as A,\n" +
+                "(select count(*) as count, user_id from follows group by user_id) as B\n" +
+                "where A.user_id = B.user_id) as AB\n" +
+                "on AB.user_id = R.user_id\n" +
+                "where R.status = 'ACTIVE' and R.updated_at like ? order by R.updated_at DESC" +
+                "limit 1";
+
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        //String currentDate = now.format(formatter);
+       String currentDate = "2022-05-23";
+
+        try {
+            GetNewsRes getReviewTodayRes = jdbcTemplate.queryForObject(reviewTodayQuery,
+                    (rs, rowNum) -> new GetNewsRes(
+                            rs.getInt(1),
+                            rs.getInt(2),
+                            rs.getString(3),
+                            rs.getString(4),
+                            rs.getInt(5),
+                            rs.getString(6),
+                            rs.getInt(7),
+                            rs.getString(8),
+                            rs.getBoolean(9),
+                            rs.getString(10)
+                    ), currentDate+"%");
+
+            if(userId != 0) {
+                getReviewTodayRes.setWish(getWish(userId, getReviewTodayRes.getRestaurantId()));
+                getReviewTodayRes.setLike(getLike(userId, getReviewTodayRes.getReviewId()));
+            }
+            getReviewTodayRes.setFollowCnt(getFollowCnt(userId));
+            getReviewTodayRes.setReviewCnt(getReviewCnt(userId));
+            getReviewTodayRes.setImgUrls(getReviewImgURLs(getReviewTodayRes.getReviewId()));
+            getReviewTodayRes.setComments(getComments(getReviewTodayRes.getReviewId()));
+
+            return getReviewTodayRes;
+        }catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+
+    }
+
+    private Boolean getLike(Integer userId, Integer reviewId) {
+        String getLikeQuery = "select exists (select * from likes where user_id = ? and review_id = ? )";
+        return jdbcTemplate.queryForObject(getLikeQuery, Boolean.class, userId, reviewId);
+    }
+
+    private Boolean getWish(Integer userId, Integer restaurantId) {
+        String getWishQuery = "select exists (select * from wishes where user_id = ? and restaurant_id = ?)";
+        return jdbcTemplate.queryForObject(getWishQuery, Boolean.class, userId, restaurantId);
+    }
+
+    public List<GetNewsRes> getNews(Integer userId, List<Integer> scores) {
+        String getNewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
+                "U.profile_img_url, R.restaurant_id, RT.name , U.is_holic, date_format(R.updated_at, '%Y-%m-%d') " +
+                "from reviews as R " +
+                "join users as U " +
+                "on R.user_id = U.id  " +
+                "join restaurants as RT  " +
+                "on R.restaurant_id = RT.id " +
+                "where R.status = 'ACTIVE' and R.score IN(";
+
+        Object[] params = new Object[scores.size()];
+        for(int i=0; i<scores.size(); i++) {
+            params[i] = scores.get(i);
+            getNewsQuery+="?,";
+        }
+
+        getNewsQuery = getNewsQuery.substring(0, getNewsQuery.length()-1);
+        getNewsQuery+=") order by R.updated_at desc";
+
+        List<GetNewsRes> getNewsRes = jdbcTemplate.query(getNewsQuery,
+                (rs, rowNum) -> new GetNewsRes(
+                rs.getInt(1),
+                rs.getInt(2),
+                rs.getString(3),
+                rs.getString(4),
+                rs.getInt(5),
+                rs.getString(6),
+                rs.getInt(7),
+                rs.getString(8),
+                rs.getBoolean(9),
+                rs.getString(10)
+        ), params);
+
+        for(GetNewsRes news : getNewsRes) {
+            if (userId != 0) {
+                news.setWish(getWish(userId, news.getRestaurantId()));
+                news.setLike(getLike(userId, news.getReviewId()));
+            }
+            news.setFollowCnt(getFollowCnt(userId));
+            news.setReviewCnt(getReviewCnt(userId));
+            news.setImgUrls(getReviewImgURLs(news.getReviewId()));
+            news.setComments(getComments(news.getReviewId()));
+        }
+        return getNewsRes;
+    }
+
+    public List<GetNewsRes> getHolicNews(Integer userId, List<Integer> scores) {
+        String getNewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
+                "U.profile_img_url, R.restaurant_id, RT.name , U.is_holic, date_format(R.updated_at, '%Y-%m-%d') " +
+                "from reviews as R " +
+                "join users as U " +
+                "on R.user_id = U.id  " +
+                "join restaurants as RT  " +
+                "on R.restaurant_id = RT.id " +
+                "join (select * from follows where  follower_id= ?) as F " +
+                "on R.user_id = F.user_id " +
+                "where R.status = 'ACTIVE' and U.is_holic = 1 and R.score IN(";
+
+        Object[] params = new Object[scores.size()+1];
+        params[0] = userId;
+        for(int i=0; i<scores.size(); i++) {
+            params[i+1] = scores.get(i);
+            getNewsQuery+="?,";
+        }
+
+        getNewsQuery = getNewsQuery.substring(0, getNewsQuery.length()-1);
+        getNewsQuery+=") order by R.updated_at desc ";
+
+        List<GetNewsRes> getNewsRes = jdbcTemplate.query(getNewsQuery,
+                (rs, rowNum) -> new GetNewsRes(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getInt(7),
+                        rs.getString(8),
+                        rs.getBoolean(9),
+                        rs.getString(10)
+                ), params);
+
+        for(GetNewsRes news : getNewsRes) {
+            news.setWish(getWish(userId, news.getRestaurantId()));
+            news.setLike(getLike(userId, news.getReviewId()));
+            news.setFollowCnt(getFollowCnt(userId));
+            news.setReviewCnt(getReviewCnt(userId));
+            news.setImgUrls(getReviewImgURLs(news.getReviewId()));
+            news.setComments(getComments(news.getReviewId()));
+        }
+        return getNewsRes;
+    }
+
+    public List<GetNewsRes> getFollowNews(Integer userId, List<Integer> scores) {
+        String getNewsQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, " +
+                "U.profile_img_url, R.restaurant_id, RT.name , U.is_holic, date_format(R.updated_at, '%Y-%m-%d') " +
+                "from reviews as R " +
+                "join users as U " +
+                "on R.user_id = U.id  " +
+                "join restaurants as RT  " +
+                "on R.restaurant_id = RT.id " +
+                "join (select * from follows where  follower_id= ?) as F " +
+                "on R.user_id = F.user_id " +
+                "where R.status = 'ACTIVE' and R.score IN(";
+
+        Object[] params = new Object[scores.size()+1];
+        params[0] = userId;
+        for(int i=0; i<scores.size(); i++) {
+            params[i+1] = scores.get(i);
+            getNewsQuery+="?,";
+        }
+
+        getNewsQuery = getNewsQuery.substring(0, getNewsQuery.length()-1);
+        getNewsQuery+=") order by R.updated_at desc ";
+
+        List<GetNewsRes> getNewsRes = jdbcTemplate.query(getNewsQuery,
+                (rs, rowNum) -> new GetNewsRes(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getInt(7),
+                        rs.getString(8),
+                        rs.getBoolean(9),
+                        rs.getString(10)
+                ), params);
+
+        for(GetNewsRes news : getNewsRes) {
+            news.setWish(getWish(userId, news.getRestaurantId()));
+            news.setLike(getLike(userId, news.getReviewId()));
+            news.setFollowCnt(getFollowCnt(userId));
+            news.setReviewCnt(getReviewCnt(userId));
+            news.setImgUrls(getReviewImgURLs(news.getReviewId()));
+            news.setComments(getComments(news.getReviewId()));
+        }
+        return getNewsRes;
     }
 }
