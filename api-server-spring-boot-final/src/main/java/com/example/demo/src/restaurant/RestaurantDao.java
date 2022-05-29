@@ -27,7 +27,7 @@ public class RestaurantDao {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String orderOption) {
+    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String orderOption, Integer userId) {
             String getRestaurantQuery = "select R.id,\n" +
                     "       R.name,\n" +
                     "       rgn.name as regionName,\n" +
@@ -36,8 +36,11 @@ public class RestaurantDao {
                     "       R.longitude,\n" +
                     "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl,\n" +
                     "       (select count(*) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE')as numReviews,\n" +
-                    "       ROUND(D.distance,2)as distance,\n" +
-                    "       ROUND((select avg(Rev.score) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE'),1)as ratingsAvg\n" +
+                    "       ROUND(D.distance,2) as distance,\n" +
+                    "       ROUND((select avg(Rev.score) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE'),1)as ratingsAvg,\n" +
+                    "       R.view,\n" +
+                    "       (select exists(select * from wishes w where w.status = 'ACTIVE' and w.user_id = ? and w.restaurant_id = R.id))as isWishes,\n" +
+                    "       (select exists(select * from visits v where v.status = 'ACTIVE' and v.user_id = ? and v.restaurant_id = R.id))as isVisits\n" +
                     "       from restaurants as R\n" +
                     "        join (SELECT * FROM (\n" +
                     "                SELECT ( 6371 * acos( cos( radians( ?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id\n" +
@@ -48,7 +51,7 @@ public class RestaurantDao {
                     "       inner join categories_food cf on R.food_category = cf.id" +
                     "       where R.status = 'ACTIVE' and R.food_category in " + foodCategories +
                     "       order by " + orderOption;
-            Object[] params = new Object[] {latitude, longitude, latitude, range};
+            Object[] params = new Object[] {userId,userId,latitude, longitude, latitude, range};
             List<GetRestaurantRes> getRestaurantRes = this.jdbcTemplate.query(getRestaurantQuery,
                     (rs, rowNum) -> new GetRestaurantRes(
                             rs.getLong("id"),
@@ -60,12 +63,15 @@ public class RestaurantDao {
                             rs.getInt("numReviews"),
                             rs.getDouble("ratingsAvg"),
                             rs.getDouble("distance"),
+                            rs.getInt("isWishes"),
+                            rs.getInt("isVisits"),
+                            rs.getInt("view"),
                             rs.getString("imgUrl"))
             ,params );
             return getRestaurantRes;
     }
 
-    public List<GetRestaurantRes> getRestaurant(String regionCode, String foodCategories, String orderOption) {
+    public List<GetRestaurantRes> getRestaurant(String regionCode, String foodCategories, String orderOption, Integer userId) {
         System.out.println(regionCode);
         String getRestaurantQuery = "select R.id,\n" +
                 "       R.name,\n" +
@@ -75,13 +81,13 @@ public class RestaurantDao {
                 "       R.longitude,\n" +
                 "       (select count(*) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE')as numReviews,\n" +
                 "       ROUND((select avg(Rev.score) from reviews Rev where Rev.restaurant_id = R.id and Rev.status = 'ACTIVE'),1)as ratingsAvg,\n" +
-                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl\n" +
-                "       from restaurants as R\n" +
-                "        inner join regions rgn on R.region = rgn.id\n" +
-                "inner join categories_food cf on R.food_category = cf.id\n" +
+                "       R.view,\n" +
+                "       (select exists(select * from wishes w where w.status = 'ACTIVE' and w.user_id = ? and w.restaurant_id = R.id))as isWishes,\n" +
+                "       (select exists(select * from visits v where v.status = 'ACTIVE' and v.user_id = ? and v.restaurant_id = R.id))as isVisits,\n" +
+                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl" +
                 "where R.status = 'ACTIVE' and R.food_category in "+ foodCategories + "and R.region in " + regionCode +
                 " order by " + orderOption;
-
+        Object[] params = new Object[] {userId,userId};
         List<GetRestaurantRes> getRestaurantRes = this.jdbcTemplate.query(getRestaurantQuery,
                 (rs, rowNum) -> new GetRestaurantRes(
                         rs.getLong("id"),
@@ -92,7 +98,10 @@ public class RestaurantDao {
                         rs.getDouble("longitude"),
                         rs.getInt("numReviews"),
                         rs.getDouble("ratingsAvg"),
-                        rs.getString("imgUrl")));
+                        rs.getInt("isWishes"),
+                        rs.getInt("isVisits"),
+                        rs.getInt("view"),
+                        rs.getString("imgUrl")),params);
     System.out.println(getRestaurantRes.size());
     System.out.println(getRestaurantRes.toString());
         return getRestaurantRes;

@@ -27,9 +27,12 @@ public class RestaurantProvider {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String sortOption) throws BaseException {
+    public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String sortOption, Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
-            List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(latitude, longitude, foodCategories, range, sortOptionToQuery(sortOption));
+            List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(latitude, longitude, foodCategories, range, sortOptionToQuery(sortOption), userId);
             return getRestaurantRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
@@ -37,9 +40,12 @@ public class RestaurantProvider {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public List<GetRestaurantRes> getRestaurant(List<Integer> regionCode, String foodCategories, String sortOption) throws BaseException {
+    public List<GetRestaurantRes> getRestaurant(List<Integer> regionCode, String foodCategories, String sortOption, Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
-            List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(regionCode.toString().replace("[", "(").replace("]", ")"), foodCategories, sortOptionToQuery(sortOption));
+            List<GetRestaurantRes> getRestaurantRes = dao.getRestaurant(regionCode.toString().replace("[", "(").replace("]", ")"), foodCategories, sortOptionToQuery(sortOption), userId);
             return getRestaurantRes;
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

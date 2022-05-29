@@ -28,18 +28,16 @@ public class FollowController {
     @GetMapping("")
     @ResponseBody
     public BaseResponse<Integer> getFollowStatus(@RequestParam(value = "followee-id") Integer followeeId) throws BaseException {
+        Integer userId = 1;
         if(followeeId == null) {
             return new BaseResponse<>(FOLLOWS_EMPTY_FOLLOWEE_ID);
         }
-        Integer userId = 1;
+        if(userId == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
         try {
 //            Integer userId = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-
-            if(userId == null) {
-                return new BaseResponse<>(USERS_EMPTY_USER_ID);
-            }
-
             Integer result = provider.checkFollowed(userId, followeeId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {
@@ -51,18 +49,16 @@ public class FollowController {
     @PostMapping("")
     @ResponseBody
     public BaseResponse<Integer> followUser(@RequestParam(value = "followee-id") Integer followeeId) throws BaseException {
+        Integer userId = 1;
         if(followeeId == null) {
             return new BaseResponse<>(FOLLOWS_EMPTY_FOLLOWEE_ID);
         }
-        Integer userId = 1;
+        if(userId == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
         try {
 //            Integer userId = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-
-            if(userId == null) {
-                return new BaseResponse<>(USERS_EMPTY_USER_ID);
-            }
-
             Integer result = service.followUser(userId, followeeId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {
@@ -74,18 +70,16 @@ public class FollowController {
     @DeleteMapping("")
     @ResponseBody
     public BaseResponse<Integer> unFollowUser(@RequestParam(value = "followee-id") Integer followeeId) throws BaseException {
+        Integer userId = 1;
         if(followeeId == null) {
             return new BaseResponse<>(FOLLOWS_EMPTY_FOLLOWEE_ID);
         }
-        Integer userId = 1;
+        if(userId == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
         try {
 //            Integer userId = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
-
-            if(userId == null) {
-                return new BaseResponse<>(USERS_EMPTY_USER_ID);
-            }
-
             Integer result = service.unfollowUser(userId, followeeId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {

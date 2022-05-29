@@ -52,18 +52,23 @@ public class RestaurantController {
 //                food-category 형식상의 validation 필요.
 //         region code가 null일때, 전체지역으로 생각해야함. 전체지역도 코드를 부여하자!
         try {
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+
             List<GetRestaurantRes> getRestaurantRes;
 
             // 위도와 경도가 들어오면 사용자가 위치 정보 사용을 동의했다고 가정.
             if (latitude != null && longitude != null) {
                 getRestaurantRes = provider.getRestaurant(latitude, longitude,
-                        foodCategories.toString().replace("[", "(").replace("]", ")"), range, sortOption);
+                        foodCategories.toString().replace("[", "(").replace("]", ")"), range, sortOption, userId);
 
                 return new BaseResponse<>(getRestaurantRes);
             }
             // 지역코드가 들어오면 사용자가 임의로 지역을 설정하여 검색
             else if (regionCode != null) {
-                getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"),sortOption);
+                getRestaurantRes = provider.getRestaurant(regionCode, foodCategories.toString().replace("[", "(").replace("]", ")"),sortOption, userId);
                 return new BaseResponse<>(getRestaurantRes);// 사용자의 위도 경도 정보가 없을 경우, 에러 발생
             }
             // 사용자의 위도 경도 정보와 지역 정보도 없을 경우, 에러 발생

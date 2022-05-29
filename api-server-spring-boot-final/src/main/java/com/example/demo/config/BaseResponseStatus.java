@@ -83,6 +83,9 @@ public enum BaseResponseStatus {
     LIKES_ALREADY_LIKED_REVIEW(false, 2121, "이미 좋아요 상태인 리뷰입니다"),
     LIKES_ALREADY_CANCELED_LIKE(false, 2122, "이미 좋아요 취소 상태인 리뷰입니다"),
 
+    BOOKMARKS_EMPTY_CONTENT_TYPE(false, 2130, "북마크할 컨텐츠 유형을 입력해주세요"),
+    BOOKMARKS_EMPTY_CONTENT_ID(false, 2131, "북마크할 컨텐츠 아이디를 입력해주세요"),
+    BOOKMARKS_CONTENT_TYPE_INVALID_FORM(false, 2132, "잘못된 컨텐츠 유형 형식입니다"),
 
     /**
      * 3000 : Response 오류
@@ -114,6 +117,9 @@ public enum BaseResponseStatus {
     WISHES_NOT_EXISTS_WISH(false, 3090, "존재하지 않은 가고싶다 항목입니다"),
     WISHES_NOT_ALLOWED_MEMO(false, 3091, "메모를 추가할 수 있는 권한이 없습니다"),
 
+    BOOKMARKS_NOT_EXISTS_CONTENT(false, 3100, "존재하지 않은 컨텐츠입니다"),
+    BOOKMARKS_ALREADY_BOOKMARKED(false, 3101, "이미 북마크한 컨텐츠입니다"),
+    BOOKMARKS_ALREADY_UNMARKED(false, 3102, "이미 북마크 해제한 컨텐츠입니다"),
     /**
      * 4000 : Database, Server 오류
      */

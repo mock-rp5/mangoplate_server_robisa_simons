@@ -23,19 +23,19 @@ public class BookmarkService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Integer postLike(int userId, int reviewId) throws BaseException {
-        if(provider.checkReviewId(reviewId) == 0) {
-            throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
+    public Integer postBookmark(int userId, String contentsType, int contentsId) throws BaseException {
+        if(provider.checkContentId(contentsType, contentsId) == 0) {
+            throw new BaseException(BOOKMARKS_NOT_EXISTS_CONTENT);
         }
-        if(provider.checkLiked(userId,reviewId) == 1) {
-            throw new BaseException(LIKES_ALREADY_LIKED_REVIEW);
+        if(provider.checkBookmarked(userId, contentsType, contentsId) == 1) {
+            throw new BaseException(BOOKMARKS_ALREADY_BOOKMARKED);
         }
 
         try {
-            if(provider.checkCanceledLike(userId, reviewId) == 0)
-                return dao.createRelation(userId,reviewId);
+            if(provider.checkUnmarked(userId, contentsType, contentsId) == 0)
+                return dao.createBookmark(userId, contentsType, contentsId);
             else
-                return dao.postLike(userId,reviewId);
+                return dao.postBookmark(userId, contentsType, contentsId);
         }catch (Exception e) {
             System.out.println(e.getMessage());
             System.out.println(e.toString());
@@ -43,16 +43,16 @@ public class BookmarkService {
         }
     }
     @Transactional(rollbackFor = Exception.class)
-    public Integer cancelLike(int userId, int reviewId) throws BaseException {
-        if(provider.checkReviewId(reviewId) == 0) {
-            throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
+    public Integer cancelBookmark(int userId, String contentsType, int contentsId) throws BaseException {
+        if(provider.checkContentId(contentsType, contentsId) == 0) {
+            throw new BaseException(BOOKMARKS_NOT_EXISTS_CONTENT);
         }
-        if(provider.checkCanceledLike(userId,reviewId) == 1) {
-            throw new BaseException(LIKES_ALREADY_CANCELED_LIKE);
+        if(provider.checkUnmarked(userId, contentsType, contentsId) == 1) {
+            throw new BaseException(BOOKMARKS_ALREADY_UNMARKED);
         }
 
         try {
-            return dao.cancelLike(userId,reviewId);
+            return dao.cancelBookmark(userId, contentsType, contentsId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
