@@ -84,8 +84,11 @@ public class RestaurantDao {
                 "       R.view,\n" +
                 "       (select exists(select * from wishes w where w.status = 'ACTIVE' and w.user_id = ? and w.restaurant_id = R.id))as isWishes,\n" +
                 "       (select exists(select * from visits v where v.status = 'ACTIVE' and v.user_id = ? and v.restaurant_id = R.id))as isVisits,\n" +
-                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl" +
-                "where R.status = 'ACTIVE' and R.food_category in "+ foodCategories + "and R.region in " + regionCode +
+                "       (select i.img_url from images_restaurant i where i.restaurant_id = R.id limit 1 )as imgUrl\n" +
+                "from restaurants as R\n" +
+                "inner join regions rgn on R.region = rgn.id\n" +
+                "inner join categories_food cf on R.food_category = cf.id" +
+                " where R.status = 'ACTIVE' and R.food_category in "+ foodCategories + "and R.region in " + regionCode +
                 " order by " + orderOption;
         Object[] params = new Object[] {userId,userId};
         List<GetRestaurantRes> getRestaurantRes = this.jdbcTemplate.query(getRestaurantQuery,
@@ -102,76 +105,10 @@ public class RestaurantDao {
                         rs.getInt("isVisits"),
                         rs.getInt("view"),
                         rs.getString("imgUrl")),params);
-    System.out.println(getRestaurantRes.size());
-    System.out.println(getRestaurantRes.toString());
+        System.out.println(getRestaurantRes.size());
+        System.out.println(getRestaurantRes.toString());
         return getRestaurantRes;
     }
-//    /*
-//    * 평점 계산 함수
-//    * Params : 레스토랑 ID
-//    * Return : Double 평점
-//    * */
-//    public Double calculateRatings(Long restaurantId){
-//        try {
-//            String calculateRatingsQuery = "select avg(score)as ratingsAvg\n" +
-//                    "from reviews\n" +
-//                    "where restaurant_id = ? and status = 'ACTIVE'\n" +
-//                    "group by restaurant_id";
-//            Long calculateRatingsParams = restaurantId;
-//            Double ratingsAvg = this.jdbcTemplate.queryForObject(calculateRatingsQuery, Double.class, calculateRatingsParams);
-//            return ratingsAvg;
-//        } catch (EmptyResultDataAccessException e) {
-//            return 3.0;
-//        }
-//    }
-//    /*
-//     * 거리 계산 함수
-//     * Params : latUser - 유저 위도,
-//     *          longUser - 유저 경도,
-//     *          latRstr - 레스토랑 위도,
-//     *          latRstr - 레스토랑 경도,
-//     *          unit - 거리 단위 ( kilometer / meter )
-//     * Return : Double - 거리
-//     * */
-//    public Double calculateDistance(Double latUser, Double longUser, Double latRstr, Double longRstr, String unit){
-//
-//        double theta = longUser - longRstr;
-//        double dist = Math.sin(deg2rad(latUser)) * Math.sin(deg2rad(latRstr)) + Math.cos(deg2rad(latUser)) * Math.cos(deg2rad(latRstr)) * Math.cos(deg2rad(theta));
-//
-//        dist = Math.acos(dist);
-//        dist = rad2deg(dist);
-//        dist = dist * 60 * 1.1515;
-//
-//        if (unit == "kilometer") {
-//            dist = dist * 1.609344;
-//        } else if(unit == "meter"){
-//            dist = dist * 1609.344;
-//        }
-//
-//        return dist;
-//    }
-//
-//    /*
-//     * 거리 계산 함수를 위한 반위 변경 함수
-//     * degrees -> radians
-//     *
-//     * Params : deg - 각도,
-//     * Return : Double - 거리
-//     * */
-//    private static double deg2rad(double deg) {
-//        return (deg * Math.PI / 180.0);
-//    }
-//
-//    /*
-//     * 거리 계산 함수를 위한 단위 변경 함수
-//     * radians -> degrees
-//     *
-//     * Params : rad - 라디언,
-//     * Return : Double - 거리
-//     * */
-//    private static double rad2deg(double rad) {
-//        return (rad * 180 / Math.PI);
-//    }
 
     public int checkRestaurantId(int restaurantId) {
         String checkRestaurantQuery = "select exists (select * from restaurants where id = ? and status = 'ACTIVE')";
