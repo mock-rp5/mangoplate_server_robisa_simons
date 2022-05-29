@@ -1,19 +1,13 @@
 package com.example.demo.src.restaurant;
 
 import com.example.demo.config.BaseException;
-import com.example.demo.config.BaseResponse;
-import com.example.demo.src.restaurant.model.GetRestaurantRes;
+import com.example.demo.src.restaurant.model.PutRestaurantReq;
 import com.example.demo.src.restaurant.model.PostRestaurantReq;
 import com.example.demo.src.restaurant.model.PostRestaurantRes;
-import com.example.demo.src.restaurant.model.PutRestaurantReq;
-import com.example.demo.src.user.model.PostUserRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 

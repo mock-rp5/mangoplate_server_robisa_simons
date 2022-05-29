@@ -1,12 +1,9 @@
 package com.example.demo.src.bookmark;
 
 import com.example.demo.src.bookmark.model.GetBookmarkCountRes;
-import com.example.demo.src.restaurant.model.GetRestaurantRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public class BookmarkDao {

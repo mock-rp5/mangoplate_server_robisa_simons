@@ -1,16 +1,12 @@
 package com.example.demo.src.wishes;
 
-import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
-import com.example.demo.src.restaurant.model.PutRestaurantReq;
 import com.example.demo.src.wishes.model.GetWishRestaurantRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.security.PublicKey;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class WishDao {

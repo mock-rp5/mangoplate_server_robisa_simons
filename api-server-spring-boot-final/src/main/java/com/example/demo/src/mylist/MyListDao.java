@@ -1,7 +1,6 @@
 package com.example.demo.src.mylist;
 
 import com.example.demo.src.mylist.model.*;
-import com.example.demo.src.restaurant.model.PostRestaurantRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

@@ -92,6 +92,10 @@ public enum BaseResponseStatus {
     REPORTS_EMPTY_REASON(false, 2042, "신고 사유 입력해주세요"),
     USER_ID_SAME_REPORT_USER_ID(false, 2043, "신고하는 유저와 리뷰 작성 유저와 동일합니다"),
 
+
+    SEARCH_EMPTY_KEYWORD(false, 2050, "조회 키워드를 입력해주세요"),
+    SEARCH_EMPTY_LATITUDE(false, 2051, "위도를 입력해주세요"),
+    SEARCH_EMPTY_LONGITUDE(false, 2052, "경도를 입력해주세요"),
     /**
      * 3000 : Response 오류
      */
