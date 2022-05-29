@@ -59,6 +59,11 @@ public class LikeController {
         try {
 //            Integer userId = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
+
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+
             Integer result = service.postLike(userId, reviewId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {

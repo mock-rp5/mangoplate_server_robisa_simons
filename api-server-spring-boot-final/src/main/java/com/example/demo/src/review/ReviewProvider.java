@@ -3,7 +3,7 @@ package com.example.demo.src.review;
 import com.example.demo.config.BaseException;
 import com.example.demo.src.review.model.GetReviewImageRes;
 import com.example.demo.src.review.model.GetReviewRes;
-import com.example.demo.src.review.model.GetReviewTodayRes;
+import com.example.demo.src.review.model.GetNewsRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,14 +103,58 @@ public class ReviewProvider {
         }
     }
 
-    public GetReviewTodayRes getReviewTodayRes(Integer userId) throws BaseException {
-        if(checkUser(userId) == 0) {
+    public GetNewsRes getReviewTodayRes(Integer userId) throws BaseException {
+        if(userId != 0) {
+            if (checkUser(userId) == 0) {
+                throw new BaseException(USERS_NOT_EXISTS_USER);
+            }
+        }
+        try {
+            GetNewsRes getReviewTodayRes = dao.getReviewToday(userId);
+            return getReviewTodayRes;
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetNewsRes> getNews(Integer userId, List<Integer> scores) throws BaseException {
+        if(userId != 0) {
+            if (checkUser(userId) == 0) {
+                throw new BaseException(USERS_NOT_EXISTS_USER);
+            }
+        }
+        try {
+            List<GetNewsRes> getNewsRes = dao.getNews(userId, scores);
+            return getNewsRes;
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetNewsRes> getHolicNews(Integer userId, List<Integer> scores) throws BaseException {
+        if (checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
         try {
-            GetReviewTodayRes getReviewTodayRes = dao.getReviewToday(userId);
-            return getReviewTodayRes;
+            List<GetNewsRes> getHolicNews = dao.getHolicNews(userId, scores);
+            return getHolicNews;
         }catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetNewsRes> getFollowNews(Integer userId, List<Integer> scores) throws BaseException {
+        if (checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            List<GetNewsRes> getFollowNews = dao.getFollowNews(userId, scores);
+            return getFollowNews;
+        }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

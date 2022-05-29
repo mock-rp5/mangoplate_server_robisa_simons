@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,22 +40,87 @@ public class ReviewController {
 
     @GetMapping("/today")
     @ResponseBody
-    public BaseResponse<GetReviewTodayRes> getTodayReview() {
+    public BaseResponse<GetNewsRes> getTodayReview(@RequestHeader(value = "X-ACCESS-TOKEN", required = false) String jwt) {
+        try{
+            Integer userId = 0;
+
+            if(jwt !=null){
+                userId = jwtService.getUserIdx();
+            }
+
+            GetNewsRes getReviewTodayRes = provider.getReviewTodayRes(userId);
+
+            if(getReviewTodayRes == null) {
+                return new BaseResponse<>(REVIEWS_NOT_EXISTS_TODAY_REVIEW);
+            }
+            return new BaseResponse<>(getReviewTodayRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @GetMapping()
+    @ResponseBody
+    public BaseResponse<List<GetNewsRes>> getNews(@RequestHeader(value = "X-ACCESS-TOKEN", required = false) String jwt,
+                                                  @RequestParam(value = "score", required = false) List<Integer> scores) {
+        if(scores == null||scores.isEmpty()) {
+            return new BaseResponse<>(REVIEWS_EMPTY_SCORE);
+        }
+        try{
+            Integer userId = 0;
+
+            if(jwt !=null){
+                userId = jwtService.getUserIdx();
+            }
+
+            List<GetNewsRes> getNewsRes = provider.getNews(userId, scores);
+
+            if(getNewsRes == null) {
+                return new BaseResponse<>(REVIEWS_NOT_EXISTS_TODAY_REVIEW);
+            }
+            return new BaseResponse<>(getNewsRes);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @GetMapping("/holic")
+    @ResponseBody
+    public BaseResponse<List<GetNewsRes>> getNewsByHolic(@RequestParam("score") List<Integer> scores) {
+        if(scores == null||scores.isEmpty()) {
+            return new BaseResponse<>(REVIEWS_EMPTY_SCORE);
+        }
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
-            GetReviewTodayRes getReviewTodayRes = provider.getReviewTodayRes(userId);
-            return new BaseResponse<>(getReviewTodayRes);
+            List<GetNewsRes> getHolicNews = provider.getHolicNews(userId, scores);
+            return new BaseResponse<>(getHolicNews);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
-
-
     }
 
-    @GetMapping()
+    @GetMapping("/follow")
+    @ResponseBody
+    public BaseResponse<List<GetNewsRes>> getNewsByFollow(@RequestParam("score") List<Integer> scores) {
+        if(scores == null||scores.isEmpty()) {
+            return new BaseResponse<>(REVIEWS_EMPTY_SCORE);
+        }
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            List<GetNewsRes> getFollowNews = provider.getFollowNews(userId, scores);
+            return new BaseResponse<>(getFollowNews);
+        }catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+    }
+
+    @GetMapping("/user")
     @ResponseBody
     public BaseResponse<List<GetReviewRes>> getReviewByUser() {
         try{

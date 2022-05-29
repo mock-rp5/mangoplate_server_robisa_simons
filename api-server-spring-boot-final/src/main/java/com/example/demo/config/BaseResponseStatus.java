@@ -54,6 +54,7 @@ public enum BaseResponseStatus {
     COMMENTS_EMPTY_COMMENT(false, 2061, "댓글 내용을 입력해주세요"),
     COMMENTS_EMPTY_PARENT_USER_ID(false, 2062, "부모 댓글의 유저 아이디를 입력해주세요"),
     COMMENTS_EMPTY_COMMENT_ID(false, 2063, "댓글 아이디를 입력해주세요"),
+    REVIEWS_EMPTY_SCORE(false, 2064, "점수를 하나라도 입력해주세요"),
 
     OAUTH_FAIL_LOAD_FACEBOOK_USER_INFO(false,2081,"페이스북에서 유저 정보를 가져오는데 실패했습니다"),
     OAUTH_FAIL_LOAD_DATABASE_USER(false,2082,"DB에서 유저 정보를 가져오는데 실패했습니다"),
@@ -86,6 +87,10 @@ public enum BaseResponseStatus {
     BOOKMARKS_EMPTY_CONTENT_TYPE(false, 2130, "북마크할 컨텐츠 유형을 입력해주세요"),
     BOOKMARKS_EMPTY_CONTENT_ID(false, 2131, "북마크할 컨텐츠 아이디를 입력해주세요"),
     BOOKMARKS_CONTENT_TYPE_INVALID_FORM(false, 2132, "잘못된 컨텐츠 유형 형식입니다"),
+    REPORTS_EMPTY_USER_ID(false, 2040, "유저 아이디를 입력해주세요"),
+    REPORTS_EMPTY_EMAIL(false, 2041, "이메일을 입력해주세요"),
+    REPORTS_EMPTY_REASON(false, 2042, "신고 사유 입력해주세요"),
+    USER_ID_SAME_REPORT_USER_ID(false, 2043, "신고하는 유저와 리뷰 작성 유저와 동일합니다"),
 
     /**
      * 3000 : Response 오류
@@ -120,6 +125,10 @@ public enum BaseResponseStatus {
     BOOKMARKS_NOT_EXISTS_CONTENT(false, 3100, "존재하지 않은 컨텐츠입니다"),
     BOOKMARKS_ALREADY_BOOKMARKED(false, 3101, "이미 북마크한 컨텐츠입니다"),
     BOOKMARKS_ALREADY_UNMARKED(false, 3102, "이미 북마크 해제한 컨텐츠입니다"),
+    REVIEWS_NOT_EXISTS_TODAY_REVIEW(false, 3063, "오늘 작성한 소식이 없습니다."),
+
+    REPORTS_NOT_EXISTS_REVIEW_USERS(false, 3083, "리뷰 작성자가 존재하지 않습니다."),
+
     /**
      * 4000 : Database, Server 오류
      */
@@ -141,12 +150,9 @@ public enum BaseResponseStatus {
     REVIEWS_UPDATE_FAIL(false, 4031, "리뷰 수정에 실패했습니다"),
     REVIEWS_DELETE_FAIL(false, 4032, "리뷰 삭제에 실패했습니다"),
     REVIEW_DELETE_IMG_FAIL(false, 4033, "리뷰 이미지 삭제에 실패했습니다."),
-    MYLISTS_DELETE_FAIL(false, 4056, "마이리스트 삭제에 실패했습니다");
+    MYLISTS_DELETE_FAIL(false, 4056, "마이리스트 삭제에 실패했습니다"),
 
-
-
-
-
+    REPORT_CREATE_FAIL(false, 4070, "리뷰 신고 실패하셨습니다.");
 
 
 
