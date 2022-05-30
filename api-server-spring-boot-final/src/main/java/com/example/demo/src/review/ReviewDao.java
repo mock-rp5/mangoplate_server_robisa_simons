@@ -75,10 +75,16 @@ public class ReviewDao {
 
     public List<String> getReviewImgURLs(int reviewId) {
         String getReviewImgQuery = "select img_url from images_review where review_id = ? and status = 'ACTIVE'";
-        List<String> imgUrls = new ArrayList<>();
+        //List<String> imgUrls = new ArrayList<>();
         try {
-             jdbcTemplate.query(getReviewImgQuery,
-                    (rs, rowNum) -> imgUrls.add(rs.getString("img_url")), reviewId);
+             //jdbcTemplate.query(getReviewImgQuery,
+                   // (rs, rowNum) -> imgUrls.add(rs.getString("img_url")), reviewId);
+             List<String> imgUrls =  jdbcTemplate.query(getReviewImgQuery,
+                     (rs, rowNum) -> rs.getString("img_url"), reviewId);
+
+             if(imgUrls.isEmpty()) {
+                 return null;
+             }
              return imgUrls;
         }catch (EmptyResultDataAccessException e) {
             return null;

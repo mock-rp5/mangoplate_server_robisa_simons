@@ -178,7 +178,7 @@ public class RestaurantDao {
                 "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.id = ?";
+                "where R.id = ? and R.status ='ACTIVE' ";
 
         List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewsQuery,
                 (rs, rowNum) -> new GetReviewRes(
