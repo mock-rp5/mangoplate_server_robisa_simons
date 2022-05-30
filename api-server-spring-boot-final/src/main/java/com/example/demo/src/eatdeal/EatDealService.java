@@ -28,8 +28,8 @@ public class EatDealService {
         if(provider.checkRestaurant(postEatDealReq.getRestaurantId()) == 0) {
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         }
-        if(provider.checkMenu(postEatDealReq.getMenuId())==0) {
-            throw new BaseException(MENUS_NOT_EXISTS_MENU);
+        if(provider.checkMenu(postEatDealReq.getEatDealId())==0) {
+            throw new BaseException(EAT_DEALS_NOT_EXISTS);
         }
         try {
             PostEatDealRes postEatDealRes = new PostEatDealRes(dao.orderEatDeal(userId, postEatDealReq));

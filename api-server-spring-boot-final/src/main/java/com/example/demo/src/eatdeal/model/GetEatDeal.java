@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GetEatDeal {
+
     private int restaurantId;
     private String restaurantName;
     private String restaurantDesc;

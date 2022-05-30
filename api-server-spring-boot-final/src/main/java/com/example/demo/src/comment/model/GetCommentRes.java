@@ -19,9 +19,10 @@ public class GetCommentRes {
     private List<GetSubComment> subComments;
     private boolean isHolic;
     private String updated_at;
+    private String profileImg;
 
 
-    public GetCommentRes(Integer id, int userId, String userName, String content, int order, boolean isHolic, String updated_at) {
+    public GetCommentRes(Integer id, int userId, String userName, String content, int order, boolean isHolic, String updated_at, String profileImg) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
@@ -29,5 +30,6 @@ public class GetCommentRes {
         this.order = order;
         this.isHolic = isHolic;
         this.updated_at = updated_at;
+        this.profileImg = profileImg;
     }
 }

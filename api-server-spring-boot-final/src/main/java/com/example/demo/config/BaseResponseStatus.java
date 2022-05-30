@@ -37,7 +37,7 @@ public enum BaseResponseStatus {
     KAKAO_LOGOUT_FAIL(false, 2022, "카카오 로그아웃 실패"),
 
     RESTAURANTS_EMPTY_RESTAURANT_ID(false, 2030, "식당 아이디 값을 확인해주세요"),
-    MENUS_EMPTY_MENU_ID(false, 2031, "메뉴 아이디 값을 확인해주세요"),
+    MENUS_EMPTY_EAT_DEAL_ID(false, 2031, "잇딜 아이디 값을 확인해주세요"),
 
     RESTAURANTS_EMPTY_USER_LOCATION_INFO(false, 2031, "사용자의 위도 경도 값을 입력해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_NAME(false, 2032, "식당 이름 값을 확인해주세요"),
@@ -115,6 +115,7 @@ public enum BaseResponseStatus {
     RESTAURANTS_VIEW_INCREASE_FAIL(false, 3031, "조회수 증가 실패했습니다"),
 
     MENUS_NOT_EXISTS_MENU(false, 3032, "존재하지 않은 메뉴입니다."),
+    EAT_DEALS_NOT_EXISTS(false, 3033, "존재하지 않은 잇딜입니다."),
 
     REVIEWS_NOT_EXISTS_REVIEW(false, 3040, "존재하지 않은 리뷰입니다."),
     REVIEWS_NOT_EXISTS_IMG(false, 3041, "존재하지 않은 이미지 입니다."),

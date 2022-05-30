@@ -178,7 +178,7 @@ public class RestaurantDao {
                 "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.id = ?";
+                "where R.id = ? and R.status ='ACTIVE' ";
 
         List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewsQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -223,7 +223,7 @@ public class RestaurantDao {
     }
 
     public List<String> getReviewImgURLs(int reviewId) {
-        String getReviewImgQuery = "select img_url from images_review where review_id = ?";
+        String getReviewImgQuery = "select img_url from images_review where review_id = ? and status ='ACTIVE'";
         List<String> imgUrls = new ArrayList<>();
 
         jdbcTemplate.query(getReviewImgQuery,
@@ -232,7 +232,7 @@ public class RestaurantDao {
     }
 
     public List<GetCommentRes> getComments(int reviewId) {
-        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.is_holic, date_format(C.updated_at, '%Y-%m-%d')" +
+        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.is_holic, date_format(C.updated_at, '%Y-%m-%d'), U.profile_img_url " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id and C.review_id = ? " +
@@ -247,7 +247,8 @@ public class RestaurantDao {
                         rs.getString(4),
                         rs.getInt(5),
                         rs.getBoolean(6),
-                        rs.getString(7)
+                        rs.getString(7),
+                        rs.getString(8)
                 ), reviewId);
 
         for(GetCommentRes comment : getCommentRes) {
@@ -258,11 +259,11 @@ public class RestaurantDao {
     }
 
     private List<GetSubComment> getSubComments(int groupNum) {
-        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order` " +
+        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id " +
-                "where level > 1 and group_num = ? " +
+                "where level > 1 and group_num = ? and status = 'ACTIVE' " +
                 "order by `order` asc, level asc ";
 
         return jdbcTemplate.query(getSubComments,
@@ -271,7 +272,8 @@ public class RestaurantDao {
                         rs.getInt(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getInt(5)
+                        rs.getInt(5),
+                        rs.getString(6)
                 ), groupNum);
     }
 

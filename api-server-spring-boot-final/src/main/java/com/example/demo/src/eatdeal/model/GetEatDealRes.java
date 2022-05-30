@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class GetEatDealRes {
+    private int eatDealId;
     private int restaurantId;
     private String restaurantName;
     private String[] restaurantDesc;
@@ -29,7 +30,8 @@ public class GetEatDealRes {
     private Double latitude;
     private Double longitude;
 
-    public GetEatDealRes(int restaurantId, String restaurantName, int price, int discountRate, String startDate, String endDate, String menuName, Integer expiredDate, List<String> imgUrls,Double latitude, Double longitude) {
+    public GetEatDealRes(int eatDealId, int restaurantId, String restaurantName, int price, int discountRate, String startDate, String endDate, String menuName, Integer expiredDate, List<String> imgUrls,Double latitude, Double longitude) {
+        this.eatDealId = eatDealId;
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
         this.price = price;
