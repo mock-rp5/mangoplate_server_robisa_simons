@@ -218,7 +218,7 @@ public class RestaurantDao {
     }
 
     public Float getRestaurantScore(int restaurantId) {
-        String getScoreQuery = "select avg(score) from reviews where restaurant_id = ? and status = 'ACTIVE'";
+        String getScoreQuery = "select ifNull(avg(score),0) from reviews where restaurant_id = ? and status = 'ACTIVE'";
         return jdbcTemplate.queryForObject(getScoreQuery, Float.class, restaurantId);
     }
 
