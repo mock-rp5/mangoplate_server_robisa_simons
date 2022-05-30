@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class PostEatDealReq {
     private Integer restaurantId;
-    private Integer menuId;
+    private Integer eatDealId;
 }

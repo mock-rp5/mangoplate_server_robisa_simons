@@ -79,8 +79,8 @@ public class EatDealController {
         if(postEatDealReq.getRestaurantId() == null) {
             return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         }
-        if(postEatDealReq.getMenuId() == null) {
-            return new BaseResponse<>(MENUS_EMPTY_MENU_ID);
+        if(postEatDealReq.getEatDealId() == null) {
+            return new BaseResponse<>(MENUS_EMPTY_EAT_DEAL_ID);
         }
 
         try {

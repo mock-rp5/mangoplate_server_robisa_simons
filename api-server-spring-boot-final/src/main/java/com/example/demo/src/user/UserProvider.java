@@ -81,6 +81,9 @@ public class UserProvider {
 
     public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
         User user = userDao.getPwd(postLoginReq);
+        if(user == null) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         String encryptPwd;
         try {
             encryptPwd=new SHA256().encrypt(postLoginReq.getPassword());

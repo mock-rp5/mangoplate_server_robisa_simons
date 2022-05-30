@@ -3,6 +3,7 @@ package com.example.demo.src.user;
 
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -134,19 +135,24 @@ public class UserDao {
 
 
     public User getPwd(PostLoginReq postLoginReq){
-        String getPwdQuery = "select id, password, email, user_name, user_phone from users where email = ?";
+        String getPwdQuery = "select id, password, email, user_name, user_phone from users where email = ? and status = 'ACTIVE'";
         String getPwdParams = postLoginReq.getEmail();
-
-        return this.jdbcTemplate.queryForObject(getPwdQuery,
-                (rs,rowNum)-> new User(
-                        rs.getInt("id"),
-                        rs.getString("password"),
-                        rs.getString("email"),
-                        rs.getString("user_name"),
-                        rs.getString("user_phone")
-                ),
-                getPwdParams
-                );
+        User user = null;
+        try {
+            user = this.jdbcTemplate.queryForObject(getPwdQuery,
+                    (rs, rowNum) -> new User(
+                            rs.getInt("id"),
+                            rs.getString("password"),
+                            rs.getString("email"),
+                            rs.getString("user_name"),
+                            rs.getString("user_phone")
+                    ),
+                    getPwdParams
+            );
+            return user;
+        }catch (EmptyResultDataAccessException e) {
+            return null;
+        }
 
     }
 

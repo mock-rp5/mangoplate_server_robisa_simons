@@ -23,7 +23,10 @@ public class SearchProvider {
         this.dao = dao;
     }
 
-    public List<GetSearchRes> search(String search, Double latitude, Double longitude, int userId) throws BaseException {
+    public List<GetSearchRes> search(String search, Double latitude, Double longitude, Integer userId) throws BaseException {
+        if(userId==null) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
             return dao.search(search, latitude, longitude, userId);
         }catch (Exception e){
