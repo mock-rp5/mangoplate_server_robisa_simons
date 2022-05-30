@@ -15,10 +15,10 @@ public class EatDealDao {
     @Autowired private JdbcTemplate jdbcTemplate;
 
     public List<GetEatDeal> getEatDeals(Double latitude, Double longitude, Integer range) {
-        String getEatDealQuery = "select D.id, D.name, E.restaurant_desc, E.menu_desc, E.notice, E.manual, E.refund_policy, E.question, E.price, E.discount_rate, E.menu_name, date_format(E.start_date, '%Y-%m-%d'), DATE_ADD(date_format(E.start_date, '%Y-%m-%d'), interval E.expired_date DAY), E.expired_date, E.emphasis,  E.id\n" +
+        String getEatDealQuery = "select D.id, D.name, E.restaurant_desc, E.menu_desc, E.notice, E.manual, E.refund_policy, E.question, E.price, E.discount_rate, E.menu_name, date_format(E.start_date, '%Y-%m-%d'), DATE_ADD(date_format(E.start_date, '%Y-%m-%d'), interval E.expired_date DAY), E.expired_date, E.emphasis,  E.id, D.latitude, D.longitude \n" +
                 "from eat_deals as E\n" +
                 "join (SELECT * FROM \n" +
-                "\t\t(SELECT name, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id\n" +
+                "\t\t(SELECT name, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id, latitude, longitude \n" +
                 "        FROM restaurants) DATA\n" +
                 "      WHERE DATA.distance < ?\n" +
                 "      ) as D\n" +
@@ -42,7 +42,9 @@ public class EatDealDao {
                         rs.getString(13),
                         rs.getInt(14),
                         rs.getString(15),
-                        rs.getInt(16)
+                        rs.getInt(16),
+                        rs.getDouble(17),
+                        rs.getDouble(18)
                 )
                 ,latitude, longitude, latitude, range);
 

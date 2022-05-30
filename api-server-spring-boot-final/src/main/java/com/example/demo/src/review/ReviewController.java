@@ -49,10 +49,6 @@ public class ReviewController {
             }
 
             GetNewsRes getReviewTodayRes = provider.getReviewTodayRes(userId);
-
-            if(getReviewTodayRes == null) {
-                return new BaseResponse<>(REVIEWS_NOT_EXISTS_TODAY_REVIEW);
-            }
             return new BaseResponse<>(getReviewTodayRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -275,6 +271,7 @@ public class ReviewController {
             GetReviewRes getReviewRes = provider.getReviewDetail(reviewId);
             return new BaseResponse<>(getReviewRes);
         }catch (BaseException e) {
+            e.printStackTrace();
             return new BaseResponse<>(e.getStatus());
         }
     }

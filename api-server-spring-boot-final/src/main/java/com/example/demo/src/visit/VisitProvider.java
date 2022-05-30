@@ -42,11 +42,12 @@ public class VisitProvider {
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         }
         try {
+            GetVisitRes getVisit = new GetVisitRes(0,0);
             int getVisitRes = dao.getVisitCheck(restaurantId, userIdxByJwt);
             if(getVisitRes != 0) {
-                getVisitRes = dao.getVisit(restaurantId, userIdxByJwt);
+                getVisit = dao.GetVisitRes(restaurantId, userIdxByJwt);
             }
-            return new GetVisitRes(getVisitRes);
+            return getVisit;
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

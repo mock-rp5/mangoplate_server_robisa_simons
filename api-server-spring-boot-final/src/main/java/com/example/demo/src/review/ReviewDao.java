@@ -118,7 +118,7 @@ public class ReviewDao {
 
     public String getParentCommentUserName(int commentId) {
         String getParentCommentUserQuery = "select user_name " +
-                "from users where id = (select parent_user_id from review_comments where id = ?)";
+                "from users where id = (select parent_user_id from review_comments where id = ? and status = 'ACTIVE')";
 
         return jdbcTemplate.queryForObject(getParentCommentUserQuery, String.class, commentId);
     }
@@ -128,7 +128,7 @@ public class ReviewDao {
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id " +
-                "where level > 1 and group_num = ? " +
+                "where level > 1 and group_num = ? and C.status ='ACTIVE' " +
                 "order by `order` asc, level asc ";
 
         return jdbcTemplate.query(getSubComments,
@@ -294,22 +294,22 @@ public class ReviewDao {
         String reviewTodayQuery = "select R.id, R.user_id, U.user_name, R.content, R.score, \n" +
                 "U.profile_img_url, R.restaurant_id, RT.name , U.is_holic, R.updated_at \n" +
                 "from reviews as R\n" +
-                "join users as U\n" +
+                "left join users as U\n" +
                 "on R.user_id = U.id \n" +
-                "join restaurants as RT \n" +
+                "left join restaurants as RT \n" +
                 "on R.restaurant_id = RT.id\n" +
-                "join (select max(A.count + B.count), A.user_id as user_id\n" +
+                "left join (select max(A.count + B.count), A.user_id as user_id\n" +
                 "from (select count(*) as count, user_id from reviews group by user_id) as A,\n" +
                 "(select count(*) as count, user_id from follows group by user_id) as B\n" +
                 "where A.user_id = B.user_id) as AB\n" +
                 "on AB.user_id = R.user_id\n" +
-                "where R.status = 'ACTIVE' and R.updated_at like ? order by R.updated_at DESC" +
+                "where R.status = 'ACTIVE' and R.updated_at like ? order by R.updated_at DESC " +
                 "limit 1";
 
         LocalDate now = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-        //String currentDate = now.format(formatter);
-       String currentDate = "2022-05-23";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String currentDate = now.format(formatter)+"%";
+       //String currentDate = "2022-05-23";
 
         try {
             GetNewsRes getReviewTodayRes = jdbcTemplate.queryForObject(reviewTodayQuery,
@@ -324,7 +324,7 @@ public class ReviewDao {
                             rs.getString(8),
                             rs.getBoolean(9),
                             rs.getString(10)
-                    ), currentDate+"%");
+                    ), currentDate);
 
             if(userId != 0) {
                 getReviewTodayRes.setWish(getWish(userId, getReviewTodayRes.getRestaurantId()));

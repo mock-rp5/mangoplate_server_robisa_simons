@@ -5,6 +5,7 @@ import com.example.demo.config.BaseResponse;
 import com.example.demo.src.visit.model.GetVisitByUserRes;
 import com.example.demo.src.visit.model.GetVisitRes;
 import com.example.demo.src.visit.model.PostVisitReq;
+import com.example.demo.src.visit.model.PutVisitReq;
 import com.example.demo.utils.JwtService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,33 @@ public class VisitController {
         }
     }
 
+    @PutMapping()
+    @ResponseBody
+    public BaseResponse<Integer> updateVisit(@RequestHeader(value = "X-ACCESS-TOKEN", required = false) String accessToken,
+                                             @RequestBody PutVisitReq putVisitReq) {
+        if(accessToken==null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+        if(putVisitReq.getRestaurantId()== null) {
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
+        }
+        if(putVisitReq.getVisitId() == null) {
+            return new BaseResponse<>(VISITS_EMPTY_VISIT_ID);
+        }
+
+        try {
+            Integer userIdxByJwt = jwtService.getUserIdx();
+            //userIdx와 접근한 유저가 같은지 확인
+            if(userIdxByJwt == null){
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            return new BaseResponse<>(service.updateVisit(putVisitReq, userIdxByJwt));
+        } catch (BaseException e) {
+            return new BaseResponse<>(e.getStatus());
+        }
+
+    }
+
     @GetMapping
     @ResponseBody
     public BaseResponse<GetVisitByUserRes> getVisitByUser() {
@@ -89,7 +117,7 @@ public class VisitController {
             Integer userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdxByJwt == null){
-                return new BaseResponse<>(INVALID_USER_JWT);
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
 
             int result = service.deleteVisit(restaurantId, userIdxByJwt, visitId);
@@ -110,7 +138,7 @@ public class VisitController {
             Integer userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdxByJwt == null){
-                return new BaseResponse<>(INVALID_USER_JWT);
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
 
             int visitId = service.createVisit(postVisitReq.getRestaurantId(), userIdxByJwt);

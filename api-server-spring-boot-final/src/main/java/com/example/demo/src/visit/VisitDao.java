@@ -47,10 +47,13 @@ public class VisitDao {
         return jdbcTemplate.update(deleteVisitQuery, reviewId);
     }
 
-    public int getVisit(Integer restaurantId, Integer userIdxByJwt) {
-        String getVisitQuery = "select id from visits where restaurant_id = ? and user_id = ? and status = 'ACTIVE'";
-        return jdbcTemplate.queryForObject(getVisitQuery, int.class, restaurantId, userIdxByJwt);
+    public GetVisitRes GetVisitRes(Integer restaurantId, Integer userIdxByJwt) {
+        String getVisitQuery = "select id, count(*) as count from visits where restaurant_id = ? and user_id = ? and status = 'ACTIVE' group by user_id, restaurant_id ";
+        return jdbcTemplate.queryForObject(getVisitQuery,
+                (rs, rowNum) ->new GetVisitRes(rs.getInt("id"), rs.getInt("count")),
+                restaurantId, userIdxByJwt);
     }
+
 
     public GetVisitByUserRes getVisitByUser(Integer userIdxByJwt) {
         String getVisitId = "select id, restaurant_id from visits where user_id = ? and status = 'ACTIVE'";
@@ -105,5 +108,10 @@ public class VisitDao {
                         rs.getInt(4),
                         rs.getInt(5)
                 ), userIdxByJwt, userIdxByJwt, userIdxByJwt);
+    }
+
+    public int updateVisit(PutVisitReq putVisitReq, Integer userIdxByJwt) {
+        String updateVisitQuery = "update visits set content = ? where id = ? and restaurant_id = ? and user_id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.update(updateVisitQuery, putVisitReq.getContent(),putVisitReq.getVisitId(), putVisitReq.getRestaurantId(), userIdxByJwt);
     }
 }
