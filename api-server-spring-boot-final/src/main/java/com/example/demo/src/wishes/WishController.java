@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.src.wishes.model.*;
+import com.example.demo.utils.JwtService;
 
 import java.util.List;
-
 import static com.example.demo.config.BaseResponseStatus.*;
 
 @RestController
@@ -21,11 +21,13 @@ public class WishController {
 
     private final WishProvider provider;
     private final WishService service;
+    private final JwtService jwtService;
 
     @Autowired
-    public WishController(WishProvider provider, WishService service){
+    public WishController(WishProvider provider, WishService service, JwtService jwtService){
         this.provider = provider;
         this.service = service;
+        this.jwtService = jwtService;
     }
     /**
      * 유저의 가고싶다 항목에 포함된 식당 조회
@@ -33,17 +35,17 @@ public class WishController {
      * @return 식당 정보가 들어있는 객체
      */
     @ResponseBody
-    @GetMapping("/{user_id}")
-    public BaseResponse<List<GetWishRestaurantRes>> getWishRestaurants(@PathVariable("user_id") Integer targetUserId) {
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 비회원이면 로그인으로 넘겨야함
-        // 일단 임시로...userId = 1
-        // 인증이 성공했다면 isValidJWT = 1,
+    @GetMapping("")
+    public BaseResponse<List<GetWishRestaurantRes>> getWishRestaurants(@RequestParam(value = "user-id", required = false) Integer targetUserId) {
+        // 나를 포함한 특정 유저의 가고싶다 항목을 조회하는 API
         if(targetUserId == null) return new BaseResponse<>(WISHES_EMPTY_TARGET_USER_ID);
-        int isValidJWT = 1;
-        int userId = 1;
-
         try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            System.out.println("targetUserId :"+ targetUserId);
+            System.out.println("userId :"+ userId);
             List<GetWishRestaurantRes> getWishRestaurantRes = provider.getWishRestaurants(userId, targetUserId);
             return new BaseResponse<>(getWishRestaurantRes);
         } catch (BaseException exception){
@@ -56,18 +58,14 @@ public class WishController {
      * @return 성공여부
      */
     @ResponseBody
-    @GetMapping("")
-    public BaseResponse<Integer> getWish(@RequestParam(value = "restaurant_id") Integer restaurantId) {
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 비회원이면 로그인으로 넘겨야함
-        // 일단 임시로...userId = 1
-        // 인증이 성공했다면 isValidJWT = 1,
-
-        int isValidJWT = 1;
-        int userId = 1;
-
+    @GetMapping("/{restaurant_id}")
+    public BaseResponse<GetWishRes> getWish(@PathVariable(value = "restaurant_id") Integer restaurantId) {
         try{
-            int result = provider.getWish(restaurantId, userId);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            GetWishRes result = provider.getWish(restaurantId, userId);
             return new BaseResponse<>(result);
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -80,17 +78,13 @@ public class WishController {
      */
     @ResponseBody
     @PostMapping("/{restaurant_id}")
-    public BaseResponse<Integer> postWish(@PathVariable("restaurant_id") Integer restaurantId) {
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 비회원이면 로그인으로 넘겨야함
-        // 일단 임시로...userId = 1
-        // 인증이 성공했다면 isValidJWT = 1,
-
-        int isValidJWT = 1;
-        int userId = 1;
-
+    public BaseResponse<PostWishRes> postWish(@PathVariable("restaurant_id") Integer restaurantId) {
         try{
-            int result = service.postWish(restaurantId, userId);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            PostWishRes result = service.postWish(restaurantId, userId);
             return new BaseResponse<>(result);
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -99,38 +93,62 @@ public class WishController {
 
     @ResponseBody
     @DeleteMapping("/{restaurant_id}")
-    public BaseResponse<Integer> deleteWish(@PathVariable("restaurant_id") Integer restaurantId) {
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 비회원이면 로그인으로 넘겨야함
-        // 일단 임시로...userId = 1
-        // 인증이 성공했다면 isValidJWT = 1,
-
-        int isValidJWT = 1;
-        int userId = 1;
-
+    public BaseResponse<PostWishRes> deleteWish(@PathVariable("restaurant_id") Integer restaurantId) {
         try{
-            int result = service.deleteWish(restaurantId, userId);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            PostWishRes result = service.deleteWish(restaurantId, userId);
             return new BaseResponse<>(result);
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
         }
     }
     @ResponseBody
-    @PostMapping("")
-    public BaseResponse<Integer> putMemo(@RequestBody PostMemoReq memo) {
-        // 로그인 기능 추가하면 토큰으로 유저 체크 추가해야함
-        // 비회원이면 로그인으로 넘겨야함
-        // 일단 임시로...userId = 1
-        // 인증이 성공했다면 isValidJWT = 1,
-
+    @PostMapping("/memo")
+    public BaseResponse<Integer> postMemo(@RequestBody PostMemoReq memo) {
         if(memo.getWishId() == null) return new BaseResponse<>(WISHES_EMPTY_WISH_ID);
         if(memo.getMemo() == null) return new BaseResponse<>(WISHES_EMPTY_MEMO_CONTENT);
-        System.out.println(memo);
-        int isValidJWT = 1;
-        int userId = 2;
-
         try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            int result = service.postMemo(memo.getWishId(), memo.getMemo(), userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+
+    @ResponseBody
+    @PutMapping("/memo")
+    public BaseResponse<Integer> putMemo(@RequestBody PostMemoReq memo) {
+        if(memo.getWishId() == null) return new BaseResponse<>(WISHES_EMPTY_WISH_ID);
+        if(memo.getMemo() == null) return new BaseResponse<>(WISHES_EMPTY_MEMO_CONTENT);
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             int result = service.putMemo(memo.getWishId(), memo.getMemo(), userId);
+            return new BaseResponse<>(result);
+        } catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+    }
+    @ResponseBody
+    @DeleteMapping("/memo")
+    public BaseResponse<Integer> deleteMemo(@RequestBody PostMemoReq memo) {
+        if(memo.getWishId() == null) return new BaseResponse<>(WISHES_EMPTY_WISH_ID);
+        if(memo.getMemo() == null) return new BaseResponse<>(WISHES_EMPTY_MEMO_CONTENT);
+        try{
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            int result = service.deleteMemo(memo.getWishId(), memo.getMemo(), userId);
             return new BaseResponse<>(result);
         } catch (BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

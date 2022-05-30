@@ -41,4 +41,12 @@ public class LikeProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int checkUser(Integer userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.demo.src.oauth.model;
+package com.example.demo.src.oauth.facebook.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

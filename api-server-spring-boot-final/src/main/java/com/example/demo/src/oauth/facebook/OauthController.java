@@ -1,29 +1,21 @@
-package com.example.demo.src.oauth;
+package com.example.demo.src.oauth.facebook;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
-import com.example.demo.src.oauth.model.FacebookUser;
+import com.example.demo.src.oauth.facebook.model.FacebookUser;
 import com.example.demo.src.user.model.PostLoginRes;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
-import static com.example.demo.config.BaseResponseStatus.*;
-
-import org.springframework.stereotype.Service;
-
-
-import com.google.gson.JsonParser;
-import com.google.gson.JsonElement;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/oauth")
@@ -54,7 +46,7 @@ public class OauthController {
     @GetMapping(value = "/facebook/login-test")
     public String getCode() {
 
-        return "redirect:http://www.facebook.com/v14.0/dialog/oauth?&client_id=700903091250073&redirect_uri=https%3A%2F%2Flocalhost%3A9000%2Foauth%2Ffacebook%2Flogin%2Fcallback%0A&state=1234&scope=email";
+        return "redirect:http://www.facebook.com/v14.0/dialog/oauth?&client_id=700903091250073&redirect_uri=https%3A%2F%2Fhalfmbbn.com%2Foauth%2Ffacebook%2Flogin%2Fcallback%0A&state=1234&scope=email";
 
     }
 
@@ -79,7 +71,7 @@ public class OauthController {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("client_id=700903091250073"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=https%3A%2F%2Flocalhost%3A9000%2Foauth%2Ffacebook%2Flogin%2Fcallback"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=https%3A%2F%2Fhalfmbbn.com%2Foauth%2Ffacebook%2Flogin%2Fcallback"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&client_secret=35fefde06db7166853fb7c02707cc4fd"); // TODO REST_API_KEY 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());

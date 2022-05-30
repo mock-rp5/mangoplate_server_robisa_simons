@@ -1,6 +1,7 @@
 package com.example.demo.src.bookmark;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.bookmark.model.PostBookmarkRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,15 @@ public class BookmarkService {
 
     @Transactional(rollbackFor = Exception.class)
     public Integer postBookmark(int userId, String contentsType, int contentsId) throws BaseException {
+        if(provider.checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkContentId(contentsType, contentsId) == 0) {
             throw new BaseException(BOOKMARKS_NOT_EXISTS_CONTENT);
         }
         if(provider.checkBookmarked(userId, contentsType, contentsId) == 1) {
             throw new BaseException(BOOKMARKS_ALREADY_BOOKMARKED);
         }
-
         try {
             if(provider.checkUnmarked(userId, contentsType, contentsId) == 0)
                 return dao.createBookmark(userId, contentsType, contentsId);
@@ -44,13 +47,15 @@ public class BookmarkService {
     }
     @Transactional(rollbackFor = Exception.class)
     public Integer cancelBookmark(int userId, String contentsType, int contentsId) throws BaseException {
+        if(provider.checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkContentId(contentsType, contentsId) == 0) {
             throw new BaseException(BOOKMARKS_NOT_EXISTS_CONTENT);
         }
         if(provider.checkUnmarked(userId, contentsType, contentsId) == 1) {
             throw new BaseException(BOOKMARKS_ALREADY_UNMARKED);
         }
-
         try {
             return dao.cancelBookmark(userId, contentsType, contentsId);
         }catch (Exception e) {

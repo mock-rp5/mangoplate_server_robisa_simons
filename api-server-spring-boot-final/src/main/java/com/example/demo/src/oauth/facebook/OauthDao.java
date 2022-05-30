@@ -1,15 +1,9 @@
-package com.example.demo.src.oauth;
+package com.example.demo.src.oauth.facebook;
 
-import com.example.demo.src.oauth.model.FacebookUser;
-import com.example.demo.src.user.model.User;
+import com.example.demo.src.oauth.facebook.model.FacebookUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.util.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
-import java.util.Optional;
 
 @Repository
 public class OauthDao {

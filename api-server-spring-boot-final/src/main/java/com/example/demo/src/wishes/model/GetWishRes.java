@@ -1,4 +1,4 @@
-package com.example.demo.src.bookmark.model;
+package com.example.demo.src.wishes.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetBookmarkCountRes {
-    private String contentsType;
-    private Integer Count;
-    private String ImgUrl;
+public class GetWishRes {
+    private Integer result;
+    private Integer isWishes;
+    private Integer wishiId;
 }

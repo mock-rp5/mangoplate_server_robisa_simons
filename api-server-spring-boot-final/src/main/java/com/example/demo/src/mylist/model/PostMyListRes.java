@@ -12,5 +12,4 @@ import lombok.Setter;
 public class PostMyListRes {
     private int myListId;
     private int insertFailCount;
-
 }

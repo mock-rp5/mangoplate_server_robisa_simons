@@ -2,6 +2,7 @@ package com.example.demo.src.restaurant;
 
 import com.example.demo.config.BaseException;
 
+import com.example.demo.src.restaurant.model.GetMyRestaurantsRes;
 import com.example.demo.src.restaurant.model.GetRestaurantRes;
 
 import com.example.demo.src.restaurant.model.GetRestaurantDetailRes;
@@ -69,6 +70,18 @@ public class RestaurantProvider {
         }
     }
 
+    public List<GetMyRestaurantsRes> getMyRestaurants(Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            return dao.getMyRestaurants(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public int checkRestaurantId(int restaurantId) throws BaseException {
         try {
             return dao.checkRestaurantId(restaurantId);
@@ -78,7 +91,7 @@ public class RestaurantProvider {
     }
 
 
-    private int checkUser(Integer userId) throws BaseException {
+    public int checkUser(Integer userId) throws BaseException {
         try {
             return dao.checkUser(userId);
         }catch (Exception e) {
@@ -86,6 +99,14 @@ public class RestaurantProvider {
         }
     }
 
+    public int checkMyRestaurant(Integer restaurantId, Integer userId) throws BaseException {
+        try {
+            return dao.checkMyRestaurant(restaurantId,userId);
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public String sortOptionToQuery(String sortOption){
         switch (sortOption){
             case "rating": return "ratingsAvg desc";

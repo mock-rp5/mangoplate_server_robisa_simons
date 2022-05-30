@@ -187,5 +187,9 @@ public class MyListDao {
         String updateView = "update mylists set view = ? where id = ?;\n";
         this.jdbcTemplate.update(updateView, view, myListId);
     }
+    public int  checkUser(Integer userId) {
+        String checkUserQuery = "select exists (select * from users where id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
+    }
 
 }

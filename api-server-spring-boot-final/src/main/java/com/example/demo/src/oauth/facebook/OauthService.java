@@ -1,13 +1,9 @@
-package com.example.demo.src.oauth;
+package com.example.demo.src.oauth.facebook;
 
-import com.example.demo.config.BaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import static com.example.demo.config.BaseResponseStatus.*;
 
 @Service
 public class OauthService {

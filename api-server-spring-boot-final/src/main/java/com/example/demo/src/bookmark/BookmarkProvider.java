@@ -2,13 +2,15 @@ package com.example.demo.src.bookmark;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.src.bookmark.model.GetBookmarkCountRes;
+import com.example.demo.src.bookmark.model.GetBookmarkedRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.example.demo.config.BaseResponseStatus.BOOKMARKS_CONTENT_TYPE_INVALID_FORM;
-import static com.example.demo.config.BaseResponseStatus.DATABASE_ERROR;
+import java.util.List;
+
+import static com.example.demo.config.BaseResponseStatus.*;
 
 @Service
 public class BookmarkProvider {
@@ -21,13 +23,26 @@ public class BookmarkProvider {
         this.dao = dao;
     }
 
-    public GetBookmarkCountRes getBookmarkCount(Integer userId) throws BaseException {
+    public List<GetBookmarkCountRes> getBookmarkCount(Integer userId) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try{
             return dao.getBookmarkCount(userId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
 
+    public List<GetBookmarkedRes> getBookmarkedContents(Integer userId, String contentsType) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try{
+            return dao.getBookmarkedContents(userId, contentsType);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
     public int checkBookmarked(Integer userId, String contentsType, int contentsId) throws BaseException {
         try{
@@ -47,6 +62,14 @@ public class BookmarkProvider {
     public int checkContentId(String contentsType, int contentsId) throws BaseException {
         try {
             return dao.checkContentId(contentsType, contentsId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkUser(int userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

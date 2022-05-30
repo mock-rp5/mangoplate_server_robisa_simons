@@ -13,6 +13,4 @@ public class PutRestaurantReq {
     private Double latitude;
     private Double longitude;
     private Integer foodCategory;
-    private Integer userId;
-
 }

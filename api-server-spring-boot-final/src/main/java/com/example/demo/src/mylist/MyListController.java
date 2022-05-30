@@ -3,6 +3,7 @@ package com.example.demo.src.mylist;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.mylist.model.*;
+import com.example.demo.utils.JwtService;
 import org.hibernate.sql.Insert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +20,22 @@ import static com.example.demo.config.BaseResponseStatus.*;
 public class MyListController {
     private final MyListService service;
     private final MyListProvider provider;
+    private final JwtService jwtService;
 
     final Logger logger = LoggerFactory.getLogger(MyListController.class);
 
     @Autowired
-    public MyListController(MyListService service, MyListProvider provider) {
+    public MyListController(MyListService service, MyListProvider provider, JwtService jwtService) {
         this.service = service;
         this.provider = provider;
+        this.jwtService = jwtService;
     }
 
 //    [DONE]특정 유저의 마이리스트 조회
     @GetMapping("/{user_id}")
     @ResponseBody
     public BaseResponse<List<GetMyListRes>> getMyList(@PathVariable(value = "user_id", required = false) Integer userId) {
-        if(userId.equals(null)) {
+        if(userId == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
         try {
@@ -49,10 +52,10 @@ public class MyListController {
     @ResponseBody
     public BaseResponse<GetMyListDetailRes> getMyListDetail(@PathVariable(value = "user_id", required = false) Integer userId,
                                                             @PathVariable(value = "mylist_id", required = false) Integer myListId) {
-        if(userId.equals(null)) {
+        if(userId == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
-        if(myListId.equals(null)) {
+        if(myListId == null) {
             return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
         }
         try {
@@ -69,14 +72,12 @@ public class MyListController {
     @ResponseBody
     public BaseResponse<PostMyListRes> createMyList(@RequestParam(value = "restaurant-id",required = false) Optional<List<Integer>> restaurantId,
                                                     @RequestBody PostMyListReq postMyListReq) {
-        // jwt 밸리데이션 필요.
-        Integer userId = 1;
         PostMyListRes postMyListRes;
-        if(userId.equals(null)) {
-            return new BaseResponse<>(USERS_EMPTY_USER_ID);
-        }
         try {
-//            postMyListReq.setUserId(userId);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             if(restaurantId.isEmpty())
                 postMyListRes = service.createMyList(postMyListReq, userId);
             else
@@ -92,16 +93,20 @@ public class MyListController {
     @ResponseBody
     public BaseResponse<PostMyListRes> insert2MyList(@PathVariable(value = "mylist_id", required = false) Integer myListId,
                                                @RequestParam(value = "restaurant-id",required = false) List<Integer> restaurantId) {
-        // 임시 유저 아이디
-        int userId = 3;
-
-        if(myListId.equals(null)) {
+        if(myListId == null) {
             return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
         }
         if(restaurantId.equals(null)) {
             return new BaseResponse<>(MYLISTS_EMPTY_RESTAURANT_ID);
         }
         try {
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            if(provider.checkUser(userId) == 0) {
+                return new BaseResponse<>(USERS_NOT_EXISTS_USER);
+            }
             PostMyListRes postMyListRes = service.insert2MyList(restaurantId, myListId);
             return new BaseResponse<>(postMyListRes);
         }catch (BaseException e) {
@@ -115,12 +120,12 @@ public class MyListController {
     @ResponseBody
     public BaseResponse<Integer> deleteMyList(@PathVariable(value = "mylist_id", required = false) Integer myListId,
                                               @RequestParam(value = "restaurants-id", required = false) List<Integer> restaurantsId) {
-        // 임시 유저 아이디
-//        유저 아이디 밸리데이션 필요
-        int userId = 1;
-
         if(myListId == null) return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
         try {
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
 //             1. 마이리스트 전체를 삭제하고싶을때
             if(restaurantsId == null )
                 return new BaseResponse<>(service.deleteMyList(myListId, userId));
@@ -132,40 +137,18 @@ public class MyListController {
         }
 
     }
-//    //    마이리스트 삭제
-//    @DeleteMapping("/{mylist_id}")
-//    @ResponseBody
-//    public BaseResponse<Integer> deleteMyList(@PathVariable(value = "mylist_id", required = false) Integer myListId,
-//                                              @RequestParam(value = "restaurant-id", required = false) List<Integer> restaurantsId) {
-//        // 임시 유저 아이디
-////        유저 아이디 밸리데이션 필요
-//        int userId = 1;
-//
-//        if(myListId == null) return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
-//        try {
-//            if(restaurantsId == null )
-//                return new BaseResponse<>(service.deleteMyList(myListId, userId));
-//            else
-//                return new BaseResponse<>(service.deleteSomeRestaurants(myListId, userId, restaurantsId));
-//        }catch (BaseException e) {
-//            return new BaseResponse<>(e.getStatus());
-//        }
-//
-//    }
 //    마이리스트 수정, 유저가 해당 마이리스트를 가졌는지 체크
     @PutMapping("")
     @ResponseBody
     public BaseResponse<Integer> updateMyList(@RequestBody PutMyListReq putMyListReq) {
-        // 임시 유저 아이디
-        int userId = 3;
-
         if(Optional.ofNullable(putMyListReq.getMyListId()).equals(null)) {
             return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
         }
-//        if(postCommentReq.getComment()== null) {
-//            return new BaseResponse<>(COMMENTS_EMPTY_COMMENT);
-//        }
         try {
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
             return new BaseResponse<>(service.updateMyList(putMyListReq, userId));
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

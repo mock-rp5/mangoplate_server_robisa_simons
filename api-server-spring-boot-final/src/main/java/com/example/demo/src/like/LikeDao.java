@@ -39,4 +39,10 @@ public class LikeDao {
         String followUserQuery = "update likes t SET t.status = 'INACTIVE' WHERE t.user_id = ? and t.review_id = ?";
         return jdbcTemplate.update(followUserQuery, userId, reviewId);
     }
+
+    public int checkUser(int userIdx) {
+        String checkUserQuery = "select exists (select * from users where id =? and status = 'ACTIVE') ";
+        return jdbcTemplate.queryForObject(checkUserQuery, int.class, userIdx);
+    }
+
 }

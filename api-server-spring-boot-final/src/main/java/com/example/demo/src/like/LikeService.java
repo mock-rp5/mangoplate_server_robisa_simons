@@ -24,13 +24,15 @@ public class LikeService {
 
     @Transactional(rollbackFor = Exception.class)
     public Integer postLike(int userId, int reviewId) throws BaseException {
+        if(provider.checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkReviewId(reviewId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }
         if(provider.checkLiked(userId,reviewId) == 1) {
             throw new BaseException(LIKES_ALREADY_LIKED_REVIEW);
         }
-
         try {
             if(provider.checkCanceledLike(userId, reviewId) == 0)
                 return dao.createRelation(userId,reviewId);
@@ -44,13 +46,15 @@ public class LikeService {
     }
     @Transactional(rollbackFor = Exception.class)
     public Integer cancelLike(int userId, int reviewId) throws BaseException {
+        if(provider.checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         if(provider.checkReviewId(reviewId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }
         if(provider.checkCanceledLike(userId,reviewId) == 1) {
             throw new BaseException(LIKES_ALREADY_CANCELED_LIKE);
         }
-
         try {
             return dao.cancelLike(userId,reviewId);
         }catch (Exception e) {
