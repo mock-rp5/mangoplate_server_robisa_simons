@@ -1,5 +1,7 @@
 package com.example.demo.src.user;
 
+import com.example.demo.src.review.upload.FileStore;
+import com.example.demo.src.review.upload.UploadFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.example.demo.config.BaseException;
@@ -9,8 +11,8 @@ import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
+import java.io.IOException;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
@@ -27,10 +29,14 @@ public class UserController {
     @Autowired
     private final JwtService jwtService;
 
-    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService){
+    @Autowired
+    private final FileStore fileStore;
+
+    public UserController(UserProvider userProvider, UserService userService, JwtService jwtService, FileStore fileStore){
         this.userProvider = userProvider;
         this.userService = userService;
         this.jwtService = jwtService;
+        this.fileStore = fileStore;
     }
 
     /**
@@ -147,26 +153,35 @@ public class UserController {
     }
 
     /**
-     * 유저정보변경 API
-     * [PATCH] /users/:userIdx
-     * @return BaseResponse<String>
+     *
+     * @param userIdx
+     * @param user
+     * @return
+     * @throws IOException
      */
     @ResponseBody
-    @PutMapping("/{userIdx}")
-    public BaseResponse<Integer> modifyUserName(@PathVariable("userIdx") int userIdx, @RequestBody PutUserReq user){
+    @PutMapping(value = "/{userIdx}", consumes = "multipart/form-data" )
+    public BaseResponse<Integer> modifyUserName(@PathVariable("userIdx") int userIdx,
+                                                @ModelAttribute PutUserReq user) throws IOException {
         try {
+            UploadFile storeImageFile = null;
             //jwt에서 idx 추출.
             int userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdx != userIdxByJwt){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            //같다면 유저네임 변경
-            PutUserReq patchUserReq = new PutUserReq(userIdx,user.getPhoneNumber(),user.getUserName());
-            int result =  userService.modifyUserName(patchUserReq);
 
-        return new BaseResponse<>(result);
+            if(user.getFile()!=null) {
+                storeImageFile = fileStore.storeFile(user.getFile());
+            }
+
+            //같다면 유저네임 변경
+            PutUser putUserReq = new PutUser(userIdx,user.getPhoneNumber(),user.getUserName(), storeImageFile);
+            int result =  userService.modifyUserName(putUserReq);
+            return new BaseResponse<>(result);
         } catch (BaseException exception) {
+            exception.printStackTrace();
             return new BaseResponse<>((exception.getStatus()));
         }
     }

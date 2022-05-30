@@ -125,12 +125,13 @@ public class UserDao {
 
     }
 
-    public int modifyUserName(PutUserReq putUserReq){
-        String modifyUserNameQuery = "update users set user_name = ?, user_phone = ? where id = ?";
-        Object[] modifyUserNameParams = new Object[]{putUserReq.getPhoneNumber(), putUserReq.getUserName(), putUserReq.getUserIdx()};
+    public int modifyUserName(PutUser putUserReq){
+        String modifyUserNameQuery = "update users set user_name = ?, user_phone = ?, profile_img_url= ? where id = ?";
+        Object[] modifyUserNameParams = new Object[]{putUserReq.getUserName(), putUserReq.getPhoneNumber(), putUserReq.getFileUrl()!=null?putUserReq.getFileUrl().getStoreFileUrl():null, putUserReq.getUserIdx()};
 
         return this.jdbcTemplate.update(modifyUserNameQuery,modifyUserNameParams);
     }
+
 
     public User getPwd(PostLoginReq postLoginReq){
         String getPwdQuery = "select id, password, email, user_name, user_phone from users where email = ?";
