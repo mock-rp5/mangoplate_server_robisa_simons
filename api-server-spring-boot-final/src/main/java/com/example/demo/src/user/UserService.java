@@ -56,15 +56,34 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public int modifyUserName(PutUser putUserReq) throws BaseException {
+        if(userProvider.checkUser(putUserReq.getUserIdx()) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try{
-            int result = userDao.modifyUserName(putUserReq);
+            int result = 0;
+            if(putUserReq.getFileUrl()!= null) {
+                result = userDao.modifyProfile(putUserReq.getUserIdx(), putUserReq.getFileUrl());
+            }
+            if(putUserReq.getUserName() != null) {
+                result = userDao.modifyUserName(putUserReq.getUserIdx(), putUserReq.getUserName());
+            }
+            if(putUserReq.getPhoneNumber()!= null) {
+                result = userDao.modifyPhoneNumber(putUserReq.getUserIdx(), putUserReq.getPhoneNumber());
+            }
+
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }
+
             return result;
         } catch(Exception exception){
             exception.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
+
+
+
 }

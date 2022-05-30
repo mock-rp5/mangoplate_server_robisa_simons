@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import static com.example.demo.config.BaseResponseStatus.*;
 
 @Service
@@ -22,6 +25,14 @@ public class VisitService {
     }
 
     public int createVisit(int restaurantId, int userId) throws BaseException {
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String currentDate = now.format(formatter);
+
+        if(provider.checkTodayVisit(restaurantId, userId, currentDate)!=0) {
+            throw new BaseException(EXISTS_TODAY_VISIT);
+        }
+
         if(provider.checkUser(userId)==0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
@@ -42,7 +53,7 @@ public class VisitService {
         if(provider.checkRestaurant(restaurantId) == 0) {
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         }
-        if(provider.checkVisit(visitId) == 0) {
+        if(provider.checkVisit(restaurantId, userId, visitId) == 0) {
             throw new BaseException(VISITS_NOT_EXISTS_VISIT);
         }
         try {
@@ -59,7 +70,7 @@ public class VisitService {
         if(provider.checkRestaurant(putVisitReq.getRestaurantId()) == 0) {
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         }
-        if(provider.checkVisit(putVisitReq.getVisitId()) == 0) {
+        if(provider.checkVisit(putVisitReq.getRestaurantId(), userIdxByJwt,putVisitReq.getVisitId()) == 0) {
             throw new BaseException(VISITS_NOT_EXISTS_VISIT);
         }
         try {

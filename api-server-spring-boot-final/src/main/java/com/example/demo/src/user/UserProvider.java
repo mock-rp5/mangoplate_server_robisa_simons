@@ -102,4 +102,12 @@ public class UserProvider {
 
     }
 
+    public int checkUser(int userId) throws BaseException {
+        try {
+            return userDao.checkUser(userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 }

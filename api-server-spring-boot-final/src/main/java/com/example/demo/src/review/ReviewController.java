@@ -176,9 +176,12 @@ public class ReviewController {
     @PostMapping(value = "/{restaurant_id}", consumes = "multipart/form-data" )
     @ResponseBody
     public BaseResponse<PostReviewRes> createReview(@PathVariable("restaurant_id") Integer restaurantId,
-                                                    @ModelAttribute PostReviewReq postReviewReq) throws IOException {
+                                                    @ModelAttribute PostReviewReq postReviewReq,
+                                                    @RequestHeader(value="X-ACCESS-TOKEN", required = false) String accessToken) throws IOException {
         logger.info("[ReviewController] createReview, restaurantId: {}, postReviewReq: {}", restaurantId, postReviewReq.toString());
-
+        if(accessToken == null) {
+            return new BaseResponse<>(EMPTY_JWT);
+        }
         if(restaurantId == null) {
             return new BaseResponse<>(REVIEWS_EMPTY_RESTAURANT_ID);
         }
@@ -190,8 +193,6 @@ public class ReviewController {
         }
 
         List<UploadFile> storeImageFiles=null;
-
-
 
 
         try{
@@ -223,7 +224,12 @@ public class ReviewController {
     @PutMapping(value = "/{review_id}", consumes = "multipart/form-data" )
     @ResponseBody
     public BaseResponse<PutReviewRes> updateReview(@PathVariable("review_id") Integer reviewId,
-                                                   @ModelAttribute PutReviewReq putReviewReq) throws BaseException, IOException {
+                                                   @ModelAttribute PutReviewReq putReviewReq,
+                                                   @RequestHeader(value="X-ACCESS-TOKEN", required = false) String accessToken) throws BaseException, IOException {
+
+        if(accessToken == null) {
+            return new BaseResponse<>(EMPTY_JWT);
+        }
 
         if(reviewId == null) {
             return new BaseResponse<>(REVIEWS_EMPTY_REVIEW_ID);

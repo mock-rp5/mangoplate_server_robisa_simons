@@ -13,4 +13,5 @@ public class GetFollowRes {
     private String isHolic;
     private int postCnt;
     private int followerCnt;
+    private String profileImg;
 }

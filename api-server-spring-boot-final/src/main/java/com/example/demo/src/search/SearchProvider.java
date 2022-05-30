@@ -24,14 +24,29 @@ public class SearchProvider {
     }
 
     public List<GetSearchRes> search(String search, Double latitude, Double longitude, Integer userId) throws BaseException {
-        if(userId==null) {
-            throw new BaseException(USERS_NOT_EXISTS_USER);
+        if(userId!=null) {
+            if(checkUser(userId) == 0) {
+                throw new BaseException(USERS_NOT_EXISTS_USER);
+            }
         }
         try {
+            if(longitude == null && latitude == null && userId == null) {
+                return dao.search(search);
+            }
             return dao.search(search, latitude, longitude, userId);
         }catch (Exception e){
             e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    private int checkUser(Integer userId) throws BaseException {
+        try {
+            return dao.checkUser(userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+
 }

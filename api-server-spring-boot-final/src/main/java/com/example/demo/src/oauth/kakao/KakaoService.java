@@ -61,13 +61,16 @@ public class KakaoService {
             throw new BaseException(POST_USERS_EMPTY_EMAIL);
         }
         String email = (String)kakaoAccount.get("email");
+        String nickName = (String)((LinkedHashMap)kakaoAccount.get("profile")).get("nickname");
+        String profileImg = (String)((LinkedHashMap)kakaoAccount.get("profile")).get("profile_image_url");
+
 
         if(email == null) {
             throw new BaseException(POST_USERS_EMPTY_EMAIL);
         }
 
         if(provider.checkUsers(email) == 0) {
-            userIdx = dao.createUser(email);
+            userIdx = dao.createUser(email, nickName, profileImg);
         }else {
             userIdx = provider.getUserId(email);
         }

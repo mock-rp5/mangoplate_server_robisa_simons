@@ -78,11 +78,11 @@ public class ReviewService {
         if(provider.checkUser(userId)==0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(provider.checkReviewId(reviewId) == 0) {
+        if(provider.checkReviewId(reviewId, userId) == 0) {
             throw new BaseException(REVIEWS_NOT_EXISTS_REVIEW);
         }
         try {
-            int result = dao.updateReview(reviewId, review);
+            int result = dao.updateReview(reviewId, review, userId);
             if(result == 0 ) {
                 logger.warn("[ReviewService] updateReview fail, userId: {}, restaurantId: {}", userId, reviewId);
                 throw new BaseException(REVIEWS_UPDATE_FAIL);

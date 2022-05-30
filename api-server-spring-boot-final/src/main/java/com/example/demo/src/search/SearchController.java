@@ -30,20 +30,36 @@ public class SearchController {
     @ResponseBody
     public BaseResponse<List<GetSearchRes>> search(@RequestParam String search,
                                                    @RequestParam(value = "lat", required = false) Double latitude,
-                                                   @RequestParam(value = "long",required = false) Double longitude) {
+                                                   @RequestParam(value = "long",required = false) Double longitude,
+                                                   @RequestHeader(value ="X-ACCESS-TOKEN", required = false) String accessToken) {
+        if(accessToken == null) {
+            if(latitude != null || longitude != null) {
+                return new BaseResponse<>(EMPTY_ACCESS_TOKEN_LATITUDE_LONGITUDE);
+            }
+        }
+
         if(search == null) {
             return new BaseResponse<>(SEARCH_EMPTY_KEYWORD);
         }
-        if(latitude == null) {
-            return new BaseResponse<>(SEARCH_EMPTY_LATITUDE);
-        }
-        if(longitude == null) {
-            return new BaseResponse<>(SEARCH_EMPTY_LONGITUDE);
-        }
+//        if(latitude == null) {
+//            return new BaseResponse<>(SEARCH_EMPTY_LATITUDE);
+//        }
+//        if(longitude == null) {
+//            return new BaseResponse<>(SEARCH_EMPTY_LONGITUDE);
+//        }
         try {
-            Integer userId = jwtService.getUserIdx();
-            if(userId == null) {
-                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            Integer userId = null;
+            if(accessToken != null) {
+                if(latitude == null) {
+                    return new BaseResponse<>(SEARCH_EMPTY_LATITUDE);
+                }
+                if(longitude == null) {
+                    return new BaseResponse<>(SEARCH_EMPTY_LONGITUDE);
+                }
+                 userId = jwtService.getUserIdx();
+                if (userId == null) {
+                    return new BaseResponse<>(USERS_EMPTY_USER_ID);
+                }
             }
             List<GetSearchRes> getSearchRes = provider.search(search, latitude, longitude, userId);
             return new BaseResponse<>(getSearchRes);

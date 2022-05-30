@@ -40,7 +40,11 @@ public class VisitController {
 
     @GetMapping("/{restaurant_id}")
     @ResponseBody
-    public BaseResponse<GetVisitRes> getVisit(@PathVariable("restaurant_id") Integer restaurantId) {
+    public BaseResponse<GetVisitRes> getVisit(@PathVariable("restaurant_id") Integer restaurantId,
+                                              @RequestHeader(value = "X-ACCESS-TOKEN", required = false) String accessToken) {
+        if(accessToken ==null) {
+            return new BaseResponse<>(EMPTY_JWT);
+        }
         if(restaurantId == null) {
             return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         }

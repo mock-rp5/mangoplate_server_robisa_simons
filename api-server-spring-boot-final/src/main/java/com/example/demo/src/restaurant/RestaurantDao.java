@@ -149,7 +149,7 @@ public class RestaurantDao {
             getRestaurantDetailRes.setWishCnt(getWishCnt(restaurantId));
 
         } catch (EmptyResultDataAccessException e) {
-            return new GetRestaurantDetailRes();
+            return null;
         }
 
         return getRestaurantDetailRes;
@@ -178,7 +178,7 @@ public class RestaurantDao {
                 "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.id = ? and R.status ='ACTIVE' ";
+                "where RT.id = ? and R.status ='ACTIVE' ";
 
         List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewsQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -218,7 +218,7 @@ public class RestaurantDao {
     }
 
     public Float getRestaurantScore(int restaurantId) {
-        String getScoreQuery = "select avg(score) from reviews where restaurant_id = ? and status = 'ACTIVE'";
+        String getScoreQuery = "select ifNull(avg(score),0) from reviews where restaurant_id = ? and status = 'ACTIVE'";
         return jdbcTemplate.queryForObject(getScoreQuery, Float.class, restaurantId);
     }
 
@@ -259,7 +259,7 @@ public class RestaurantDao {
     }
 
     private List<GetSubComment> getSubComments(int groupNum) {
-        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url " +
+        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url, U.is_holic, C.updated_at " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id " +
@@ -273,7 +273,9 @@ public class RestaurantDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getString(6)
+                        rs.getString(6),
+                        rs.getBoolean(7),
+                        rs.getString(8)
                 ), groupNum);
     }
 

@@ -1,6 +1,7 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.src.review.upload.UploadFile;
 import com.example.demo.src.user.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -68,7 +69,7 @@ public class UserDao {
     }
 
     private List<GetFollowRes> getFollows(List<Integer> followingsIds) {
-        String getFollowQuery = "select U.id, U.user_name, U.is_holic, R.postCnt, F.followerCnt " +
+        String getFollowQuery = "select U.id, U.user_name, U.is_holic, R.postCnt, F.followerCnt, U.profile_img_url " +
                 "from users U " +
                 "left join (select count(user_id) as postCnt , user_id from reviews where user_id = ? and status = 'ACTIVE') R " +
                 "on U.id = R.user_id " +
@@ -86,7 +87,8 @@ public class UserDao {
                                     rs.getString(2),
                                     rs.getString(3),
                                     rs.getInt(4),
-                                    rs.getInt(5)
+                                    rs.getInt(5),
+                                    rs.getString(6)
                             ), id, id, id));
         }
         return getFollowRes;
@@ -160,5 +162,20 @@ public class UserDao {
     public int checkUser(int userIdx) {
         String checkUserQuery = "select exists (select * from users where id =? and status = 'ACTIVE') ";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, userIdx);
+    }
+
+    public int modifyProfile(int userIdx, UploadFile fileUrl) {
+        String modifyProfile = "update users set profile_img_url= ? where id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.update(modifyProfile, fileUrl.getStoreFileUrl(), userIdx);
+    }
+
+    public int modifyUserName(int userIdx, String userName) {
+        String modifyUserName = "update users set user_name = ? where id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.update(modifyUserName, userName, userIdx);
+    }
+
+    public int modifyPhoneNumber(int userIdx, String phoneNumber) {
+        String modifyUserName = "update users set user_phone = ? where id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.update(modifyUserName, phoneNumber, userIdx);
     }
 }

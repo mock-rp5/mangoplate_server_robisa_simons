@@ -160,9 +160,12 @@ public class UserController {
      * @throws IOException
      */
     @ResponseBody
-    @PutMapping(value = "/{userIdx}", consumes = "multipart/form-data" )
+    @PutMapping(value = "/{userIdx}")
     public BaseResponse<Integer> modifyUserName(@PathVariable("userIdx") int userIdx,
                                                 @ModelAttribute PutUserReq user) throws IOException {
+        if(user.getPhoneNumber() == null && user.getUserName() == null && user.getFile()==null) {
+            return new BaseResponse<>(NOT_EXISTS_INPUT_CHANGES);
+        }
         try {
             UploadFile storeImageFile = null;
             //jwt에서 idx 추출.
