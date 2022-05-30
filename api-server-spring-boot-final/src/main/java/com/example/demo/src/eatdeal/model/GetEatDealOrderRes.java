@@ -12,15 +12,15 @@ public class GetEatDealOrderRes {
     private int userId;
     private int restaurantId;
     private String restaurantName;
-    private int menuId;
+    private int eatDealId;
     private String menuName;
     private int price;
 
-    public GetEatDealOrderRes(int id, int userId, int restaurantId, int menuId, int price) {
+    public GetEatDealOrderRes(int id, int userId, int restaurantId, int eatDealId, int price) {
         this.id = id;
         this.userId = userId;
         this.restaurantId = restaurantId;
-        this.menuId = menuId;
+        this.eatDealId = eatDealId;
         this.price = price;
     }
 }

@@ -88,7 +88,7 @@ public class ReviewDao {
 
 
     public List<GetCommentRes> getComments(int reviewId) {
-        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.is_holic, date_format(C.updated_at, '%Y-%m-%d') " +
+        String getComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.is_holic, date_format(C.updated_at, '%Y-%m-%d'), U.profile_img_url " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id and C.review_id = ? " +
@@ -103,7 +103,8 @@ public class ReviewDao {
                         rs.getString(4),
                         rs.getInt(5),
                         rs.getBoolean(6),
-                        rs.getString(7)
+                        rs.getString(7),
+                        rs.getString(8)
                 ), reviewId);
 
         for(GetCommentRes comment : getCommentRes) {
@@ -124,7 +125,7 @@ public class ReviewDao {
     }
 
     private List<GetSubComment> getSubComments(int groupNum) {
-        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order` " +
+        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id " +
@@ -137,7 +138,8 @@ public class ReviewDao {
                         rs.getInt(2),
                         rs.getString(3),
                         rs.getString(4),
-                        rs.getInt(5)
+                        rs.getInt(5),
+                        rs.getString(6)
                 ), groupNum);
     }
 
@@ -183,7 +185,7 @@ public class ReviewDao {
     }
 
     public int deleteReview(Integer reviewId) {
-        String deleteReviewQuery = "update reviews set status = 'INACTIVE' where id = ?";
+        String deleteReviewQuery = "update reviews set status = 'INACTIVE' where id = ? ";
         int result = jdbcTemplate.update(deleteReviewQuery, reviewId);
 
         deleteReviewImg(reviewId);

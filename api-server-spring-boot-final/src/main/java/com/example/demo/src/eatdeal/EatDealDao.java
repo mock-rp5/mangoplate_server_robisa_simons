@@ -65,17 +65,19 @@ public class EatDealDao {
     }
 
     public int checkMenu(Integer menuId) {
-        String checkMenuQuery = "select exists (select * from menus where id = ? and discount_rate >0)";
+        String checkMenuQuery = "select exists (select * from eat_deals where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkMenuQuery, int.class, menuId);
     }
 
     public int orderEatDeal(Integer userId, PostEatDealReq postEatDealReq) {
-        String orderEatDealQuery = "insert into eat_deal_orders(user_id, menu_id, restaurant_id, price, status) " +
+        String orderEatDealQuery = "insert into eat_deal_orders(user_id, eat_deal_id, restaurant_id, price, status) " +
                 "values(?,?,?,?,'ACTIVE')";
-        int price = getMenuPrice(postEatDealReq.getMenuId());
-        Object[] params = new Object[]{userId, postEatDealReq.getMenuId(), postEatDealReq.getRestaurantId(), price};
+        int price = getMenuPrice(postEatDealReq.getEatDealId());
+        Object[] params = new Object[]{userId, postEatDealReq.getEatDealId(), postEatDealReq.getRestaurantId(), price};
 
-        return jdbcTemplate.update(orderEatDealQuery, params);
+        int result =  jdbcTemplate.update(orderEatDealQuery, params);
+        String lastIdQuery = "select id from eat_deal_orders order by id desc limit 1";
+        return jdbcTemplate.queryForObject(lastIdQuery, int.class);
     }
 
     private int getMenuPrice(Integer menuId) {
@@ -84,19 +86,19 @@ public class EatDealDao {
     }
 
     public List<GetEatDealOrderRes> getEatDealOrders(Integer userId) {
-        String getEatDealOrdersQuery = "select id, user_id, restaurant_id, menu_id, price from eat_deal_orders where user_id = ?";
+        String getEatDealOrdersQuery = "select id, user_id, restaurant_id, eat_deal_id, price from eat_deal_orders where user_id = ? and status = 'ACTIVE'";
         List<GetEatDealOrderRes> getEatDealOrderRes = jdbcTemplate.query(getEatDealOrdersQuery,
                 (rs, rowNum) -> new GetEatDealOrderRes(
                         rs.getInt("id"),
                         rs.getInt("user_id"),
                         rs.getInt("restaurant_id"),
-                        rs.getInt("menu_id"),
+                        rs.getInt("eat_deal_id"),
                         rs.getInt("price")
 
                 ), userId);
 
         for(GetEatDealOrderRes order : getEatDealOrderRes) {
-            order.setMenuName(getMenuName(order.getMenuId()));
+            order.setMenuName(getMenuName(order.getEatDealId()));
             order.setRestaurantName(getRestaurantName(order.getRestaurantId()));
         }
         return getEatDealOrderRes;
