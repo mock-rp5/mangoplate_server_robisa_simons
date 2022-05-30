@@ -2,6 +2,7 @@ package com.example.demo.src.visit;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.visit.model.PutVisitReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,27 @@ public class VisitService {
         }
         try {
             return dao.deleteVisit(visitId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int updateVisit(PutVisitReq putVisitReq, Integer userIdxByJwt) throws BaseException {
+        if(provider.checkUser(userIdxByJwt)==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        if(provider.checkRestaurant(putVisitReq.getRestaurantId()) == 0) {
+            throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
+        }
+        if(provider.checkVisit(putVisitReq.getVisitId()) == 0) {
+            throw new BaseException(VISITS_NOT_EXISTS_VISIT);
+        }
+        try {
+            int result = dao.updateVisit(putVisitReq, userIdxByJwt);
+            if(result == 0) {
+                throw new BaseException(VISITS_MODIFY_FAIL);
+            }
+            return result;
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

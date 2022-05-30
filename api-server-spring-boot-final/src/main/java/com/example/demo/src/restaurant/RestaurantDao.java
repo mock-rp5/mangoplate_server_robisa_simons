@@ -1,20 +1,16 @@
 package com.example.demo.src.restaurant;
 
-import com.example.demo.config.BaseException;
 import com.example.demo.src.comment.model.GetCommentRes;
 
 import com.example.demo.src.restaurant.model.*;
 import com.example.demo.src.review.model.GetReviewRes;
-import com.example.demo.src.user.model.GetUserRes;
 
 import com.example.demo.src.comment.model.GetSubComment;
 import com.example.demo.src.menu.model.GetRestaurantMenu;
-import com.example.demo.src.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

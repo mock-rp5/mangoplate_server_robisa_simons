@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -53,14 +54,16 @@ public class UserService {
         }
     }
 
-    public int modifyUserName(PutUserReq patchUserReq) throws BaseException {
+    @Transactional(rollbackFor = Exception.class)
+    public int modifyUserName(PutUser putUserReq) throws BaseException {
         try{
-            int result = userDao.modifyUserName(patchUserReq);
+            int result = userDao.modifyUserName(putUserReq);
             if(result == 0){
                 throw new BaseException(MODIFY_FAIL_USERNAME);
             }
             return result;
         } catch(Exception exception){
+            exception.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

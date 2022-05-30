@@ -64,6 +64,7 @@ public enum BaseResponseStatus {
 
     VISITS_EMPTY_VISIT_ID(false, 2080, "가봤어요 아이디를 입력해주세요"),
 
+
     FOLLOWS_EMPTY_FOLLOWEE_ID(false, 2090, "팔로우하려는 유저 아이디를 입력해주세요"),
     FOLLOWS_CANT_FOLLOW_SELF(false, 2091, "사용자 아이디와 팔로우하려는 아이디가 같습니다"),
     FOLLOWS_CANT_UNFOLLOW_SELF(false, 2092, "사용자 아이디와 언팔로우하려는 아이디가 같습니다"),
@@ -93,6 +94,11 @@ public enum BaseResponseStatus {
     REPORTS_EMPTY_EMAIL(false, 2141, "이메일을 입력해주세요"),
     REPORTS_EMPTY_REASON(false, 2142, "신고 사유 입력해주세요"),
     USER_ID_SAME_REPORT_USER_ID(false, 2143, "신고하는 유저와 리뷰 작성 유저와 동일합니다"),
+
+    SEARCH_EMPTY_KEYWORD(false, 2050, "조회 키워드를 입력해주세요"),
+    SEARCH_EMPTY_LATITUDE(false, 2051, "위도를 입력해주세요"),
+    SEARCH_EMPTY_LONGITUDE(false, 2052, "경도를 입력해주세요"),
+
     /**
      * 3000 : Response 오류
      */
@@ -154,7 +160,8 @@ public enum BaseResponseStatus {
     REVIEW_DELETE_IMG_FAIL(false, 4033, "리뷰 이미지 삭제에 실패했습니다."),
     MYLISTS_DELETE_FAIL(false, 4056, "마이리스트 삭제에 실패했습니다"),
 
-    REPORT_CREATE_FAIL(false, 4070, "리뷰 신고 실패하셨습니다.");
+    REPORT_CREATE_FAIL(false, 4070, "리뷰 신고 실패하셨습니다."),
+    VISITS_MODIFY_FAIL(false, 4080, "가봤어요 수정이 실패했습니다.");
 
 
 

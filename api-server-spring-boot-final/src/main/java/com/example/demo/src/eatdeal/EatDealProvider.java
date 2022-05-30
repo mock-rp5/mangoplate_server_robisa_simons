@@ -63,7 +63,7 @@ public class EatDealProvider {
 
         for(GetEatDeal eatDeal : getEatDeal) {
             GetEatDealRes eatDealRes = new GetEatDealRes(eatDeal.getRestaurantId(), eatDeal.getRestaurantName(), eatDeal.getPrice(),
-                    eatDeal.getDiscountRate(), eatDeal.getStartDate(), eatDeal.getEndDate(), eatDeal.getMenuName(), eatDeal.getExpiredDate(), eatDeal.getImgUrls());
+                    eatDeal.getDiscountRate(), eatDeal.getStartDate(), eatDeal.getEndDate(), eatDeal.getMenuName(), eatDeal.getExpiredDate(), eatDeal.getImgUrls(), eatDeal.getLatitude(), eatDeal.getLongitude());
 
             eatDealRes.setRestaurantDesc(eatDeal.getRestaurantDesc() != null ? eatDeal.getRestaurantDesc().split("\n") : null);
             eatDealRes.setMenuDesc(eatDeal.getMenuDesc() != null ? eatDeal.getMenuDesc().split("\n") : null);
