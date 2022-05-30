@@ -103,6 +103,7 @@ public class RestaurantProvider {
         try {
             return dao.checkMyRestaurant(restaurantId,userId);
         }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

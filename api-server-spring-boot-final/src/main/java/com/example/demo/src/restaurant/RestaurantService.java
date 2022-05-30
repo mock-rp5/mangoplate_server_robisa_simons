@@ -58,23 +58,25 @@ public class RestaurantService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public String deleteRestaurant(Integer restaurantId, Integer userId) throws BaseException {
+    public Integer deleteRestaurant(Integer restaurantId, Integer userId) throws BaseException {
         if(provider.checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(dao.checkRestaurantId(restaurantId) == 1)
+        if(provider.checkRestaurantId(restaurantId) == 0)
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         if(provider.checkMyRestaurant(restaurantId,userId) == 0)
             throw new BaseException(RESTAURANTS_CANT_ACCESS_RESTAURANT);
         try {
-            if(dao.deleteRestaurant(restaurantId).equals(1)){
-                return new String("1 RESTAURANT DELETE SUCCESS");
+            if(dao.deleteRestaurant(restaurantId) == 1){
+                return 1;
             }else {
                 throw new BaseException(DELETE_FAIL_RESTAURANT);
             }
         } catch (BaseException e) {
+            e.printStackTrace();
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -85,7 +87,7 @@ public class RestaurantService {
         if(provider.checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(dao.checkRestaurantId(restaurantId) == 1)
+        if(dao.checkRestaurantId(restaurantId) == 0)
             throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
         if(provider.checkMyRestaurant(restaurantId, userId) == 0)
             throw new BaseException(RESTAURANTS_CANT_ACCESS_RESTAURANT);

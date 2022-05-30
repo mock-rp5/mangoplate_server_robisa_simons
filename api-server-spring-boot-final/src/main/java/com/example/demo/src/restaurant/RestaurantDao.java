@@ -317,18 +317,19 @@ public class RestaurantDao {
     public PostRestaurantRes createRestaurant(PostRestaurantReq postRestaurantReq, Integer userId) {
         String createRestaurantQuery =
                 "INSERT INTO restaurants (name, view, address, first_region_id, second_region_id, third_region_id, latitude, longitude, open_hour, " +
-                        "close_hour, break_time, min_price, max_price, day_off, park_info, last_order, website, status, created_at, updated_at, food_category, user_id) " +
-                        "VALUES ( ?, 0, ?, null, null, null, ?, ?, null, null, null, null, null, null, DEFAULT, null, null, DEFAULT, DEFAULT, DEFAULT, ?, ?)\n";
+                        "close_hour, break_time, min_price, max_price, day_off, park_info, last_order, website, status, created_at, updated_at, food_category, user_id, store_number) " +
+                        "VALUES ( ?, 0, ?, null, null, null, ?, ?, null, null, null, null, null, null, DEFAULT, null, null, DEFAULT, DEFAULT, DEFAULT, ?, ?, ?)\n";
 //        food_category default 값 설정 필요.
         Object[] createRestaurantParams = new Object[]{postRestaurantReq.getName(), postRestaurantReq.getAddress(), postRestaurantReq.getLatitude(),
-                postRestaurantReq.getLongitude(), Optional.ofNullable(postRestaurantReq.getFoodCategory()).orElse(null), userId};
+                postRestaurantReq.getLongitude(), Optional.ofNullable(postRestaurantReq.getFoodCategory()).orElse(null), userId, postRestaurantReq.getStoreNumber()};
         this.jdbcTemplate.update(createRestaurantQuery, createRestaurantParams);
 
-        String lastInsertIdQuery = "select name, address, concat(DATEDIFF(NOW(),created_at),'일 전')as 'createdAt'\n" +
+        String lastInsertIdQuery = "select id, name, address, concat(DATEDIFF(NOW(),created_at),'일 전')as 'createdAt'\n" +
                 "from restaurants\n" +
                 "where id = (select last_insert_id())";
         return this.jdbcTemplate.queryForObject(lastInsertIdQuery,
                 (rs,rowNum)-> new PostRestaurantRes(
+                rs.getInt("id"),
                 rs.getString("name"),
                 rs.getString("address"),
                 rs.getString("createdAt")
@@ -356,7 +357,7 @@ public class RestaurantDao {
     }
 
     public int checkMyRestaurant(Integer restaurantId, Integer userId) {
-        String checkUserQuery = "select exists (select * from users where id = ? and user_id = ? and status = 'ACTIVE')";
+        String checkUserQuery = "select exists (select * from restaurants where id = ? and user_id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, restaurantId, userId);
     }
     public int checkUser(Integer userId) {

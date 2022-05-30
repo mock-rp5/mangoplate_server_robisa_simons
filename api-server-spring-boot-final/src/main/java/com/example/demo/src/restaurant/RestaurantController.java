@@ -172,13 +172,15 @@ public class RestaurantController {
 
     @ResponseBody
     @DeleteMapping("/{restaurant_id}")
-    public BaseResponse<String> deleteRestaurant(@PathVariable("restaurant_id") Integer restaurantId) {
+    public BaseResponse<Integer> deleteRestaurant(@PathVariable("restaurant_id") Integer restaurantId) {
+        if(restaurantId == null)
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
-            String result = service.deleteRestaurant(restaurantId, userId);
+            Integer result = service.deleteRestaurant(restaurantId, userId);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));
@@ -187,6 +189,8 @@ public class RestaurantController {
     @ResponseBody
     @PutMapping("/{restaurant_id}")
     public BaseResponse<String> updateRestaurant(@PathVariable("restaurant_id") Integer restaurantId, @RequestBody PutRestaurantReq putRestaurantReq) {
+        if(restaurantId == null)
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         if(putRestaurantReq.getName() == null){
             return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
         }

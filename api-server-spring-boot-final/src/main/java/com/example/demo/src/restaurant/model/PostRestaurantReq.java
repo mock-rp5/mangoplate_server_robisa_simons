@@ -13,4 +13,5 @@ public class PostRestaurantReq {
     private Double latitude;
     private Double longitude;
     private Integer foodCategory;
+    private String StoreNumber;
 }

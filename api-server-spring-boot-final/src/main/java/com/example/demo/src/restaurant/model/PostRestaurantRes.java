@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostRestaurantRes {
+    private Integer id;
     private String name;
     private String address;
     private String createdAt;
