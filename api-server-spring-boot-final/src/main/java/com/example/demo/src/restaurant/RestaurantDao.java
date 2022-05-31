@@ -254,7 +254,7 @@ public class RestaurantDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getBoolean(6),
+                        rs.getInt(6),
                         rs.getString(7),
                         rs.getString(8)
                 ), reviewId);
@@ -282,7 +282,7 @@ public class RestaurantDao {
                         rs.getString(4),
                         rs.getInt(5),
                         rs.getString(6),
-                        rs.getBoolean(7),
+                        rs.getInt(7),
                         rs.getString(8)
                 ), groupNum);
     }

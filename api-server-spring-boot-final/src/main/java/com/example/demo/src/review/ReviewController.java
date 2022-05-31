@@ -49,6 +49,11 @@ public class ReviewController {
             }
 
             GetNewsRes getReviewTodayRes = provider.getReviewTodayRes(userId);
+
+            if(getReviewTodayRes == null) {
+                return new BaseResponse<>(REVIEWS_NOT_EXISTS_TODAY_REVIEW);
+            }
+
             return new BaseResponse<>(getReviewTodayRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -71,9 +76,7 @@ public class ReviewController {
 
             List<GetNewsRes> getNewsRes = provider.getNews(userId, scores);
 
-            if(getNewsRes == null) {
-                return new BaseResponse<>(REVIEWS_NOT_EXISTS_TODAY_REVIEW);
-            }
+
             return new BaseResponse<>(getNewsRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -82,7 +85,7 @@ public class ReviewController {
 
     @GetMapping("/holic")
     @ResponseBody
-    public BaseResponse<List<GetNewsRes>> getNewsByHolic(@RequestParam("score") List<Integer> scores) {
+    public BaseResponse<List<GetNewsRes>> getNewsByHolic(@RequestParam(value = "score", required = false) List<Integer> scores) {
         if(scores == null||scores.isEmpty()) {
             return new BaseResponse<>(REVIEWS_EMPTY_SCORE);
         }
@@ -100,7 +103,7 @@ public class ReviewController {
 
     @GetMapping("/follow")
     @ResponseBody
-    public BaseResponse<List<GetNewsRes>> getNewsByFollow(@RequestParam("score") List<Integer> scores) {
+    public BaseResponse<List<GetNewsRes>> getNewsByFollow(@RequestParam(value = "score", required = false) List<Integer> scores) {
         if(scores == null||scores.isEmpty()) {
             return new BaseResponse<>(REVIEWS_EMPTY_SCORE);
         }
@@ -116,14 +119,14 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/user/{user-id}")
+    @GetMapping("/user/{user_id}")
     @ResponseBody
     public BaseResponse<List<GetReviewByUserRes>> getReviewByUser(@RequestParam(value = "lat", required = false) Double latitude,
                                                             @RequestParam(value = "long",required = false) Double longitude,
                                                             @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
                                                             @RequestParam(value = "sort", defaultValue = "updated_at") String sortOption,
                                                             @RequestParam(value = "score", defaultValue = "1,3,5") List<Integer> scores,
-                                                                  @PathVariable("user-id") Integer userId) {
+                                                                  @PathVariable("user_id") Integer userId) {
         if(userId == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
@@ -153,15 +156,28 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/images")
+    @GetMapping("/images/{user_id}")
     @ResponseBody
-    public BaseResponse<GetReviewImageRes> getReviewImgUrl() {
+    public BaseResponse<GetReviewImageRes> getReviewImgUrl(@RequestParam(value = "lat", required = false) Double latitude,
+                                                           @RequestParam(value = "long",required = false) Double longitude,
+                                                           @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
+                                                           @RequestParam(value = "sort", defaultValue = "updated_at") String sortOption,
+                                                           @PathVariable("user_id") Integer userId) {
+        if(userId == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
         try{
-            Integer userId = jwtService.getUserIdx();
+            Integer userIdxByJwt = jwtService.getUserIdx();
             if(userId == null) {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
-            GetReviewImageRes getReviewRes = provider.getReviewImages(userId);
+
+            GetReviewImageRes getReviewRes =  null;
+            if(latitude == null && longitude == null) {
+                getReviewRes = provider.getReviewImages(userId, foodCategories, sortOption, userIdxByJwt);
+            }else {
+                getReviewRes = provider.getReviewImages(userId, foodCategories, sortOption, userIdxByJwt, latitude, longitude);
+            }
             return new BaseResponse<>(getReviewRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
