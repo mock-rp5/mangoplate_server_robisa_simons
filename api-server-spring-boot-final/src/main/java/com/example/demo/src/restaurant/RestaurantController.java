@@ -110,7 +110,7 @@ public class RestaurantController {
 
     /**
      * 내가 등록한 식당 목록 조회
-     * @param restaurantId
+     * @param
      * @return
      */
     @ResponseBody

@@ -9,8 +9,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetRestaurantInfo {
     private String name;
-    private int viewCnt;
+    private Integer viewCnt;
     private String foodCategory;
     private String ImgUrl;
-    private int reviewCnt;
+    private Integer reviewCnt;
 }
