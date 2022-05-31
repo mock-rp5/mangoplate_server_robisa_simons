@@ -10,7 +10,7 @@ public class ReportDao {
     @Autowired private JdbcTemplate jdbcTemplate;
 
     public int checkUser(Integer userId) {
-        String checkUserQuery = "select exists (select * from users where id = ?)";
+        String checkUserQuery = "select exists (select * from users where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
     }
 

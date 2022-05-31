@@ -18,7 +18,7 @@ public class GetRestaurantDetailRes {
     private String name;
     private Integer view;
     private Integer wishCnt;
-    private Float score;
+    private float score;
     private String address;
     private Double latitude;
     private Double longitude;

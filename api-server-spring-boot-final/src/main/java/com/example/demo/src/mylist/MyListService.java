@@ -31,7 +31,6 @@ public class MyListService {
         if(provider.checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(postMyListReq.getTitle().equals(null)) throw new BaseException(MYLISTS_EMPTY_TITLE);
         try {
             PostMyListRes postMyListRes = new PostMyListRes(dao.createMyList(postMyListReq, userId), 0);
             return postMyListRes;
@@ -43,6 +42,11 @@ public class MyListService {
     @Transactional(rollbackFor = Exception.class)
     public PostMyListRes insert2MyList(List<Integer> restaurantId, Integer myListId) throws BaseException {
         if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
+        for(Integer resId : restaurantId){
+            if(provider.checkRestaurantId(resId) == 0)
+                throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
+        }
+
         int count = 0;
         try {
             for(Integer resId : restaurantId){
@@ -63,7 +67,7 @@ public class MyListService {
         }
         if(provider.checkUserMyListId(putMyListReq.getMyListId(), userId) == 0) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
         if(provider.checkMyListId(putMyListReq.getMyListId()) == 0) {
-            throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
+            throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
         }
         try{
             return dao.updateMyList(putMyListReq);
@@ -78,7 +82,7 @@ public class MyListService {
         if(provider.checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
+        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
         if(provider.checkUserMyListId(myListId, userId) == 0) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
 
         try{
@@ -109,7 +113,7 @@ public class MyListService {
         if(provider.checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_EMPTY_MYLIST_ID);
+        if(provider.checkMyListId(myListId) == 0) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
         if(provider.checkUserMyListId(myListId, userId) == 0) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
         if(provider.checkMyListEmpty(myListId) == 0) throw new BaseException(MYLISTS_EMPTY_RESTAURANT_IN_MYLIST);
 

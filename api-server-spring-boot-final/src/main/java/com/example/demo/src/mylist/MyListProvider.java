@@ -42,14 +42,14 @@ public class MyListProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-    public GetMyListDetailRes getMyListDetail(Integer userId, Integer myListId) throws BaseException {
-        if(checkUser(userId) == 0) {
+    public GetMyListDetailRes getMyListDetail(Integer targetUserId, Integer myListId, Integer userId) throws BaseException {
+        if(checkUser(targetUserId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
         try{
             if(checkMyListId(myListId) == 0 ) throw new BaseException(MYLISTS_NOT_EXISTS_MYLIST);
-            if(checkUserMyListId(myListId, userId) == 0 ) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
-            return dao.getMyListDetail(userId,myListId);
+            if(checkUserMyListId(myListId, targetUserId) == 0 ) throw new BaseException(MYLISTS_NOT_USERS_MYLIST);
+            return dao.getMyListDetail(targetUserId,myListId, userId);
         }catch (BaseException e) {
             System.out.println(e.toString());
             throw new BaseException(e.getStatus());
@@ -102,6 +102,14 @@ public class MyListProvider {
     public int checkUser(Integer userId) throws BaseException {
         try {
             return dao.checkUser(userId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public int checkRestaurantId(int restaurantId) throws BaseException {
+        try {
+            return dao.checkRestaurantId(restaurantId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

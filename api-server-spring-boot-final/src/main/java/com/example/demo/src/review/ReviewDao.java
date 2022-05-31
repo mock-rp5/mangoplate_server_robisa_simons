@@ -25,9 +25,9 @@ public class ReviewDao {
         return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId, userId);
     }
 
-    public int checkReviewId(int reviewId) {
-        String checkReviewQuery = "select exists (select * from reviews where id = ? and status = 'ACTIVE')";
-        return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId);
+    public int checkReviewId(int reviewId,  int userId) {
+        String checkReviewQuery = "select exists (select * from reviews where id = ? and user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId, userId);
     }
 
     public GetReviewRes getReviewDetail(int reviewId) {
@@ -81,10 +81,10 @@ public class ReviewDao {
                    // (rs, rowNum) -> imgUrls.add(rs.getString("img_url")), reviewId);
              List<String> imgUrls =  jdbcTemplate.query(getReviewImgQuery,
                      (rs, rowNum) -> rs.getString("img_url"), reviewId);
-
-             if(imgUrls.isEmpty()) {
-                 return null;
-             }
+//
+//             if(imgUrls.isEmpty()) {
+//                 return null;
+//             }
              return imgUrls;
         }catch (EmptyResultDataAccessException e) {
             return null;
@@ -114,7 +114,7 @@ public class ReviewDao {
                 ), reviewId);
 
         for(GetCommentRes comment : getCommentRes) {
-            List<GetSubComment> subComments = getSubComments(comment.getId());
+            List<GetSubComment> subComments = getSubComments(reviewId);
             for (GetSubComment getSubComment : subComments) {
                 getSubComment.setParentCommentUserName(getParentCommentUserName(getSubComment.getId()));
             }
@@ -131,7 +131,7 @@ public class ReviewDao {
     }
 
     private List<GetSubComment> getSubComments(int groupNum) {
-        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url " +
+        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url, U.is_holic, C.updated_at " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id " +
@@ -145,7 +145,9 @@ public class ReviewDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getString(6)
+                        rs.getString(6),
+                        rs.getBoolean(7),
+                        rs.getString(8)
                 ), groupNum);
     }
 
@@ -177,14 +179,16 @@ public class ReviewDao {
         }
     }
 
-    public int updateReview(Integer reviewId, Review review) {
-        String updateReviewQuery = "update reviews set content = ?, score = ? where id = ?";
-        Object[] updateQueryParams = new Object[]{review.getContent(), review.getScore(), reviewId};
+    public int updateReview(Integer reviewId, Review review, int userId) {
+        String updateReviewQuery = "update reviews set content = ?, score = ? where id = ? and user_id = ?";
+        Object[] updateQueryParams = new Object[]{review.getContent(), review.getScore(), reviewId, userId};
 
         int result = jdbcTemplate.update(updateReviewQuery, updateQueryParams);
 
         if(review.getFile()!= null) {
             storeReviewImg(reviewId, review.getFile());
+        }else {
+            deleteReviewImg(reviewId);
         }
 
         return result;
@@ -205,7 +209,7 @@ public class ReviewDao {
     }
 
     public int checkUser(Integer userId) {
-        String checkUserQuery = "select exists (select * from users where id = ?)";
+        String checkUserQuery = "select exists (select * from users where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
     }
 
@@ -251,7 +255,7 @@ public class ReviewDao {
                 "on IR.review_id = R.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.user_id = ? IR.status = 'ACTIVE'";
+                "where R.user_id = ? and IR.status = 'ACTIVE'";
 
         List<GetReviewImage> getReviewImages = jdbcTemplate.query(getReviewImageQuery,
                 (rs, rowNum) -> new GetReviewImage(
@@ -270,7 +274,7 @@ public class ReviewDao {
                 "(select count(*) from follows where user_id = ?) as follow, " +
                 "(select count(*) from reviews where user_id = ?) as review " +
                 " from users " +
-                " where id = ?";
+                " where id = ? and status = 'ACTIVE'";
 
         return jdbcTemplate.queryForObject(getUserInfoQuery,
                 (rs, rowNum) -> new GetUserInfo(
@@ -498,5 +502,10 @@ public class ReviewDao {
             news.setComments(getComments(news.getReviewId()));
         }
         return getNewsRes;
+    }
+
+    public int checkReviewId(int reviewId) {
+        String checkReviewQuery = "select exists (select * from reviews where id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId);
     }
 }

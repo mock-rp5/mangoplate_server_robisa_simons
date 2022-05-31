@@ -27,9 +27,9 @@ public class CommentProvider {
         }
     }
 
-    public int checkCommentId(Integer commentId) throws BaseException {
+    public int checkCommentId(Integer commentId, int userId) throws BaseException {
         try{
-            return dao.checkCommentId(commentId);
+            return dao.checkCommentId(commentId, userId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

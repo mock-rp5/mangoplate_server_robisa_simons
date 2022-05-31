@@ -17,11 +17,11 @@ public class KakaoDao {
         return jdbcTemplate.queryForObject(checkUsers, Integer.class, email);
     }
 
-    public Integer createUser(String email) {
-        String createUserQuery = "insert into users(email, social_provider, status)" +
-                " values(?, 'KAKAO', 'ACTIVE')";
+    public Integer createUser(String email, String nickName, String profileImage) {
+        String createUserQuery = "insert into users(email, social_provider, status, user_name, profile_img_url)" +
+                " values(?, 'KAKAO', 'ACTIVE', ?, ?)";
 
-        jdbcTemplate.update(createUserQuery, email);
+        jdbcTemplate.update(createUserQuery, email, nickName, profileImage);
 
         String lastUserId = "select id from users order by id desc limit 1";
 

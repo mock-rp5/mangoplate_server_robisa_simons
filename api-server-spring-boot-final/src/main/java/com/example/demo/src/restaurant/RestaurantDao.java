@@ -26,6 +26,7 @@ public class RestaurantDao {
     public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String orderOption, Integer userId) {
             String getRestaurantQuery = "select R.id,\n" +
                     "       R.name,\n" +
+                    "       R.address,\n" +
                     "       rgn.name as regionName,\n" +
                     "       cf.name as foodCategory,\n" +
                     "       R.latitude,\n" +
@@ -62,8 +63,11 @@ public class RestaurantDao {
                             rs.getInt("isWishes"),
                             rs.getInt("isVisits"),
                             rs.getInt("view"),
+                            rs.getString("address"),
                             rs.getString("imgUrl"))
             ,params );
+
+            getRestaurantRes.forEach(s -> s.setRegionName(extractRegionName(s.getAddress())));
             return getRestaurantRes;
     }
 
@@ -71,6 +75,7 @@ public class RestaurantDao {
         System.out.println(regionCode);
         String getRestaurantQuery = "select R.id,\n" +
                 "       R.name,\n" +
+                "       R.address,\n" +
                 "       rgn.name as regionName,\n" +
                 "       cf.name as foodCategory,\n" +
                 "       R.latitude,\n" +
@@ -100,9 +105,12 @@ public class RestaurantDao {
                         rs.getInt("isWishes"),
                         rs.getInt("isVisits"),
                         rs.getInt("view"),
+                        rs.getString("address"),
                         rs.getString("imgUrl")),params);
         System.out.println(getRestaurantRes.size());
         System.out.println(getRestaurantRes.toString());
+        getRestaurantRes.forEach(s -> s.setRegionName(extractRegionName(s.getAddress())));
+
         return getRestaurantRes;
     }
 
@@ -149,7 +157,7 @@ public class RestaurantDao {
             getRestaurantDetailRes.setWishCnt(getWishCnt(restaurantId));
 
         } catch (EmptyResultDataAccessException e) {
-            return new GetRestaurantDetailRes();
+            return null;
         }
 
         return getRestaurantDetailRes;
@@ -178,7 +186,7 @@ public class RestaurantDao {
                 "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.id = ? and R.status ='ACTIVE' ";
+                "where RT.id = ? and R.status ='ACTIVE' ";
 
         List<GetReviewRes> getReviewRes = jdbcTemplate.query(getReviewsQuery,
                 (rs, rowNum) -> new GetReviewRes(
@@ -259,7 +267,7 @@ public class RestaurantDao {
     }
 
     private List<GetSubComment> getSubComments(int groupNum) {
-        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url " +
+        String getSubComments = "select C.id, C.user_id, U.user_name, C.comment, `order`, U.profile_img_url, U.is_holic, C.updated_at " +
                 "from review_comments as C " +
                 "join users as U " +
                 "on C.user_id = U.id " +
@@ -273,7 +281,9 @@ public class RestaurantDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getString(6)
+                        rs.getString(6),
+                        rs.getBoolean(7),
+                        rs.getString(8)
                 ), groupNum);
     }
 
@@ -373,6 +383,20 @@ public class RestaurantDao {
     public int updateRestaurantFoodCategory(Integer value, Integer userId) {
         String checkUserQuery = "update restaurants set food_category = ? where user_id = ?";
         return jdbcTemplate.update(checkUserQuery, value, userId);
+    }
+
+    public String extractRegionName(String address){
+        String[] addressInfo = address.split(" ");
+
+//        for(String s : addressInfo)
+//            System.out.print(s+",");
+        if(addressInfo[0].equals("서울특별시")) {
+//            System.out.println(addressInfo[2]);
+            return addressInfo[2];
+        } else {
+//            System.out.println(addressInfo[1]);
+            return addressInfo[1];
+        }
     }
 
 

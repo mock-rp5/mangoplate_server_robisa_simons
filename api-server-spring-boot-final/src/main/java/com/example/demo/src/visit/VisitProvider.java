@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
@@ -35,6 +37,7 @@ public class VisitProvider {
     }
 
     public GetVisitRes getVisit(Integer restaurantId, Integer userIdxByJwt) throws BaseException {
+
         if(checkUser(userIdxByJwt) ==0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
@@ -53,6 +56,14 @@ public class VisitProvider {
         }
     }
 
+    public int checkTodayVisit(Integer restaurantId, Integer userIdxByJwt, String currentDate) throws BaseException {
+        try{
+            return dao.checkTodayVisit(restaurantId, userIdxByJwt, currentDate);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
     public int checkUser(Integer userIdxByJwt) throws BaseException {
         try {
             return dao.checkUser(userIdxByJwt);
@@ -61,9 +72,9 @@ public class VisitProvider {
         }
     }
 
-    public int checkVisit(Integer visitId) throws BaseException {
+    public int checkVisit(Integer restaurantId, Integer userId, Integer visitId) throws BaseException {
         try {
-            return dao.checkVisit(visitId);
+            return dao.checkVisit(restaurantId, userId, visitId);
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }

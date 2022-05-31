@@ -37,9 +37,9 @@ public class VisitDao {
         return jdbcTemplate.queryForObject(getVisitQuery, int.class, restaurantId, userIdxByJwt);
     }
 
-    public int checkVisit(Integer visitId) {
-        String checkVisitQuery = "select exists (select * from visits where id = ? and status = 'ACTIVE')";
-        return jdbcTemplate.queryForObject(checkVisitQuery, int.class, visitId);
+    public int checkVisit(Integer restaurantId, Integer userId,Integer visitId) {
+        String checkVisitQuery = "select exists (select * from visits where id = ? and restaurant_id = ? and user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkVisitQuery, int.class, visitId, restaurantId, userId);
     }
 
     public int deleteVisit(int reviewId) {
@@ -113,5 +113,10 @@ public class VisitDao {
     public int updateVisit(PutVisitReq putVisitReq, Integer userIdxByJwt) {
         String updateVisitQuery = "update visits set content = ? where id = ? and restaurant_id = ? and user_id = ? and status = 'ACTIVE'";
         return jdbcTemplate.update(updateVisitQuery, putVisitReq.getContent(),putVisitReq.getVisitId(), putVisitReq.getRestaurantId(), userIdxByJwt);
+    }
+
+    public int checkTodayVisit(Integer restaurantId, Integer userIdxByJwt, String currentDate) {
+        String checkTodayVisit = "select exists (select * from visits where updated_at like ? and restaurant_id =? and user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkTodayVisit, int.class, currentDate+"%", restaurantId, userIdxByJwt);
     }
 }

@@ -36,4 +36,17 @@ public class GetSearchRes {
         this.view = view;
         this.imgUrl = imgUrl;
     }
+
+    public GetSearchRes(Long id, String name, String address, String foodCategory, Double latitude, Double longitude, Integer numReviews, Double ratingsAvg, Integer view, String imgUrl) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.foodCategory = foodCategory;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.numReviews = numReviews;
+        this.ratingsAvg = ratingsAvg;
+        this.view = view;
+        this.imgUrl = imgUrl;
+    }
 }

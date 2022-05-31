@@ -51,8 +51,8 @@ public class EatDealController {
     @GetMapping("")
     @ResponseBody
     public BaseResponse<List<GetEatDealRes>> getEatDeals(
-            @RequestParam(value = "lat") Double latitude,
-            @RequestParam(value = "long") Double longitude,
+            @RequestParam(value = "lat", required = false) Double latitude,
+            @RequestParam(value = "long", required = false) Double longitude,
             @RequestParam(value= "range", defaultValue = "3") Integer range) {
         if(latitude == null) {
             return new BaseResponse<>(EAT_DEALS_EMPTY_LATITUDE);

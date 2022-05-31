@@ -32,6 +32,8 @@ public enum BaseResponseStatus {
     POST_USERS_EXISTS_EMAIL(false,2017,"중복된 이메일입니다."),
     POST_USERS_EMPTY_USER_NAME(false, 2018, "유저 이름을 입력해주세요"),
 
+    NOT_EXISTS_INPUT_CHANGES(false, 2019, "변경 사항이 없습니다."),
+
     GET_KAKAO_USER_INFO_FALI(false, 2020, "카카오 유저 정보 조회 실패했습니다."),
     KAKAO_LOGIN_FAIL(false, 2021, "카카오 로그인 실패"),
     KAKAO_LOGOUT_FAIL(false, 2022, "카카오 로그아웃 실패"),
@@ -44,11 +46,16 @@ public enum BaseResponseStatus {
     RESTAURANTS_EMPTY_RESTAURANT_ADDRESS(false, 2033, "식당 주소 값을 확인해주세요"),
 
     RESTAURANTS_EXISTS_RESTAURANT(false, 2034, "중복된 식당 정보입니다"),
+
+    REVIEWS_EMPTY_REVIEW_ID(false, 2044, "리뷰 아이디 값을 확인해주세요"),
+
     RESTAURANTS_CANT_ACCESS_RESTAURANT(false, 2035, "식당 수정 및 삭제에 접근 가능한 권한이 없습니다"),
+
     RESTAURANTS_EMPTY_RESTAURANT_FOODCATEGORY(false, 2036, "음식 카테고리 값을 입력해주세요"),
     RESTAURANTS_EMPTY_UPDATE_DATA(false, 2037, "수정할 데이터 값을 입력해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_ADDRESS_INFO(false, 2038, "수정할 식당의 주소와 위치 정보 값을 입력해주세요"),
-    REVIEWS_EMPTY_REVIEW_ID(false, 2040, "리뷰 아이디 값을 확인해주세요"),
+    //REVIEWS_EMPTY_REVIEW_ID(false, 2040, "리뷰 아이디 값을 확인해주세요"),
+
     REVIEWS_EMPTY_RESTAURANT_ID(false, 2041, "식당 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),
     REVIEWS_EMPTY_CONTENT(false, 2043, "리뷰 내용을 입력해주세요"),
@@ -103,6 +110,9 @@ public enum BaseResponseStatus {
     SEARCH_EMPTY_LATITUDE(false, 2051, "위도를 입력해주세요"),
     SEARCH_EMPTY_LONGITUDE(false, 2052, "경도를 입력해주세요"),
 
+
+    EMPTY_ACCESS_TOKEN_LATITUDE_LONGITUDE(false, 2053, "jwt 값이 없으면 위도, 경도 값도 없어야 합니다."),
+
     /**
      * 3000 : Response 오류
      */
@@ -130,6 +140,7 @@ public enum BaseResponseStatus {
     COMMENTS_NOT_EXISTS_PARENT_USER_ID(false, 3062, "존재하지 않은 유저 입니다"),
 
     VISITS_NOT_EXISTS_VISIT(false, 3080, "존재하지 않은 가봤어요 입니다"),
+    EXISTS_TODAY_VISIT(false, 3081, "같은 식당에 하루만 가봤어요 가능합니다"),
 
     WISHES_NOT_EXISTS_WISH(false, 3090, "존재하지 않은 가고싶다 항목입니다"),
     WISHES_NOT_ALLOWED_MEMO(false, 3091, "메모를 추가할 수 있는 권한이 없습니다"),

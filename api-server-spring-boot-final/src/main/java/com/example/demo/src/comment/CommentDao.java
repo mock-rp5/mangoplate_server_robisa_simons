@@ -17,9 +17,9 @@ public class CommentDao {
         return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId);
     }
 
-    public int checkCommentId(Integer commentId) {
-        String checkCommentQuery = "select exists (select * from review_comments where id = ? and status ='ACTIVE')";
-        return jdbcTemplate.queryForObject(checkCommentQuery, int.class, commentId);
+    public int checkCommentId(Integer commentId,  int userId) {
+        String checkCommentQuery = "select exists (select * from review_comments where id = ? and user_id = ? and status ='ACTIVE')";
+        return jdbcTemplate.queryForObject(checkCommentQuery, int.class, commentId, userId);
     }
 
     public int  checkUserId(Integer parentUserId) {
@@ -34,19 +34,20 @@ public class CommentDao {
         int level = postCommentReq.getCommentId() !=null ? 2:1;
 
         //순서를 구해야 함
-        Pair<Integer, Integer> pairs = getLevelOrder(postCommentReq.getReviewId(), level);
+        Integer order = getLevelOrder(postCommentReq.getReviewId(), level);
 
-        Object[] createParams = new Object[] {postCommentReq.getReviewId(), postCommentReq.getComment(), level, pairs.getSecond()+1, postCommentReq.getReviewId(), userId,  postCommentReq.getParentUserId()};
+        Object[] createParams = new Object[] {postCommentReq.getReviewId(), postCommentReq.getComment(), level, order+1, postCommentReq.getReviewId(), userId,  postCommentReq.getParentUserId()};
         int result = jdbcTemplate.update(createCommentQuery, createParams);
 
-        return pairs.getFirst()+1;
+        String lastId = "select id from review_comments order by id desc limit 1";
+        return jdbcTemplate.queryForObject(lastId, int.class);
     }
 
     //first: id, second: order
-    private Pair<Integer, Integer> getLevelOrder(Integer reviewId, int i) {
-        String getLevelOrderQuery = "select id,`order` from review_comments where review_id = ? and level = ? and status = 'ACTIVE' order by id desc limit 1";
+    private Integer getLevelOrder(Integer reviewId, int i) {
+        String getLevelOrderQuery = "select count(*) from review_comments where review_id = ? and level = ? and status = 'ACTIVE' order by id desc";
         return jdbcTemplate.queryForObject(getLevelOrderQuery,
-                (rs, rowNum) -> Pair.of(rs.getInt("id"), rs.getInt("order"))
+                int.class
                 , reviewId, i);
     }
 

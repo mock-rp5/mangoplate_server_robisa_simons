@@ -33,11 +33,11 @@ public class CommentService {
         }
         // 댓글의 대댓글인 경우
         if(postCommentReq.getCommentId()!=null) {
-            if(provider.checkCommentId(postCommentReq.getCommentId()) == 0) {
-                throw new BaseException(COMMENTS_NOT_EXISTS_COMMENT);
-            }
             if(provider.checkUserId(postCommentReq.getParentUserId()) == 0) {
                 throw new BaseException(COMMENTS_NOT_EXISTS_PARENT_USER_ID);
+            }
+            if(provider.checkCommentId(postCommentReq.getCommentId(), postCommentReq.getParentUserId()) == 0) {
+                throw new BaseException(COMMENTS_NOT_EXISTS_COMMENT);
             }
         }
 
@@ -53,7 +53,7 @@ public class CommentService {
         if(provider.checkUser(userId)==0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(provider.checkCommentId(putCommentReq.getCommentId()) == 0) {
+        if(provider.checkCommentId(putCommentReq.getCommentId(), userId) == 0) {
             throw new BaseException(COMMENTS_NOT_EXISTS_COMMENT);
         }
         try{
@@ -68,7 +68,7 @@ public class CommentService {
         if(provider.checkUser(userId)==0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
-        if(provider.checkCommentId(commentId) == 0) {
+        if(provider.checkCommentId(commentId, userId) == 0) {
             throw new BaseException(COMMENTS_NOT_EXISTS_COMMENT);
         }
         try{

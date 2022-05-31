@@ -50,16 +50,20 @@ public class MyListController {
 //    특정 유저가 가진 마이리스트 번호가 아니면 밸리데이션, 1,2,4번의 마이리스트를 가지고 있는 유저에게서 3번 마이리스트를 가져오면 안된다
     @GetMapping("/{user_id}/{mylist_id}")
     @ResponseBody
-    public BaseResponse<GetMyListDetailRes> getMyListDetail(@PathVariable(value = "user_id", required = false) Integer userId,
+    public BaseResponse<GetMyListDetailRes> getMyListDetail(@PathVariable(value = "user_id", required = false) Integer targetUserId,
                                                             @PathVariable(value = "mylist_id", required = false) Integer myListId) {
-        if(userId == null) {
+        if(targetUserId == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
         if(myListId == null) {
             return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
         }
         try {
-            GetMyListDetailRes getMyListDetailRes = provider.getMyListDetail(userId,myListId);
+            Integer userId = jwtService.getUserIdx();
+            if(userId == null) {
+                return new BaseResponse<>(USERS_EMPTY_USER_ID);
+            }
+            GetMyListDetailRes getMyListDetailRes = provider.getMyListDetail(targetUserId, myListId, userId);
             return new BaseResponse<>(getMyListDetailRes);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
@@ -72,6 +76,7 @@ public class MyListController {
     @ResponseBody
     public BaseResponse<PostMyListRes> createMyList(@RequestParam(value = "restaurant-id",required = false) Optional<List<Integer>> restaurantId,
                                                     @RequestBody PostMyListReq postMyListReq) {
+        if(postMyListReq.getTitle().equals(null)) return new BaseResponse<>(MYLISTS_EMPTY_TITLE);
         PostMyListRes postMyListRes;
         try {
             Integer userId = jwtService.getUserIdx();
@@ -119,7 +124,7 @@ public class MyListController {
     @DeleteMapping("/{mylist_id}")
     @ResponseBody
     public BaseResponse<Integer> deleteMyList(@PathVariable(value = "mylist_id", required = false) Integer myListId,
-                                              @RequestParam(value = "restaurants-id", required = false) List<Integer> restaurantsId) {
+                                              @RequestParam(value = "restaurant-id", required = false) List<Integer> restaurantsId) {
         if(myListId == null) return new BaseResponse<>(MYLISTS_EMPTY_MYLIST_ID);
         try {
             Integer userId = jwtService.getUserIdx();
