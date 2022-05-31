@@ -1,9 +1,10 @@
 package com.example.demo.src.review;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.review.model.GetNewsRes;
 import com.example.demo.src.review.model.GetReviewImageRes;
 import com.example.demo.src.review.model.GetReviewRes;
-import com.example.demo.src.review.model.GetNewsRes;
+import com.example.demo.src.review.model.GetReviewByUserRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,12 +79,25 @@ public class ReviewProvider {
         }
     }
 
-    public List<GetReviewRes> getReviewByUser(Integer userId) throws BaseException {
+    public List<GetReviewByUserRes> getReviewByUser(Integer userId, List<Integer> foodCategories, String sortOption, List<Integer> scores, Integer userIdxByJwt) throws BaseException {
         if(checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
         try {
-            List<GetReviewRes> getReviewRes = dao.getReviewByUser(userId);
+            List<GetReviewByUserRes> getReviewRes = dao.getReviewByUser(userId, foodCategories, sortOption, scores, userIdxByJwt);
+            return getReviewRes;
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public List<GetReviewByUserRes> getReviewByUser(Integer userId, List<Integer> foodCategories, String sortOption, Double latitude, Double longitude, List<Integer> scores, Integer userIdxByJwt) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            List<GetReviewByUserRes> getReviewRes = dao.getReviewByUser(userId, foodCategories, sortOption, latitude, longitude, scores, userIdxByJwt);
             return getReviewRes;
         }catch (Exception e) {
             e.printStackTrace();
@@ -166,4 +180,6 @@ public class ReviewProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+
 }

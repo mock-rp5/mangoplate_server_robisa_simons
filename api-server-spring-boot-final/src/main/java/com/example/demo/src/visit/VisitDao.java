@@ -3,9 +3,11 @@ package com.example.demo.src.visit;
 import com.example.demo.config.BaseResponse;
 import com.example.demo.src.visit.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -55,22 +57,85 @@ public class VisitDao {
     }
 
 
-    public GetVisitByUserRes getVisitByUser(Integer userIdxByJwt) {
-        String getVisitId = "select id, restaurant_id from visits where user_id = ? and status = 'ACTIVE'";
+    public GetVisitByUserRes getVisitByUser(Integer userId,  List<Integer> foodCategories, String sortOption,  Integer userIdxByJwt) {
+        String getVisitId = "select V.id, V.restaurant_id, V.content " +
+                "from visits as V " +
+                "left join visit_likes as VL " +
+                "on V.id = VL.visit_id " +
+                "left join visit_comments as VC " +
+                "on V.id = VC.visit_id "+
+                "join restaurants as RT " +
+                "on V.restaurant_id = RT.id " +
+                "where V.user_id = ? and V.status = 'ACTIVE' and RT.food_category in(";
 
-        GetUserInfo getUserInfo = getUserInfo(userIdxByJwt);
-        
+        GetUserInfo getUserInfo = getUserInfo(userId);
+
+        Object[] params = new Object[foodCategories.size()+1];
+        params[0] = userId;
+        for(int i=0; i<foodCategories.size(); i++) {
+            params[i+1] = foodCategories.get(i);
+            getVisitId+="?,";
+        }
+
+        getVisitId = getVisitId.substring(0, getVisitId.length()-1);
+        getVisitId+=") order by V."+sortOption+" desc";
+
         List<GetVisit> getVisits = jdbcTemplate.query(getVisitId,
                 (rs, rowNum) -> new GetVisit(
                         rs.getInt("id"),
-                        rs.getInt("restaurant_id")
-                ), userIdxByJwt);
+                        rs.getInt("restaurant_id"),
+                        rs.getString("content")
+                ), params);
         
         for(GetVisit visit : getVisits) {
+            if(visit.getVisitId() == 0) {
+                return new GetVisitByUserRes(getUserInfo,new ArrayList<GetVisit>());
+            }
+            visit.setLikeCnt(getLikeCnt(visit.getVisitId()));
+            visit.setCommentCnt(getCommentCnt(visit.getVisitId()));
             visit.setGetRestaurantInfo(getRestaurantInfo(visit.getRestaurantId()));
+            visit.setIsWish(getWish(visit.getRestaurantId(), userIdxByJwt));
+            visit.setIsLike(getLike(visit.getVisitId(), userIdxByJwt));
+            visit.setComments(getComments(visit.getVisitId()));
+
         }
 
         return new GetVisitByUserRes(getUserInfo, getVisits);
+    }
+
+    private Integer getCommentCnt(Integer visitId) {
+        String getCommentCnt = "select count(*) from visit_comments where visit_id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.queryForObject(getCommentCnt, int.class, visitId);
+    }
+
+    private Integer getLikeCnt(Integer visitId) {
+        String getLikeCnt = "select count(*) from visit_likes where visit_id = ? and status = 'ACTIVE'";
+        return jdbcTemplate.queryForObject(getLikeCnt, int.class, visitId);
+    }
+
+    private List<GetVisitComment> getComments(int visitId) {
+        String getCommentsQuery = "select VC.id, VC.visit_id, U.id as user_id, U.user_name, VC.parentUserName, U.is_holic, VC.comment, VC.updated_at, U.profile_img_url " +
+                "from visit_comments as VC " +
+                "join users as U " +
+                "on VC.user_id = U.id " +
+                "where VC.visit_id = ?";
+        return jdbcTemplate.query(getCommentsQuery,
+                (rs, rowNum) -> new GetVisitComment(
+                        rs.getInt("id"),
+                        rs.getInt("visit_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("user_name"),
+                        rs.getString("parentUserName"),
+                        rs.getInt("is_holic"),
+                        rs.getString("comment"),
+                        rs.getString("updated_at"),
+                        rs.getString("profile_img_url")
+                ), visitId);
+    }
+
+    private int getLike(int visitId, Integer userIdxByJwt) {
+        String getLikeQuery = "select exists (select * from visit_likes where visit_id = ? and user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(getLikeQuery, int.class, visitId, userIdxByJwt);
     }
 
     private GetRestaurantInfo getRestaurantInfo(int restaurantId) {
@@ -82,15 +147,21 @@ public class VisitDao {
                 " on R.food_category = C.id " +
                 " where R.id = ?";
 
-        return jdbcTemplate.queryForObject(getRestaurantInfoQuery,
-                (rs, rowNum) -> new GetRestaurantInfo(
-                        rs.getString(1),
-                        rs.getInt(2),
-                        rs.getString(3),
-                        rs.getString(4),
-                        rs.getInt(5)
+        GetRestaurantInfo getRestaurantInfo = null;
+        try {
+            getRestaurantInfo = jdbcTemplate.queryForObject(getRestaurantInfoQuery,
+                    (rs, rowNum) -> new GetRestaurantInfo(
+                            rs.getString(1),
+                            rs.getInt(2),
+                            rs.getString(3),
+                            rs.getString(4),
+                            rs.getInt(5)
 
-                ), restaurantId, restaurantId, restaurantId );
+                    ), restaurantId, restaurantId, restaurantId);
+            return getRestaurantInfo;
+        }catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     private GetUserInfo getUserInfo(Integer userIdxByJwt) {
@@ -118,5 +189,68 @@ public class VisitDao {
     public int checkTodayVisit(Integer restaurantId, Integer userIdxByJwt, String currentDate) {
         String checkTodayVisit = "select exists (select * from visits where updated_at like ? and restaurant_id =? and user_id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkTodayVisit, int.class, currentDate+"%", restaurantId, userIdxByJwt);
+    }
+
+    public GetVisitByUserRes getVisitByUser(Integer userId, List<Integer> foodCategories, String sortOption, Double latitude, Double longitude,  Integer userIdxByJwt) {
+        String getVisitId = "select V.id, V.restaurant_id, V.content " +
+                "from visits as V " +
+                "left join visit_likes as VL " +
+                "on V.id = VL.visit_id " +
+                "left join visit_comments as VC " +
+                "on V.id = VC.visit_id "+
+                "join restaurants as RT " +
+                "on V.restaurant_id = RT.id " +
+                "left join (SELECT * FROM (" +
+                " SELECT ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id " +
+                " FROM restaurants) DATA) as D " +
+                "on V.restaurant_id = D.id "+
+                "where V.user_id = ? and V.status = 'ACTIVE' and RT.food_category in(";
+
+        GetUserInfo getUserInfo = getUserInfo(userId);
+
+        Object[] params = new Object[foodCategories.size()+4];
+        params[0] = latitude;
+        params[1] = longitude;
+        params[2] = latitude;
+        params[3] = userId;
+
+        for(int i=0; i<foodCategories.size(); i++) {
+            params[i+4] = foodCategories.get(i);
+            getVisitId+="?,";
+        }
+
+        getVisitId = getVisitId.substring(0, getVisitId.length()-1);
+        if(sortOption.equals("distance")) {
+            getVisitId+=") order by D."+sortOption;
+        }else {
+            getVisitId+=") order by R."+sortOption+ " desc";
+        }
+
+        List<GetVisit> getVisits = jdbcTemplate.query(getVisitId,
+                (rs, rowNum) -> new GetVisit(
+                        rs.getInt("id"),
+                        rs.getInt("restaurant_id"),
+                        rs.getString("content")
+                ), params);
+
+        for(GetVisit visit : getVisits) {
+            if(visit.getVisitId() == 0) {
+                return new GetVisitByUserRes(getUserInfo,new ArrayList<GetVisit>());
+            }
+            visit.setLikeCnt(getLikeCnt(visit.getVisitId()));
+            visit.setCommentCnt(getCommentCnt(visit.getVisitId()));
+            visit.setGetRestaurantInfo(getRestaurantInfo(visit.getRestaurantId()));
+            visit.setIsWish(getWish(visit.getRestaurantId(), userIdxByJwt));
+            visit.setIsLike(getLike(visit.getVisitId(), userIdxByJwt));
+            visit.setComments(getComments(visit.getVisitId()));
+        }
+
+
+        return new GetVisitByUserRes(getUserInfo, getVisits);
+    }
+
+    private int getWish(int restaurantId, Integer userIdxByJwt) {
+        String getWishQuery = "select exists (select * from wishes where restaurant_id = ? and user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(getWishQuery, int.class, restaurantId, userIdxByJwt);
     }
 }

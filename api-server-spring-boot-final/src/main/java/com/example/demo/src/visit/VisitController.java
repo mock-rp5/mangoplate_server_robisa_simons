@@ -90,16 +90,39 @@ public class VisitController {
 
     }
 
-    @GetMapping
+    @GetMapping("/user/{user-id}")
     @ResponseBody
-    public BaseResponse<GetVisitByUserRes> getVisitByUser() {
+    public BaseResponse<GetVisitByUserRes> getVisitByUser(@RequestParam(value = "lat", required = false) Double latitude,
+                                                          @RequestParam(value = "long",required = false) Double longitude,
+                                                          @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
+                                                          @RequestParam(value = "sort", defaultValue = "updated_at") String sortOption,
+                                                          @PathVariable(value = "user-id", required = false) Integer userId
+                                                          ) {
+//        if(userId == null) {
+//            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+//        }
+
+        if(sortOption.equals("distance")) {
+            if(latitude == null || longitude == null) {
+                return new BaseResponse<>(SORT_DISTANCE_NEED_LATITUDE_LOGITUDE);
+            }
+        }
         try {
             Integer userIdxByJwt = jwtService.getUserIdx();
             //userIdx와 접근한 유저가 같은지 확인
             if(userIdxByJwt == null){
                 return new BaseResponse<>(INVALID_USER_JWT);
             }
-            GetVisitByUserRes getVisitByUserRes = provider.getVisitByUser(userIdxByJwt);
+
+            GetVisitByUserRes getVisitByUserRes = null;
+
+            if(latitude == null && longitude == null) {
+                getVisitByUserRes = provider.getVisitByUser(userId, foodCategories, sortOption, userIdxByJwt);
+
+            }else {
+                getVisitByUserRes = provider.getVisitByUser(userId, foodCategories, sortOption, latitude, longitude, userIdxByJwt);
+            }
+
             return new BaseResponse<>(getVisitByUserRes);
 
         }catch (BaseException e) {

@@ -31,7 +31,7 @@ public class WishController {
     }
     /**
      * 유저의 가고싶다 항목에 포함된 식당 조회
-     * @param userId
+     * @param
      * @return 식당 정보가 들어있는 객체
      */
     @ResponseBody

@@ -116,7 +116,7 @@ public class WishDao {
         String getWishQuery = "select exists (select * from wishes where restaurant_id = ? and user_id = ? and status = 'ACTIVE')";
         int result = jdbcTemplate.queryForObject(getWishQuery, int.class, restaurantId, userId);
 
-        if (result == 0) return new GetWishRes(0,null,null);
+        if (result == 0) return new GetWishRes(0,0,0);
 
         String getIdQuery = "select id from wishes where restaurant_id = ? and user_id = ? and status = 'ACTIVE'";
         int wishId = jdbcTemplate.queryForObject(getIdQuery, int.class, restaurantId, userId);

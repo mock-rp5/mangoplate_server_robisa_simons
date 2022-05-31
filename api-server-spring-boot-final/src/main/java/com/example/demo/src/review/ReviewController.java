@@ -58,7 +58,7 @@ public class ReviewController {
     @GetMapping()
     @ResponseBody
     public BaseResponse<List<GetNewsRes>> getNews(@RequestHeader(value = "X-ACCESS-TOKEN", required = false) String jwt,
-                                                  @RequestParam(value = "score", required = false) List<Integer> scores) {
+                                                          @RequestParam(value = "score", required = false) List<Integer> scores) {
         if(scores == null||scores.isEmpty()) {
             return new BaseResponse<>(REVIEWS_EMPTY_SCORE);
         }
@@ -116,18 +116,39 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/user")
+    @GetMapping("/user/{user-id}")
     @ResponseBody
-    public BaseResponse<List<GetReviewRes>> getReviewByUser() {
+    public BaseResponse<List<GetReviewByUserRes>> getReviewByUser(@RequestParam(value = "lat", required = false) Double latitude,
+                                                            @RequestParam(value = "long",required = false) Double longitude,
+                                                            @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
+                                                            @RequestParam(value = "sort", defaultValue = "updated_at") String sortOption,
+                                                            @RequestParam(value = "score", defaultValue = "1,3,5") List<Integer> scores,
+                                                                  @PathVariable("user-id") Integer userId) {
+        if(userId == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
+
+        if(sortOption.equals("distance")) {
+            if(latitude == null || longitude == null) {
+                return new BaseResponse<>(SORT_DISTANCE_NEED_LATITUDE_LOGITUDE);
+            }
+        }
         try{
-            Integer userId = jwtService.getUserIdx();
-            if(userId == null) {
+            Integer userIdxByJwt = jwtService.getUserIdx();
+            if(userIdxByJwt == null) {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
-            List<GetReviewRes> getReviewRes = provider.getReviewByUser(userId);
+            List<GetReviewByUserRes> getReviewRes = null;
+            if(latitude == null && longitude == null) {
+                getReviewRes = provider.getReviewByUser(userId, foodCategories, sortOption, scores, userIdxByJwt);
+
+            }else {
+                getReviewRes = provider.getReviewByUser(userId, foodCategories, sortOption, latitude, longitude, scores, userIdxByJwt);
+
+            }
+
             return new BaseResponse<>(getReviewRes);
         }catch (BaseException e) {
-
             return new BaseResponse<>(e.getStatus());
         }
     }

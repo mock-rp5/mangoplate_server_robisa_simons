@@ -80,15 +80,29 @@ public class VisitProvider {
         }
     }
 
-    public GetVisitByUserRes getVisitByUser(Integer userIdxByJwt) throws BaseException {
-        if(checkUser(userIdxByJwt) ==0) {
+    public GetVisitByUserRes getVisitByUser(Integer userId, List<Integer> foodCategories, String sortOption, Integer userIdxByJwt) throws BaseException {
+        if(checkUser(userId) ==0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
         try {
-            GetVisitByUserRes getVisitByUserRes = dao.getVisitByUser(userIdxByJwt);
+            GetVisitByUserRes getVisitByUserRes = dao.getVisitByUser(userId, foodCategories, sortOption, userIdxByJwt);
             return getVisitByUserRes;
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-}
+
+    public GetVisitByUserRes getVisitByUser(Integer userId, List<Integer> foodCategories, String sortOption, Double latitude, Double longitude, Integer userIdxByJwt) throws BaseException {
+        if(checkUser(userId) ==0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            GetVisitByUserRes getVisitByUserRes = dao.getVisitByUser(userId, foodCategories, sortOption, latitude, longitude, userIdxByJwt);
+            return getVisitByUserRes;
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+    }
+
