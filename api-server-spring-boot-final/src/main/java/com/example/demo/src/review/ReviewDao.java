@@ -109,7 +109,7 @@ public class ReviewDao {
                         rs.getString(3),
                         rs.getString(4),
                         rs.getInt(5),
-                        rs.getBoolean(6),
+                        rs.getInt(6),
                         rs.getString(7),
                         rs.getString(8)
                 ), reviewId);
@@ -147,7 +147,7 @@ public class ReviewDao {
                         rs.getString(4),
                         rs.getInt(5),
                         rs.getString(6),
-                        rs.getBoolean(7),
+                        rs.getInt(7),
                         rs.getString(8)
                 ), groupNum);
     }
@@ -371,24 +371,103 @@ public class ReviewDao {
         return jdbcTemplate.queryForObject(getIsWishQuery, int.class, restaurantId, userIdxByJwt);
     }
 
-    public GetReviewImageRes getReviewImages(Integer userId) {
+    public GetReviewImageRes getReviewImages(Integer userId, List<Integer> foodCategories, String sortOption, Integer userIdxByJwt, Double latitude, Double longitude) {
         GetUserInfo getUserInfo = getUserInfo(userId);
 
-        String getReviewImageQuery = "select R.id , RT.name, IR.id, IR.img_url " +
+        String getReviewImageQuery = "select IR.id , R.id, RT.name , IR.img_url, U.id, U.user_name, U.profile_img_url, R.content, date_format(IR.updated_at, '%Y-%m-%d') " +
                 "from images_review as IR " +
                 "join reviews as R " +
                 "on IR.review_id = R.id " +
+                "join users as U " +
+                "on R.user_id = U.id " +
                 "join restaurants as RT " +
                 "on R.restaurant_id = RT.id " +
-                "where R.user_id = ? and IR.status = 'ACTIVE'";
+                "left join (SELECT * FROM (" +
+                " SELECT ( 6371 * acos( cos( radians(?) ) * cos( radians( latitude) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians(latitude) ) ) ) AS distance, id\n" +
+                " FROM restaurants) DATA) as D " +
+                "on RT.id = D.id "+
+                "where R.user_id = ? and IR.status = 'ACTIVE' and RT.food_category in(";
+
+        Object[] params = new Object[foodCategories.size()+4];
+        params[0] = latitude;
+        params[1] = longitude;
+        params[2] = latitude;
+        params[3] = userId;
+
+        for(int i=0; i<foodCategories.size(); i++) {
+            params[i+4] = foodCategories.get(i);
+            getReviewImageQuery+="?,";
+        }
+
+        getReviewImageQuery = getReviewImageQuery.substring(0, getReviewImageQuery.length()-1);
+
+        if(sortOption.equals("distance")) {
+            getReviewImageQuery+=") order by D."+sortOption;
+        }else {
+            getReviewImageQuery+=") order by R."+sortOption+ " desc";
+        }
 
         List<GetReviewImage> getReviewImages = jdbcTemplate.query(getReviewImageQuery,
                 (rs, rowNum) -> new GetReviewImage(
                         rs.getInt(1),
-                        rs.getString(2),
-                        rs.getInt(3),
-                        rs.getString(4)
-                ), userId);
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9)
+                ), params);
+
+        for(GetReviewImage reviewImage : getReviewImages) {
+            reviewImage.setIsLike(getIsLike(reviewImage.getReviewId(), userIdxByJwt));
+        }
+
+        return new GetReviewImageRes(getUserInfo, getReviewImages);
+
+
+    }
+
+    public GetReviewImageRes getReviewImages(Integer userId, List<Integer> foodCategories, String sortOption, Integer userIdxByJwt) {
+        GetUserInfo getUserInfo = getUserInfo(userId);
+
+        String getReviewImageQuery = "select IR.id , R.id, RT.name, IR.img_url, U.id, U.user_name, U.profile_img_url, R.content, date_format(IR.updated_at, '%Y-%m-%d') " +
+                "from images_review as IR " +
+                "join reviews as R " +
+                "on IR.review_id = R.id " +
+                "join users as U " +
+                "on R.user_id = U.id " +
+                "join restaurants as RT " +
+                "on R.restaurant_id = RT.id " +
+                "where R.user_id = ? and IR.status = 'ACTIVE' and RT.food_category in(";
+
+        Object[] params = new Object[foodCategories.size()+1];
+        params[0] = userId;
+        for(int i=0; i<foodCategories.size(); i++) {
+            params[i+1] = foodCategories.get(i);
+            getReviewImageQuery+="?,";
+        }
+
+        getReviewImageQuery = getReviewImageQuery.substring(0, getReviewImageQuery.length()-1);
+        getReviewImageQuery+=") order by R."+sortOption+" desc";
+
+        List<GetReviewImage> getReviewImages = jdbcTemplate.query(getReviewImageQuery,
+                (rs, rowNum) -> new GetReviewImage(
+                        rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getInt(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9)
+                ), params);
+
+        for(GetReviewImage reviewImage : getReviewImages) {
+            reviewImage.setIsLike(getIsLike(reviewImage.getReviewId(), userIdxByJwt));
+        }
 
         return new GetReviewImageRes(getUserInfo, getReviewImages);
 
@@ -448,8 +527,10 @@ public class ReviewDao {
         String currentDate = now.format(formatter)+"%";
        //String currentDate = "2022-05-23";
 
+        GetNewsRes getReviewTodayRes = null;
+
         try {
-            GetNewsRes getReviewTodayRes = jdbcTemplate.queryForObject(reviewTodayQuery,
+             getReviewTodayRes = jdbcTemplate.queryForObject(reviewTodayQuery,
                     (rs, rowNum) -> new GetNewsRes(
                             rs.getInt(1),
                             rs.getInt(2),
@@ -459,14 +540,14 @@ public class ReviewDao {
                             rs.getString(6),
                             rs.getInt(7),
                             rs.getString(8),
-                            rs.getBoolean(9),
+                            rs.getInt(9),
                             rs.getString(10)
                     ), currentDate);
 
-            if(userId != 0) {
-                getReviewTodayRes.setWish(getWish(userId, getReviewTodayRes.getRestaurantId()));
-                getReviewTodayRes.setLike(getLike(userId, getReviewTodayRes.getReviewId()));
-            }
+
+             getReviewTodayRes.setWish(getWish(userId, getReviewTodayRes.getRestaurantId()));
+             getReviewTodayRes.setLike(getLike(userId, getReviewTodayRes.getReviewId()));
+
             getReviewTodayRes.setFollowCnt(getFollowCnt(userId));
             getReviewTodayRes.setReviewCnt(getReviewCnt(userId));
             getReviewTodayRes.setImgUrls(getReviewImgURLs(getReviewTodayRes.getReviewId()));
@@ -474,19 +555,19 @@ public class ReviewDao {
 
             return getReviewTodayRes;
         }catch (EmptyResultDataAccessException e) {
-            return null;
+            return getReviewTodayRes;
         }
 
     }
 
-    private Boolean getLike(Integer userId, Integer reviewId) {
+    private int getLike(Integer userId, Integer reviewId) {
         String getLikeQuery = "select exists (select * from likes where user_id = ? and review_id = ? )";
-        return jdbcTemplate.queryForObject(getLikeQuery, Boolean.class, userId, reviewId);
+        return jdbcTemplate.queryForObject(getLikeQuery, int.class, userId, reviewId);
     }
 
-    private Boolean getWish(Integer userId, Integer restaurantId) {
+    private int getWish(Integer userId, Integer restaurantId) {
         String getWishQuery = "select exists (select * from wishes where user_id = ? and restaurant_id = ?)";
-        return jdbcTemplate.queryForObject(getWishQuery, Boolean.class, userId, restaurantId);
+        return jdbcTemplate.queryForObject(getWishQuery, int.class, userId, restaurantId);
     }
 
     public List<GetNewsRes> getNews(Integer userId, List<Integer> scores) {
@@ -518,7 +599,7 @@ public class ReviewDao {
                 rs.getString(6),
                 rs.getInt(7),
                 rs.getString(8),
-                rs.getBoolean(9),
+                rs.getInt(9),
                 rs.getString(10)
         ), params);
 
@@ -543,14 +624,14 @@ public class ReviewDao {
                 "on R.user_id = U.id  " +
                 "join restaurants as RT  " +
                 "on R.restaurant_id = RT.id " +
-                "join (select * from follows where  follower_id= ?) as F " +
-                "on R.user_id = F.user_id " +
+               // "join (select * from follows where  follower_id= ?) as F " +
+               // "on R.user_id = F.user_id " +
                 "where R.status = 'ACTIVE' and U.is_holic = 1 and R.score IN(";
 
-        Object[] params = new Object[scores.size()+1];
-        params[0] = userId;
+        Object[] params = new Object[scores.size()];
+        //params[0] = userId;
         for(int i=0; i<scores.size(); i++) {
-            params[i+1] = scores.get(i);
+            params[i] = scores.get(i);
             getNewsQuery+="?,";
         }
 
@@ -567,7 +648,7 @@ public class ReviewDao {
                         rs.getString(6),
                         rs.getInt(7),
                         rs.getString(8),
-                        rs.getBoolean(9),
+                        rs.getInt(9),
                         rs.getString(10)
                 ), params);
 
@@ -614,7 +695,7 @@ public class ReviewDao {
                         rs.getString(6),
                         rs.getInt(7),
                         rs.getString(8),
-                        rs.getBoolean(9),
+                        rs.getInt(9),
                         rs.getString(10)
                 ), params);
 
@@ -633,6 +714,7 @@ public class ReviewDao {
         String checkReviewQuery = "select exists (select * from reviews where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkReviewQuery, int.class, reviewId);
     }
+
 
 
 }

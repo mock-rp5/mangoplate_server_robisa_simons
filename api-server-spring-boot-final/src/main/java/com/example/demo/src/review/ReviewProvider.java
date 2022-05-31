@@ -105,14 +105,33 @@ public class ReviewProvider {
         }
     }
 
-    public GetReviewImageRes getReviewImages(Integer userId) throws BaseException {
+    public GetReviewImageRes getReviewImages(Integer userId, List<Integer> foodCategories, String sortOption, Integer userIdxByJwt, Double latitude, Double longitude) throws BaseException {
         if(checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
+        if(checkUser(userIdxByJwt) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
         try {
-            GetReviewImageRes getReviewImageRes = dao.getReviewImages(userId);
+            GetReviewImageRes getReviewImageRes = dao.getReviewImages(userId, foodCategories, sortOption, userIdxByJwt, latitude, longitude);
             return getReviewImageRes;
         }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    public GetReviewImageRes getReviewImages(Integer userId, List<Integer> foodCategories, String sortOption, Integer userIdxByJwt) throws BaseException {
+        if(checkUser(userId) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        if(checkUser(userIdxByJwt) == 0) {
+            throw new BaseException(USERS_NOT_EXISTS_USER);
+        }
+        try {
+            GetReviewImageRes getReviewImageRes = dao.getReviewImages(userId, foodCategories, sortOption, userIdxByJwt);
+            return getReviewImageRes;
+        }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -180,6 +199,7 @@ public class ReviewProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
 
 
 }

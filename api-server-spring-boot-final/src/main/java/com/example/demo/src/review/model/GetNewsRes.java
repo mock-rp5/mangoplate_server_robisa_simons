@@ -25,12 +25,12 @@ public class GetNewsRes {
     private List<GetCommentRes> comments;
     private Integer reviewCnt;
     private Integer followCnt;
-    private Boolean isHolic;
+    private int isHolic;
     private String updatedAt;
-    private Boolean wish;
-    private Boolean like;
+    private int wish;
+    private int like;
 
-    public GetNewsRes(Integer id, int userId, String userName, String content, int score, String profileImgUrl, int restaurantId, String restaurantName, boolean isHolic, String updatedAt) {
+    public GetNewsRes(Integer id, int userId, String userName, String content, int score, String profileImgUrl, int restaurantId, String restaurantName, int isHolic, String updatedAt) {
         this.reviewId = id;
         this.userId = userId;
         this.userName = userName;

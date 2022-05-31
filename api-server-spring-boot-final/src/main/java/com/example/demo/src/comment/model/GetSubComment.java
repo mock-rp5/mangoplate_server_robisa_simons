@@ -14,11 +14,11 @@ public class GetSubComment {
     private String content;
     private String parentCommentUserName;
     private int order;
-    private boolean isHolic;
+    private int isHolic;
     private String profileImg;
     private String updatedAt;
 
-    public GetSubComment(Integer id, int userId, String userName, String content, int order, String profileImg, boolean isHolic, String updatedAt) {
+    public GetSubComment(Integer id, int userId, String userName, String content, int order, String profileImg, int isHolic, String updatedAt) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;

@@ -90,17 +90,17 @@ public class VisitController {
 
     }
 
-    @GetMapping("/user/{user-id}")
+    @GetMapping("/user/{user_id}")
     @ResponseBody
     public BaseResponse<GetVisitByUserRes> getVisitByUser(@RequestParam(value = "lat", required = false) Double latitude,
                                                           @RequestParam(value = "long",required = false) Double longitude,
                                                           @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
                                                           @RequestParam(value = "sort", defaultValue = "updated_at") String sortOption,
-                                                          @PathVariable(value = "user-id", required = false) Integer userId
+                                                          @PathVariable(value = "user_id", required = false) Integer userId
                                                           ) {
-//        if(userId == null) {
-//            return new BaseResponse<>(USERS_EMPTY_USER_ID);
-//        }
+        if(userId == null) {
+           return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
 
         if(sortOption.equals("distance")) {
             if(latitude == null || longitude == null) {
