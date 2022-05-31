@@ -77,7 +77,7 @@ public class RestaurantService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    public String updateRestaurant(Integer restaurantId, PutRestaurantReq putRestaurantReq, Integer userId) throws BaseException {
+    public Integer updateRestaurant(Integer restaurantId, PutRestaurantReq putRestaurantReq, Integer userId) throws BaseException {
         if(provider.checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
@@ -86,14 +86,24 @@ public class RestaurantService {
         if(provider.checkMyRestaurant(restaurantId, userId) == 0)
             throw new BaseException(RESTAURANTS_CANT_ACCESS_RESTAURANT);
         try {
-            if(dao.updateRestaurant(restaurantId, putRestaurantReq).equals(1)){
-                return new String("1 RESTAURANT UPDATED SUCCESS");
-            }else {
-                throw new BaseException(UPDATE_FAIL_RESTAURANT);
+            if(putRestaurantReq.getName() != null) {
+                int result = dao.updateRestaurantName(putRestaurantReq.getName(), userId);
+                if(result == 0) throw new BaseException(UPDATE_FAIL_RESTAURANT);
             }
+            if(putRestaurantReq.getAddress() != null) {
+                int result = dao.updateRestaurantAddress(putRestaurantReq.getAddress(), putRestaurantReq.getLatitude(), putRestaurantReq.getLongitude(),userId);
+                if(result == 0) throw new BaseException(UPDATE_FAIL_RESTAURANT);
+            }
+            if(putRestaurantReq.getFoodCategory() != null) {
+                int result = dao.updateRestaurantFoodCategory(putRestaurantReq.getFoodCategory(), userId);
+                if(result == 0) throw new BaseException(UPDATE_FAIL_RESTAURANT);
+            }
+            return 1;
         } catch (BaseException e) {
+            e.printStackTrace();
             throw new BaseException(e.getStatus());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

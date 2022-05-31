@@ -362,5 +362,18 @@ public class RestaurantDao {
         String checkUserQuery = "select exists (select * from users where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
     }
+    public int updateRestaurantName(String value, Integer userId) {
+        String checkUserQuery = "update restaurants set name = ? where user_id = ?";
+        return jdbcTemplate.update(checkUserQuery, value, userId);
+    }
+    public int updateRestaurantAddress(String address, Double latitude, Double longitude, Integer userId) {
+        String checkUserQuery = "update restaurants set address = ?,  latitude = ?, longitude = ?where user_id = ?";
+        return jdbcTemplate.update(checkUserQuery, address, latitude, longitude, userId);
+    }
+    public int updateRestaurantFoodCategory(Integer value, Integer userId) {
+        String checkUserQuery = "update restaurants set food_category = ? where user_id = ?";
+        return jdbcTemplate.update(checkUserQuery, value, userId);
+    }
+
 
 }

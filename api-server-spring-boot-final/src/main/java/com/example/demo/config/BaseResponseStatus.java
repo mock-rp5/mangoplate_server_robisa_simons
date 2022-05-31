@@ -42,8 +42,12 @@ public enum BaseResponseStatus {
     RESTAURANTS_EMPTY_USER_LOCATION_INFO(false, 2031, "사용자의 위도 경도 값을 입력해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_NAME(false, 2032, "식당 이름 값을 확인해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_ADDRESS(false, 2033, "식당 주소 값을 확인해주세요"),
+
     RESTAURANTS_EXISTS_RESTAURANT(false, 2034, "중복된 식당 정보입니다"),
     RESTAURANTS_CANT_ACCESS_RESTAURANT(false, 2035, "식당 수정 및 삭제에 접근 가능한 권한이 없습니다"),
+    RESTAURANTS_EMPTY_RESTAURANT_FOODCATEGORY(false, 2036, "음식 카테고리 값을 입력해주세요"),
+    RESTAURANTS_EMPTY_UPDATE_DATA(false, 2037, "수정할 데이터 값을 입력해주세요"),
+    RESTAURANTS_EMPTY_RESTAURANT_ADDRESS_INFO(false, 2038, "수정할 식당의 주소와 위치 정보 값을 입력해주세요"),
     REVIEWS_EMPTY_REVIEW_ID(false, 2040, "리뷰 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_RESTAURANT_ID(false, 2041, "식당 아이디 값을 확인해주세요"),
     REVIEWS_EMPTY_SOCRE(false, 2042, "리뷰 점수를 입력해주세요"),

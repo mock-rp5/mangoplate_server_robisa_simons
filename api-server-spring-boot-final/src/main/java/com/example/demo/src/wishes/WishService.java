@@ -62,8 +62,8 @@ public class WishService {
         }
         try {
             int wishId = dao.findWishId(restaurantId,userId);
-            if(wishId == 0) throw new BaseException(WISHES_POST_FAIL);
-            if(dao.deleteWish(restaurantId, userId) == 0) throw new BaseException(WISHES_POST_FAIL);
+            if(wishId == 0) throw new BaseException(WISHES_DELETE_FAIL);
+            if(dao.deleteWish(restaurantId, userId) == 0) throw new BaseException(WISHES_DELETE_FAIL);
             return new PostWishRes(1, wishId);
         } catch (BaseException e) {
             throw new BaseException(e.getStatus());

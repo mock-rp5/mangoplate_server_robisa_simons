@@ -60,6 +60,8 @@ public class WishController {
     @ResponseBody
     @GetMapping("/{restaurant_id}")
     public BaseResponse<GetWishRes> getWish(@PathVariable(value = "restaurant_id") Integer restaurantId) {
+        if(restaurantId == null)
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
@@ -79,6 +81,8 @@ public class WishController {
     @ResponseBody
     @PostMapping("/{restaurant_id}")
     public BaseResponse<PostWishRes> postWish(@PathVariable("restaurant_id") Integer restaurantId) {
+        if(restaurantId == null)
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
@@ -94,6 +98,8 @@ public class WishController {
     @ResponseBody
     @DeleteMapping("/{restaurant_id}")
     public BaseResponse<PostWishRes> deleteWish(@PathVariable("restaurant_id") Integer restaurantId) {
+        if(restaurantId == null)
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
