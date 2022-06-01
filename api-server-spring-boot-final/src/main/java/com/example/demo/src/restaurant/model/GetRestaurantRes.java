@@ -32,11 +32,12 @@ public class GetRestaurantRes {
     private Integer isWishes;
     private Integer isVisits;
     private Integer view;
+    private String address;
     private String imgUrl;
 
 
     public GetRestaurantRes(Long id, String name, String regionName, String foodCategory, Double latitude, Double longitude,
-                            Integer numReviews, Double ratingsAvg, Double distance, Integer isWishes, Integer isVisits, Integer view, String imgUrl) {
+                            Integer numReviews, Double ratingsAvg, Double distance, Integer isWishes, Integer isVisits, Integer view, String address, String imgUrl) {
         this.id = id;
         this.name = name;
         this.regionName = regionName;
@@ -49,10 +50,11 @@ public class GetRestaurantRes {
         this.isWishes = isWishes;
         this.isVisits = isVisits;
         this.view = view;
+        this.address = address;
         this.imgUrl = imgUrl;
     }
     public GetRestaurantRes(Long id, String name, String regionName, String foodCategory, Double latitude, Double longitude,
-                            Integer numReviews, Double ratingsAvg, Integer isWishes, Integer isVisits, Integer view, String imgUrl) {
+                            Integer numReviews, Double ratingsAvg, Integer isWishes, Integer isVisits, Integer view, String address,String imgUrl) {
         this.id = id;
         this.name = name;
         this.regionName = regionName;
@@ -64,6 +66,7 @@ public class GetRestaurantRes {
         this.isWishes = isWishes;
         this.isVisits = isVisits;
         this.view = view;
+        this.address = address;
         this.imgUrl = imgUrl;
     }
 }

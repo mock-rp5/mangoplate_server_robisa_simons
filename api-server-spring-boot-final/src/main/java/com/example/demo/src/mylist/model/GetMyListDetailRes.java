@@ -17,6 +17,8 @@ public class GetMyListDetailRes {
     private String createdAt;
     private int view;
     private int bookmarkCount;
+    private int restaurantsCount;
+
     private String title;
     private int userId;
     private String userName;
@@ -32,6 +34,19 @@ public class GetMyListDetailRes {
         this.mylistId = mylistId;
         this.createdAt = createdAt;
         this.view = view;
+        this.title = title;
+        this.userId = userId;
+        this.userName = userName;
+        this.numReviews = numReviews;
+        this.numFollowers = numFollowers;
+        this.content = content;
+    }
+    public GetMyListDetailRes(int mylistId, String createdAt, int view, int bookmarkCount, int restaurantsCount, String title,int userId,String userName,String profileImgUrl,int numReviews,int numFollowers,String content){
+        this.mylistId = mylistId;
+        this.createdAt = createdAt;
+        this.view = view;
+        this.bookmarkCount = bookmarkCount;
+        this.restaurantsCount = restaurantsCount;
         this.title = title;
         this.userId = userId;
         this.userName = userName;

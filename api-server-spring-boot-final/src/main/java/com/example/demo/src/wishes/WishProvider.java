@@ -27,6 +27,9 @@ public class WishProvider {
         if(checkUser(userId) == 0) {
             throw new BaseException(USERS_NOT_EXISTS_USER);
         }
+        if(checkRestaurantId(restaurantId) == 0 ) {
+            throw new BaseException(RESTAURANTS_NOT_EXISTS_RESTAURANT);
+        }
         try {
             GetWishRes getWishRes = dao.getWish(restaurantId, userId);
 //            if(getWishRes.getResult().equals(0)) throw new BaseException(WISHES_FAIL_GET_WISH);
@@ -73,6 +76,15 @@ public class WishProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public int checkRestaurantId(int restaurantId) throws BaseException {
+        try {
+            return dao.checkRestaurantId(restaurantId);
+        }catch (Exception e) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
 }
 
 

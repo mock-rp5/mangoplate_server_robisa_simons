@@ -26,6 +26,7 @@ public class RestaurantDao {
     public List<GetRestaurantRes> getRestaurant(Double latitude, Double longitude, String foodCategories, int range, String orderOption, Integer userId) {
             String getRestaurantQuery = "select R.id,\n" +
                     "       R.name,\n" +
+                    "       R.address,\n" +
                     "       rgn.name as regionName,\n" +
                     "       cf.name as foodCategory,\n" +
                     "       R.latitude,\n" +
@@ -62,8 +63,11 @@ public class RestaurantDao {
                             rs.getInt("isWishes"),
                             rs.getInt("isVisits"),
                             rs.getInt("view"),
+                            rs.getString("address"),
                             rs.getString("imgUrl"))
             ,params );
+
+            getRestaurantRes.forEach(s -> s.setRegionName(extractRegionName(s.getAddress())));
             return getRestaurantRes;
     }
 
@@ -71,6 +75,7 @@ public class RestaurantDao {
         System.out.println(regionCode);
         String getRestaurantQuery = "select R.id,\n" +
                 "       R.name,\n" +
+                "       R.address,\n" +
                 "       rgn.name as regionName,\n" +
                 "       cf.name as foodCategory,\n" +
                 "       R.latitude,\n" +
@@ -100,9 +105,12 @@ public class RestaurantDao {
                         rs.getInt("isWishes"),
                         rs.getInt("isVisits"),
                         rs.getInt("view"),
+                        rs.getString("address"),
                         rs.getString("imgUrl")),params);
         System.out.println(getRestaurantRes.size());
         System.out.println(getRestaurantRes.toString());
+        getRestaurantRes.forEach(s -> s.setRegionName(extractRegionName(s.getAddress())));
+
         return getRestaurantRes;
     }
 
@@ -364,5 +372,32 @@ public class RestaurantDao {
         String checkUserQuery = "select exists (select * from users where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkUserQuery, int.class, userId);
     }
+    public int updateRestaurantName(String value, Integer userId) {
+        String checkUserQuery = "update restaurants set name = ? where user_id = ?";
+        return jdbcTemplate.update(checkUserQuery, value, userId);
+    }
+    public int updateRestaurantAddress(String address, Double latitude, Double longitude, Integer userId) {
+        String checkUserQuery = "update restaurants set address = ?,  latitude = ?, longitude = ?where user_id = ?";
+        return jdbcTemplate.update(checkUserQuery, address, latitude, longitude, userId);
+    }
+    public int updateRestaurantFoodCategory(Integer value, Integer userId) {
+        String checkUserQuery = "update restaurants set food_category = ? where user_id = ?";
+        return jdbcTemplate.update(checkUserQuery, value, userId);
+    }
+
+    public String extractRegionName(String address){
+        String[] addressInfo = address.split(" ");
+
+//        for(String s : addressInfo)
+//            System.out.print(s+",");
+        if(addressInfo[0].equals("서울특별시")) {
+//            System.out.println(addressInfo[2]);
+            return addressInfo[2];
+        } else {
+//            System.out.println(addressInfo[1]);
+            return addressInfo[1];
+        }
+    }
+
 
 }

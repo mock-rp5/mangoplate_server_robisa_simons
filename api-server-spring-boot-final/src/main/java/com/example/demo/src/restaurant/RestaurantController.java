@@ -38,7 +38,7 @@ public class RestaurantController {
     @GetMapping("")
     public BaseResponse<List<GetRestaurantRes>> getRestaurant(@RequestParam(value = "lat", required = false) Double latitude,
                                                               @RequestParam(value = "long",required = false) Double longitude,
-                                                              @RequestParam(value = "region-code", required = false, defaultValue = "1") List<Integer> regionCode,
+                                                              @RequestParam(value = "region-code", required = false) List<Integer> regionCode,
                                                               @RequestParam(value = "food-category",defaultValue = "1,2,3,4,5,6,7,8") List<Integer> foodCategories,
                                                               @RequestParam(value = "range", defaultValue = "3") Integer range,
                                                               @RequestParam(value = "sort", defaultValue = "rating") String sortOption) {
@@ -158,6 +158,9 @@ public class RestaurantController {
         if(postRestaurantReq.getLatitude() == null | postRestaurantReq.getLongitude() == null){
             return new BaseResponse<>(RESTAURANTS_EMPTY_USER_LOCATION_INFO);
         }
+        if(postRestaurantReq.getFoodCategory() == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_FOODCATEGORY);
+        }
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
@@ -188,21 +191,24 @@ public class RestaurantController {
     }
     @ResponseBody
     @PutMapping("/{restaurant_id}")
-    public BaseResponse<String> updateRestaurant(@PathVariable("restaurant_id") Integer restaurantId, @RequestBody PutRestaurantReq putRestaurantReq) {
+    public BaseResponse<Integer> updateRestaurant(@PathVariable("restaurant_id") Integer restaurantId, @RequestBody PutRestaurantReq putRestaurantReq) {
         if(restaurantId == null)
             return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
-        if(putRestaurantReq.getName() == null){
-            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_NAME);
+        if(putRestaurantReq == null){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_UPDATE_DATA);
         }
-        if(putRestaurantReq.getAddress() == null){
-            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS);
+        if(putRestaurantReq.getAddress() != null && (putRestaurantReq.getLatitude() == null || putRestaurantReq.getLongitude() == null)){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS_INFO);
+        }
+        if(putRestaurantReq.getAddress() == null && (putRestaurantReq.getLatitude() != null && putRestaurantReq.getLongitude() != null)){
+            return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ADDRESS_INFO);
         }
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
                 return new BaseResponse<>(USERS_EMPTY_USER_ID);
             }
-            String result = service.updateRestaurant(restaurantId,putRestaurantReq, userId);
+            Integer result = service.updateRestaurant(restaurantId,putRestaurantReq, userId);
             return new BaseResponse<>(result);
         } catch(BaseException exception){
             return new BaseResponse<>((exception.getStatus()));

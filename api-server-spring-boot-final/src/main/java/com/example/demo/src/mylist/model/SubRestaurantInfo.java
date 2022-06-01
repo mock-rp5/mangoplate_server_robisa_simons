@@ -16,9 +16,13 @@ public class SubRestaurantInfo {
     private String restaurantName;
     private String address;
     private Double ratingsAvg;
+    private int isWishes;
+    private int isVisits;
     private int reviewId;
     private int reviewUserID;
     private String reviewUserProfileImg;
     private String reviewUserName;
     private String reviewContent;
+
+
 }
