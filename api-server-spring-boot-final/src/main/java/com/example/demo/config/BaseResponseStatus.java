@@ -43,6 +43,10 @@ public enum BaseResponseStatus {
     RESTAURANTS_EMPTY_RESTAURANT_ID(false, 2030, "식당 아이디 값을 확인해주세요"),
     MENUS_EMPTY_EAT_DEAL_ID(false, 2031, "잇딜 아이디 값을 확인해주세요"),
 
+
+    NO_AGREE_PRIVACY(false, 3036, "정보동의를 하지 않았습니다."),
+    EAT_DEALS_EMPTY_PAYMENT(false, 3035, "결제수단을 입력해주세요"),
+
     RESTAURANTS_EMPTY_USER_LOCATION_INFO(false, 2031, "사용자의 위도 경도 값을 입력해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_NAME(false, 2032, "식당 이름 값을 확인해주세요"),
     RESTAURANTS_EMPTY_RESTAURANT_ADDRESS(false, 2033, "식당 주소 값을 확인해주세요"),

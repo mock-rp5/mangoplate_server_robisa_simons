@@ -35,6 +35,7 @@ public class EatDealService {
             PostEatDealRes postEatDealRes = new PostEatDealRes(dao.orderEatDeal(userId, postEatDealReq));
             return postEatDealRes;
         }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

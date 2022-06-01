@@ -30,8 +30,9 @@ public class GetEatDeal {
     private int eatDealId;
     private Double latitude;
     private Double longitude;
+    private String address;
 
-    public GetEatDeal(int restaurantId, String restaurantName, String restaurantDesc, String menuDesc, String notice, String manual, String refundPolicy, String question, int price, int discountRate, String menuName, String startDate, String endDate, int expiredDate, String emphasis, int eatDealId,Double latitude , Double longitude) {
+    public GetEatDeal(int restaurantId, String restaurantName, String restaurantDesc, String menuDesc, String notice, String manual, String refundPolicy, String question, int price, int discountRate, String menuName, String startDate, String endDate, int expiredDate, String emphasis, int eatDealId,Double latitude , Double longitude, String address) {
         this.eatDealId = eatDealId;
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
@@ -50,5 +51,6 @@ public class GetEatDeal {
         this.emphasis = emphasis;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.address = address;
     }
 }

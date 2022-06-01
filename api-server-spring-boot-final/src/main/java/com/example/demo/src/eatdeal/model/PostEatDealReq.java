@@ -8,4 +8,6 @@ import lombok.Setter;
 public class PostEatDealReq {
     private Integer restaurantId;
     private Integer eatDealId;
+    private String payment;
+    private Integer isPrivacy;
 }

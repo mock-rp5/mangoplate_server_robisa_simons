@@ -29,8 +29,9 @@ public class GetEatDealRes {
     private List<String> imgUrls;
     private Double latitude;
     private Double longitude;
+    private String address;
 
-    public GetEatDealRes(int eatDealId, int restaurantId, String restaurantName, int price, int discountRate, String startDate, String endDate, String menuName, Integer expiredDate, List<String> imgUrls,Double latitude, Double longitude) {
+    public GetEatDealRes(int eatDealId, int restaurantId, String restaurantName, int price, int discountRate, String startDate, String endDate, String menuName, Integer expiredDate, List<String> imgUrls,Double latitude, Double longitude, String address) {
         this.eatDealId = eatDealId;
         this.restaurantId = restaurantId;
         this.restaurantName = restaurantName;
@@ -43,5 +44,6 @@ public class GetEatDealRes {
         this.imgUrls = imgUrls;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.address = address;
     }
 }
