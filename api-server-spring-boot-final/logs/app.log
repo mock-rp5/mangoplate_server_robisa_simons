@@ -1,3 +1,0 @@
-01:24:51.027 WARN  [File:ReviewService.java] [Func:createReview] [Line:50] [Message:[ReviewService] createReview database error]- [ReviewService] createReview database error
-01:25:28.287 WARN  [File:ReviewService.java] [Func:createReview] [Line:50] [Message:[ReviewService] createReview database error]- [ReviewService] createReview database error
-01:26:17.931 WARN  [File:ReviewService.java] [Func:createReview] [Line:50] [Message:[ReviewService] createReview database error]- [ReviewService] createReview database error
