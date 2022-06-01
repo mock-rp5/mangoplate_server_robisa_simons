@@ -29,6 +29,8 @@ public class GetNewsRes {
     private String updatedAt;
     private int wish;
     private int like;
+    private int reviewLikeCnt;
+    private int reviewCommentCnt;
 
     public GetNewsRes(Integer id, int userId, String userName, String content, int score, String profileImgUrl, int restaurantId, String restaurantName, int isHolic, String updatedAt) {
         this.reviewId = id;

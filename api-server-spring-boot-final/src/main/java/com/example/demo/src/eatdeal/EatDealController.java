@@ -34,7 +34,10 @@ public class EatDealController {
 
     @GetMapping("/order")
     @ResponseBody
-    public BaseResponse<List<GetEatDealOrderRes>> getEatDealOrders() {
+    public BaseResponse<List<GetEatDealOrderRes>> getEatDealOrders(@RequestHeader(value = "X-ACCESS-TOKEN", required = false) String accessToken) {
+        if(accessToken == null) {
+            return new BaseResponse<>(USERS_EMPTY_USER_ID);
+        }
         try {
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {
@@ -76,11 +79,17 @@ public class EatDealController {
         if(userId == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
+        if(postEatDealReq.getIsPrivacy() ==  null || postEatDealReq.getIsPrivacy() ==0) {
+            return new BaseResponse<>(NO_AGREE_PRIVACY);
+        }
         if(postEatDealReq.getRestaurantId() == null) {
             return new BaseResponse<>(RESTAURANTS_EMPTY_RESTAURANT_ID);
         }
         if(postEatDealReq.getEatDealId() == null) {
             return new BaseResponse<>(MENUS_EMPTY_EAT_DEAL_ID);
+        }
+        if(postEatDealReq.getPayment()==null) {
+            return new BaseResponse<>(EAT_DEALS_EMPTY_PAYMENT);
         }
 
         try {

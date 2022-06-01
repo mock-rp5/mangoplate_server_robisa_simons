@@ -54,6 +54,7 @@ public class EatDealProvider {
         try {
             return dao.getEatDealOrders(userId);
         }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }
@@ -63,7 +64,7 @@ public class EatDealProvider {
 
         for(GetEatDeal eatDeal : getEatDeal) {
             GetEatDealRes eatDealRes = new GetEatDealRes(eatDeal.getEatDealId(), eatDeal.getRestaurantId(), eatDeal.getRestaurantName(), eatDeal.getPrice(),
-                    eatDeal.getDiscountRate(), eatDeal.getStartDate(), eatDeal.getEndDate(), eatDeal.getMenuName(), eatDeal.getExpiredDate(), eatDeal.getImgUrls(), eatDeal.getLatitude(), eatDeal.getLongitude());
+                    eatDeal.getDiscountRate(), eatDeal.getStartDate(), eatDeal.getEndDate(), eatDeal.getMenuName(), eatDeal.getExpiredDate(), eatDeal.getImgUrls(), eatDeal.getLatitude(), eatDeal.getLongitude(), eatDeal.getAddress());
 
             eatDealRes.setRestaurantDesc(eatDeal.getRestaurantDesc() != null ? eatDeal.getRestaurantDesc().split("\n") : null);
             eatDealRes.setMenuDesc(eatDeal.getMenuDesc() != null ? eatDeal.getMenuDesc().split("\n") : null);
