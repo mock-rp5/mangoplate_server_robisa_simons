@@ -550,6 +550,8 @@ public class ReviewDao {
 
             getReviewTodayRes.setFollowCnt(getFollowCnt(userId));
             getReviewTodayRes.setReviewCnt(getReviewCnt(userId));
+            getReviewTodayRes.setReviewLikeCnt(getLikeCnt(getReviewTodayRes.getReviewId()));
+            getReviewTodayRes.setReviewCommentCnt(getCommentCnt(getReviewTodayRes.getReviewId()));
             getReviewTodayRes.setImgUrls(getReviewImgURLs(getReviewTodayRes.getReviewId()));
             getReviewTodayRes.setComments(getComments(getReviewTodayRes.getReviewId()));
 
@@ -659,6 +661,8 @@ public class ReviewDao {
             news.setReviewCnt(getReviewCnt(userId));
             news.setImgUrls(getReviewImgURLs(news.getReviewId()));
             news.setComments(getComments(news.getReviewId()));
+            news.setReviewLikeCnt(getLikeCnt(news.getReviewId()));
+            news.setReviewCommentCnt(getCommentCnt(news.getReviewId()));
         }
         return getNewsRes;
     }
@@ -706,6 +710,8 @@ public class ReviewDao {
             news.setReviewCnt(getReviewCnt(userId));
             news.setImgUrls(getReviewImgURLs(news.getReviewId()));
             news.setComments(getComments(news.getReviewId()));
+            news.setReviewLikeCnt(getLikeCnt(news.getReviewId()));
+            news.setReviewCommentCnt(getCommentCnt(news.getReviewId()));
         }
         return getNewsRes;
     }
