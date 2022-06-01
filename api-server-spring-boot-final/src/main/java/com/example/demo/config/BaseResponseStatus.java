@@ -83,6 +83,7 @@ public enum BaseResponseStatus {
     FOLLOWS_CANT_UNFOLLOW_SELF(false, 2092, "사용자 아이디와 언팔로우하려는 아이디가 같습니다"),
     FOLLOWS_ALREADY_FOLLOWED_USER(false, 2093, "이미 팔로우한 유저입니다"),
     FOLLOWS_ALREADY_UNFOLLOWED_USER(false, 2094, "이미 언팔로우한 유저입니다"),
+    FOLLOWS_NOT_EXISTS_USER(false, 2095, "존재하지 않는 followee 아이디입니다"),
 
     MYLISTS_NOT_EXISTS_MYLIST(false, 2100, "마이리스트가 존재하지 않습니다"),
     MYLISTS_EMPTY_TITLE(false, 2101, "마이리스트의 제목을 입력해주세요"),
@@ -147,6 +148,7 @@ public enum BaseResponseStatus {
     WISHES_NOT_EXISTS_WISH(false, 3090, "존재하지 않은 가고싶다 항목입니다"),
     WISHES_NOT_ALLOWED_MEMO(false, 3091, "메모를 추가할 수 있는 권한이 없습니다"),
     WISHES_FAIL_GET_WISH(false, 3092, "가고싶다 항목을 불러올 수 없습니다."),
+    WISHES_NOT_EXISTS_RESTAURANTS_IN_WISHES(false, 3093, "가고싶다 리스트에 식당 데이터가 없습니다"),
 
     BOOKMARKS_NOT_EXISTS_CONTENT(false, 3100, "존재하지 않은 컨텐츠입니다"),
     BOOKMARKS_ALREADY_BOOKMARKED(false, 3101, "이미 북마크한 컨텐츠입니다"),

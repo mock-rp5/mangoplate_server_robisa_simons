@@ -73,12 +73,16 @@ public class WishDao {
             return 0;
         }
     }
+    public int checkExistsWishes(int userId) {
+        // 위시 존재 정보를 위시 아이디로 조회
+        String checkWishIdQuery = "select exists (select * from wishes where user_id = ? and status = 'ACTIVE')";
+        return jdbcTemplate.queryForObject(checkWishIdQuery, int.class, userId);
+    }
     public int checkWishId(int wishId) {
         // 위시 존재 정보를 위시 아이디로 조회
         String checkWishIdQuery = "select exists (select * from wishes where id = ? and status = 'ACTIVE')";
         return jdbcTemplate.queryForObject(checkWishIdQuery, int.class, wishId);
     }
-
     public PostWishRes postWish(Integer restaurantId, Integer userId) {
         String postWishQuery = "insert into wishes(restaurant_id, status, created_at, updated_at, user_id, memo) " +
                 "values(?, 'ACTIVE', DEFAULT , DEFAULT , ?, null) ";
