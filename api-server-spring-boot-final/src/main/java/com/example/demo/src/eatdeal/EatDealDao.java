@@ -23,7 +23,7 @@ public class EatDealDao {
                 "      WHERE DATA.distance < ?\n" +
                 "      ) as D\n" +
                 " on E.restaurant_id = D.id\n" +
-                " where E.status = 'ACTIVE'";
+                " where E.status = 'ACTIVE' order by E.updated_at desc";
 
         List<GetEatDeal> getEatDeals = jdbcTemplate.query(getEatDealQuery,
                 (rs, rowNum) -> new GetEatDeal(
@@ -101,7 +101,7 @@ public class EatDealDao {
                 "on O.eat_deal_id = I.eat_deal_id " +
                 "left join restaurants as R " +
                 "on R.id = O.restaurant_id " +
-                "where O.user_id = ? and O.status = 'ACTIVE'";
+                "where O.user_id = ? and O.status = 'ACTIVE' order by O.created_at desc";
         List<GetEatDealOrderRes> getEatDealOrderRes = jdbcTemplate.query(getEatDealOrdersQuery,
                 (rs, rowNum) -> new GetEatDealOrderRes(
                         rs.getInt("id"),

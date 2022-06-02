@@ -26,15 +26,13 @@ public class KakaoController {
 
     @ResponseBody
     @GetMapping("/callback")
-    public BaseResponse<Object> kakaoCallback(@RequestParam String code) {
+    public BaseResponse<PostLoginRes> kakaoCallback(@RequestParam String code) {
 
         try {
             String accessTokenV2 = service.getKakaoAccessTokenV2(code);
-            //String email = (String)((LinkedHashMap)userInfo.get("kakao_account")).get("email");
 
-            // PostLoginRes postLoginRes = userService.oAuthLogin(email);
-
-            return new BaseResponse<>(accessTokenV2);
+            PostLoginRes postLoginRes = service.login(accessTokenV2);
+            return new BaseResponse<>(postLoginRes);
 
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());

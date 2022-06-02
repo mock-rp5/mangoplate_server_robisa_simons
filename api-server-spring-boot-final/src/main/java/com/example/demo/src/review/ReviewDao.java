@@ -589,7 +589,7 @@ public class ReviewDao {
         }
 
         getNewsQuery = getNewsQuery.substring(0, getNewsQuery.length()-1);
-        getNewsQuery+=") order by R.updated_at desc";
+        getNewsQuery+=") order by R.created_at desc";
 
         List<GetNewsRes> getNewsRes = jdbcTemplate.query(getNewsQuery,
                 (rs, rowNum) -> new GetNewsRes(
