@@ -90,28 +90,28 @@ public class BookmarkDao {
     }
 
     public int checkBookmarked(int userId, String contentsType, int contentsId) {
-        String checkBookmarkedQuery = "select exists (select * from bookmarks where user_id = ? and contents_type = ? and contents_id = ? and status ='ACTIVE')";
+        String checkBookmarkedQuery = "select exists (select * from bookmarks where user_id = ? and content_type = ? and content_id = ? and status ='ACTIVE')";
         return jdbcTemplate.queryForObject(checkBookmarkedQuery, int.class, userId, contentsType, contentsId);
     }
     public int checkUnmarked(int userId, String contentsType, int contentsId) {
-        String checkUnmarkedQuery = "select exists (select * from bookmarks where user_id = ? and contents_type = ? and contents_id = ? and status ='INACTIVE')";
+        String checkUnmarkedQuery = "select exists (select * from bookmarks where user_id = ? and content_type = ? and content_id = ? and status ='INACTIVE')";
         return jdbcTemplate.queryForObject(checkUnmarkedQuery, int.class, userId, contentsType, contentsId);
     }
 
 
     public int createBookmark(int userId, String contentsType, int contentsId) {
-        String createRelationQuery = "insert into bookmarks (user_id, contents_id, contents_type, status, created_at, updated_at) VALUES (?, ?, ?, DEFAULT, DEFAULT, DEFAULT)";
+        String createRelationQuery = "insert into bookmarks (user_id, content_id, content_type, status, created_at, updated_at) VALUES (?, ?, ?, DEFAULT, DEFAULT, DEFAULT)";
         return jdbcTemplate.update(createRelationQuery, userId, contentsId, contentsType);
 
     }
 
     public int postBookmark(int userId, String contentsType, int contentsId) {
-        String postBookmarkQuery = "update bookmarks t SET t.status = 'ACTIVE' WHERE t.user_id = ? and t.contents_type = ? and t.contents_id = ? ";
+        String postBookmarkQuery = "update bookmarks t SET t.status = 'ACTIVE' WHERE t.user_id = ? and t.content_type = ? and t.content_id = ? ";
         return jdbcTemplate.update(postBookmarkQuery, userId, contentsType, contentsId);
     }
 
     public int cancelBookmark(int userId, String contentsType, int contentsId) {
-        String cancelBookmarkQuery = "update bookmarks t SET t.status = 'INACTIVE' WHERE t.user_id = ? and t.contents_type = ? and t.contents_id = ? ";
+        String cancelBookmarkQuery = "update bookmarks t SET t.status = 'INACTIVE' WHERE t.user_id = ? and t.content_type = ? and t.content_id = ? ";
         return jdbcTemplate.update(cancelBookmarkQuery, userId, contentsType, contentsId);
     }
     public int checkUser(Integer userId) {

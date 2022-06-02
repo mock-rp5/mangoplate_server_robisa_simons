@@ -2,6 +2,7 @@ package com.example.demo.src.bookmark;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.src.bookmark.model.BookmarkedStatus;
 import com.example.demo.src.bookmark.model.GetBookmarkCountRes;
 import com.example.demo.src.bookmark.model.GetBookmarkedRes;
 import com.example.demo.utils.JwtService;
@@ -32,13 +33,14 @@ public class BookmarkController {
     }
     @GetMapping("/{user_id}")
     @ResponseBody
-    public BaseResponse<List<GetBookmarkCountRes>> getBookmarkCount(@PathVariable(value = "user_id") Integer userId) throws BaseException {
+    public BaseResponse<BookmarkedStatus> getBookmarkCount(@PathVariable(value = "user_id") Integer userId) throws BaseException {
         if(userId == null) {
             return new BaseResponse<>(USERS_EMPTY_USER_ID);
         }
         try {
             List<GetBookmarkCountRes> getBookmarkCountRes = provider.getBookmarkCount(userId);
-            return new BaseResponse<>(getBookmarkCountRes);
+            BookmarkedStatus bookmarkedStatus = service.classifyContentsType(getBookmarkCountRes);
+            return new BaseResponse<>(bookmarkedStatus);
         }catch (BaseException e) {
             return new BaseResponse<>(e.getStatus());
         }
@@ -84,6 +86,7 @@ public class BookmarkController {
             Integer result = service.postBookmark(userId, contentsType, contentsId);
             return new BaseResponse<>(result);
         }catch (BaseException e) {
+            e.printStackTrace();
             return new BaseResponse<>(e.getStatus());
         }
 

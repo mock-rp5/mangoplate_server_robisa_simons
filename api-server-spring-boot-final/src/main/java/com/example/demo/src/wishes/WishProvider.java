@@ -44,6 +44,7 @@ public class WishProvider {
     }
     public List<GetWishRestaurantRes> getWishRestaurants(Integer userId, Integer targetUserId) throws BaseException{
         if(checkUser(targetUserId) == 0 ) throw new BaseException(USERS_NOT_EXISTS_USER);
+        if(checkExistsWishes(targetUserId) == 0 ) throw new BaseException(WISHES_NOT_EXISTS_RESTAURANTS_IN_WISHES);
         try {
             List<GetWishRestaurantRes> getWishRestaurantRes = dao.getWishRestaurants(userId,targetUserId);
             return getWishRestaurantRes;
@@ -60,7 +61,14 @@ public class WishProvider {
             throw new BaseException(DATABASE_ERROR);
         }
     }
-
+    public Integer checkExistsWishes(Integer userId) throws BaseException{
+        try {
+            return dao.checkExistsWishes(userId);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
     public Integer getUserIdFromWish(Integer wishId) throws BaseException{
         try {
             return dao.getUserIdFromWish(wishId);

@@ -48,6 +48,7 @@ public class BookmarkProvider {
         try{
             return dao.checkBookmarked(userId, contentsType, contentsId);
         }catch (Exception e) {
+            e.printStackTrace();
             throw new BaseException(DATABASE_ERROR);
         }
     }

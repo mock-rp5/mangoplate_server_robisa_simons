@@ -46,7 +46,7 @@ public class OauthController {
     @GetMapping(value = "/facebook/login-test")
     public String getCode() {
 
-        return "redirect:http://www.facebook.com/v14.0/dialog/oauth?&client_id=700903091250073&redirect_uri=https%3A%2F%2Fhalfmbbn.com%2Foauth%2Ffacebook%2Flogin%2Fcallback%0A&state=1234&scope=email";
+        return "redirect:https://www.facebook.com/v14.0/dialog/oauth?&client_id=700903091250073&redirect_uri=https://halfmbbn.shop/oauth/facebook/login/callback&state=1234&scope=email";
 
     }
 
@@ -71,7 +71,7 @@ public class OauthController {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("client_id=700903091250073"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=https%3A%2F%2Fhalfmbbn.com%2Foauth%2Ffacebook%2Flogin%2Fcallback"); // TODO 인가코드 받은 redirect_uri 입력
+            sb.append("&redirect_uri=https://halfmbbn.shop/oauth/facebook/login/callback"); // TODO 인가코드 받은 redirect_uri 입력
             sb.append("&client_secret=35fefde06db7166853fb7c02707cc4fd"); // TODO REST_API_KEY 입력
             sb.append("&code=" + code);
             bw.write(sb.toString());

@@ -148,7 +148,6 @@ public class WishController {
     @DeleteMapping("/memo")
     public BaseResponse<Integer> deleteMemo(@RequestBody PostMemoReq memo) {
         if(memo.getWishId() == null) return new BaseResponse<>(WISHES_EMPTY_WISH_ID);
-        if(memo.getMemo() == null) return new BaseResponse<>(WISHES_EMPTY_MEMO_CONTENT);
         try{
             Integer userId = jwtService.getUserIdx();
             if(userId == null) {

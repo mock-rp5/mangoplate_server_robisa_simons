@@ -1,12 +1,16 @@
 package com.example.demo.src.bookmark;
 
 import com.example.demo.config.BaseException;
+import com.example.demo.src.bookmark.model.BookmarkedStatus;
+import com.example.demo.src.bookmark.model.GetBookmarkCountRes;
 import com.example.demo.src.bookmark.model.PostBookmarkRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -61,6 +65,20 @@ public class BookmarkService {
         }catch (Exception e) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+    @Transactional(rollbackFor = Exception.class)
+    public BookmarkedStatus classifyContentsType(List<GetBookmarkCountRes> getBookmarkCountRes) throws BaseException {
+        BookmarkedStatus bookmarkedStatus = new BookmarkedStatus(new GetBookmarkCountRes("top_lists",0,""),
+                new GetBookmarkCountRes("mylists",0,""), new GetBookmarkCountRes("mango_pick_stories",0,""));
+        if(getBookmarkCountRes == null) {
+            return bookmarkedStatus;
+        }
+        for(GetBookmarkCountRes element : getBookmarkCountRes){
+            if(element.getContentsType().equals("top_lists")) bookmarkedStatus.setTopList(element);
+            if(element.getContentsType().equals("mylists")) bookmarkedStatus.setMyList(element);
+        }
+
+        return bookmarkedStatus;
     }
 
 }
